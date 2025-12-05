@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = 'http://localhost:5010/api'; // Change 5010 to your actual port
+const API_URL = 'http://localhost:5011/api'; // Change 5010 to your actual port
 
 // Authentication State
 let authToken = localStorage.getItem('authToken');
