@@ -1,7 +1,9 @@
-// API Configuration - Use environment variable or fallback to localhost
+// API Configuration - For Production Deployment
+// When deployed to Vercel, always use the Render backend API URL
+// Update 'https://ym-realestate-api.onrender.com/api' with your actual Render deployment URL
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:5011/api'
-  : 'https://ym-realestate-api.onrender.com/api'; // REPLACE with your actual Render URL
+  : 'https://ym-realestate-api.onrender.com/api';
 
 // Authentication State
 let authToken = localStorage.getItem('authToken');
