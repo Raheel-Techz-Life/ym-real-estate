@@ -1,5 +1,7 @@
-// API Configuration
-const API_URL = 'http://localhost:5010/api'; // Change 5010 to your actual port
+// API Configuration - Use environment variable or fallback to localhost
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5011/api'
+  : 'https://ym-realestate-api.onrender.com/api'; // REPLACE with your actual Render URL
 
 // Authentication State
 let authToken = localStorage.getItem('authToken');
