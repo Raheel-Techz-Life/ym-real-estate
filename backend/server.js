@@ -14,8 +14,18 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:3000'],
-  credentials: true
+  origin: [
+    'http://localhost:5500', 
+    'http://127.0.0.1:5500', 
+    'http://localhost:3000',
+    'http://localhost:5011',
+    'https://your-site.vercel.app', // ADD YOUR VERCEL URL
+    'https://*.vercel.app', // Allow all Vercel preview deployments
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -279,11 +289,14 @@ app.post('/api/register', async (req, res) => {
       });
     }
 
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create user
     const user = await User.create({
       name,
       email,
-      password,
+      password: hashedPassword, // Use hashed password
       phone,
       address: address || undefined,
       role: role || 'user'
@@ -350,7 +363,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/api/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login.html?error=auth_failed' }),
+  passport.authenticate('google', { failureRedirect: `${process.env.FRONTEND_URL}/login.html?error=auth_failed` }),
   (req, res) => {
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '30d' });
     const user = {
@@ -361,7 +374,7 @@ app.get('/api/auth/google/callback',
       role: req.user.role
     };
     const userEncoded = encodeURIComponent(JSON.stringify({ ...user, token }));
-    res.redirect(`http://127.0.0.1:5500/index.html?auth=success&user=${userEncoded}`);
+    res.redirect(`${process.env.FRONTEND_URL}/index.html?auth=success&user=${userEncoded}`);
   }
 );
 
