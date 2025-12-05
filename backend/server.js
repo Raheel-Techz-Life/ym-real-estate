@@ -9,6 +9,7 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
@@ -79,6 +80,25 @@ app.use(passport.session());
 app.use((req, res, next) => {
   console.log(`📥 ${new Date().toISOString()} | ${req.method} ${req.url}`);
   next();
+});
+
+// ============ RATE LIMITING ============
+// Protect authentication routes from brute force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
+  message: { success: false, error: 'Too many attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// General API rate limiter for database operations
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: { success: false, error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // ============ MONGODB CONNECTION ============
@@ -397,7 +417,7 @@ async function handleLogin(req, res) {
 
 // Team Registration with specific team code (YMTEAM2024)
 // This endpoint is for backward compatibility with test endpoints
-app.post('/api/register/team', async (req, res) => {
+app.post('/api/register/team', authLimiter, async (req, res) => {
   console.log('📝 Team registration request received');
   console.log('Request body:', req.body);
   
@@ -453,17 +473,17 @@ app.post('/api/register/team', async (req, res) => {
 
 // Regular registration endpoint
 // For production deployment: Frontend should POST to /api/register or /api/auth/register
-app.post('/api/register', handleRegistration);
+app.post('/api/register', authLimiter, handleRegistration);
 
 // Auth namespace alias (both work the same way)
-app.post('/api/auth/register', handleRegistration);
+app.post('/api/auth/register', authLimiter, handleRegistration);
 
 // Login endpoint
 // For production deployment: Frontend can POST to /api/login or /api/auth/login
-app.post('/api/login', handleLogin);
+app.post('/api/login', authLimiter, handleLogin);
 
 // Auth namespace alias (both work the same way)
-app.post('/api/auth/login', handleLogin);
+app.post('/api/auth/login', authLimiter, handleLogin);
 
 // Google OAuth routes
 app.get('/api/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -520,7 +540,7 @@ app.get('/api/properties/:id', async (req, res) => {
 });
 
 // Add property (Team/Admin only)
-app.post('/api/properties', authenticateToken, isTeamOrAdmin, async (req, res) => {
+app.post('/api/properties', apiLimiter, authenticateToken, isTeamOrAdmin, async (req, res) => {
   try {
     const propertyData = { ...req.body, addedBy: req.user.id };
     const property = await Property.create(propertyData);
@@ -532,7 +552,7 @@ app.post('/api/properties', authenticateToken, isTeamOrAdmin, async (req, res) =
 });
 
 // Update property (Team/Admin only)
-app.put('/api/properties/:id', authenticateToken, isTeamOrAdmin, async (req, res) => {
+app.put('/api/properties/:id', apiLimiter, authenticateToken, isTeamOrAdmin, async (req, res) => {
   try {
     const property = await Property.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!property) {
@@ -545,7 +565,7 @@ app.put('/api/properties/:id', authenticateToken, isTeamOrAdmin, async (req, res
 });
 
 // Delete property (Team/Admin only)
-app.delete('/api/properties/:id', authenticateToken, isTeamOrAdmin, async (req, res) => {
+app.delete('/api/properties/:id', apiLimiter, authenticateToken, isTeamOrAdmin, async (req, res) => {
   try {
     const property = await Property.findByIdAndDelete(req.params.id);
     if (!property) {
@@ -601,7 +621,7 @@ app.post('/api/upload', authenticateToken, isTeamOrAdmin, upload.array('images',
 
 // ============ CONTACT ROUTES ============
 
-app.post('/api/contact', async (req, res) => {
+app.post('/api/contact', apiLimiter, async (req, res) => {
   try {
     const contact = await Contact.create(req.body);
     console.log('📧 New Contact:', req.body.name, req.body.email);
@@ -612,7 +632,7 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // Get messages (Team/Admin only)
-app.get('/api/messages', authenticateToken, isTeamOrAdmin, async (req, res) => {
+app.get('/api/messages', apiLimiter, authenticateToken, isTeamOrAdmin, async (req, res) => {
   try {
     const messages = await Contact.find().sort({ createdAt: -1 });
     res.json({ success: true, data: messages });
@@ -624,7 +644,7 @@ app.get('/api/messages', authenticateToken, isTeamOrAdmin, async (req, res) => {
 // ============ ADMIN ROUTES ============
 
 // Get all users (Admin only)
-app.get('/api/users', authenticateToken, isAdmin, async (req, res) => {
+app.get('/api/users', apiLimiter, authenticateToken, isAdmin, async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json({ success: true, data: users });
@@ -634,7 +654,7 @@ app.get('/api/users', authenticateToken, isAdmin, async (req, res) => {
 });
 
 // Approve team member (Admin only)
-app.put('/api/users/:id/approve', authenticateToken, isAdmin, async (req, res) => {
+app.put('/api/users/:id/approve', apiLimiter, authenticateToken, isAdmin, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { isApproved: true }, { new: true });
     res.json({ success: true, user });
@@ -644,7 +664,7 @@ app.put('/api/users/:id/approve', authenticateToken, isAdmin, async (req, res) =
 });
 
 // Get stats (Team/Admin)
-app.get('/api/stats', authenticateToken, isTeamOrAdmin, async (req, res) => {
+app.get('/api/stats', apiLimiter, authenticateToken, isTeamOrAdmin, async (req, res) => {
   try {
     const totalProperties = await Property.countDocuments();
     const forSale = await Property.countDocuments({ status: 'sale' });
