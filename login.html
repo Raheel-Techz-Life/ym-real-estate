@@ -330,10 +330,12 @@
   </div>
 
   <script>
-    // Dynamic API URL based on environment
+    // API Configuration - For Production Deployment
+    // When deployed to Vercel, always use the Render backend API URL
+    // Update 'https://ym-realestate-api.onrender.com/api' with your actual Render deployment URL
     const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:5011/api'
-      : 'https://ym-realestate-api.onrender.com/api'; // REPLACE with your actual Render URL
+      : 'https://ym-realestate-api.onrender.com/api';
     
     let selectedRole = 'user';
 
@@ -402,7 +404,7 @@
       
       if (selectedRole === 'team') {
         userData.teamCode = document.getElementById('teamCode').value;
-        // Verify team code on frontend first
+        // Verify team code on frontend first (must match backend code 'YM2024TEAM')
         if (userData.teamCode !== 'YM2024TEAM') {
           alert('Invalid team code. Contact admin for access.');
           return;
