@@ -254,37 +254,64 @@ app.post('/api/register/team', async (req, res) => {
   }
 });
 
-// User Registration
+// Regular registration (handles both user and team)
 app.post('/api/register', async (req, res) => {
-  console.log('📝 User registration request received');
-  console.log('Body:', req.body);
-  
   try {
-    const { name, email, password, phone, address } = req.body;
-    
+    const { name, email, password, phone, address, role, teamCode } = req.body;
+
+    // If registering as team, verify team code
+    if (role === 'team') {
+      const VALID_TEAM_CODE = 'YM2024TEAM';
+      if (teamCode !== VALID_TEAM_CODE) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid team code'
+        });
+      }
+    }
+
+    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log('❌ Email already exists:', email);
-      return res.status(400).json({ success: false, error: 'Email already registered' });
+      return res.status(400).json({
+        success: false,
+        error: 'Email already registered'
+      });
     }
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
     const user = await User.create({
-      name, email, password: hashedPassword, phone, address, role: 'user'
+      name,
+      email,
+      password,
+      phone,
+      address: address || undefined,
+      role: role || 'user'
     });
-    
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '30d' });
-    
-    console.log('✅ User registered:', user.email);
-    
-    res.json({
+
+    // Generate token
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET || 'your_jwt_secret',
+      { expiresIn: '30d' }
+    );
+
+    res.status(201).json({
       success: true,
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role, picture: user.picture }
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
     });
   } catch (error) {
-    console.error('❌ User registration error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Registration failed'
+    });
   }
 });
 
