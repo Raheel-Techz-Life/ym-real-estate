@@ -250,19 +250,27 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        // Extract profile data with safety checks
+        const email = profile.emails?.[0]?.value;
+        const profilePicture = profile.photos?.[0]?.value;
+        
+        if (!email) {
+          return done(new Error('No email provided by Google'), null);
+        }
+        
         let user = await User.findOne({ googleId: profile.id });
         if (!user) {
-          user = await User.findOne({ email: profile.emails[0].value });
+          user = await User.findOne({ email });
           if (user) {
             user.googleId = profile.id;
-            user.picture = profile.photos[0]?.value;
+            user.picture = profilePicture;
             await user.save();
           } else {
             user = await User.create({
               googleId: profile.id,
               name: profile.displayName,
-              email: profile.emails[0].value,
-              picture: profile.photos[0]?.value,
+              email,
+              picture: profilePicture,
               role: 'user'
             });
           }

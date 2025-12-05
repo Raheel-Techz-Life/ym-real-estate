@@ -12,23 +12,45 @@ console.log();
 
 let allChecks = true;
 
+function safeReadFile(filePath, errorMsg) {
+  try {
+    return fs.readFileSync(filePath, 'utf8');
+  } catch (error) {
+    console.error(`  ❌ ${errorMsg}: ${error.message}`);
+    allChecks = false;
+    return null;
+  }
+}
+
 // Check 1: Package.json has correct scripts
 console.log('✓ Checking package.json scripts...');
-const packageJson = JSON.parse(fs.readFileSync(
-  path.join(__dirname, 'backend/package.json'), 'utf8'
-));
-if (packageJson.scripts.start === 'node server.js' && 
-    packageJson.scripts.dev === 'nodemon server.js') {
-  console.log('  ✅ Scripts configured correctly');
-  console.log('     - start: node server.js');
-  console.log('     - dev: nodemon server.js');
+const packageJsonContent = safeReadFile(
+  path.join(__dirname, 'backend/package.json'),
+  'Failed to read backend/package.json'
+);
+if (!packageJsonContent) {
+  console.log('  ❌ Cannot verify package.json');
 } else {
-  console.log('  ❌ Scripts not configured correctly');
-  allChecks = false;
+  try {
+    const packageJson = JSON.parse(packageJsonContent);
+    if (packageJson.scripts.start === 'node server.js' && 
+        packageJson.scripts.dev === 'nodemon server.js') {
+      console.log('  ✅ Scripts configured correctly');
+      console.log('     - start: node server.js');
+      console.log('     - dev: nodemon server.js');
+    } else {
+      console.log('  ❌ Scripts not configured correctly');
+      allChecks = false;
+    }
+  } catch (error) {
+    console.log(`  ❌ Invalid JSON in package.json: ${error.message}`);
+    allChecks = false;
+  }
 }
 
 // Check 2: nodemon in devDependencies
 console.log('\n✓ Checking nodemon location...');
+const packageJson = packageJsonContent ? JSON.parse(packageJsonContent) : {};
 if (packageJson.devDependencies?.nodemon && !packageJson.dependencies?.nodemon) {
   console.log('  ✅ nodemon in devDependencies only');
 } else {
@@ -47,57 +69,64 @@ if (packageJson.dependencies['express-rate-limit']) {
 
 // Check 4: Server.js exists and is valid
 console.log('\n✓ Checking server.js...');
-const serverJs = fs.readFileSync(
-  path.join(__dirname, 'backend/server.js'), 'utf8'
+const serverJs = safeReadFile(
+  path.join(__dirname, 'backend/server.js'),
+  'Failed to read backend/server.js'
 );
-if (serverJs.includes('express-rate-limit') && 
-    serverJs.includes('authLimiter') &&
-    serverJs.includes('apiLimiter')) {
-  console.log('  ✅ Rate limiting configured in server.js');
+if (!serverJs) {
+  console.log('  ❌ Cannot verify server.js');
 } else {
-  console.log('  ❌ Rate limiting not configured in server.js');
-  allChecks = false;
-}
+  if (serverJs.includes('express-rate-limit') && 
+      serverJs.includes('authLimiter') &&
+      serverJs.includes('apiLimiter')) {
+    console.log('  ✅ Rate limiting configured in server.js');
+  } else {
+    console.log('  ❌ Rate limiting not configured in server.js');
+    allChecks = false;
+  }
 
-if (serverJs.includes('handleRegistration') && 
-    serverJs.includes('handleLogin')) {
-  console.log('  ✅ Shared auth handlers implemented');
-} else {
-  console.log('  ❌ Shared auth handlers missing');
-  allChecks = false;
-}
+  if (serverJs.includes('handleRegistration') && 
+      serverJs.includes('handleLogin')) {
+    console.log('  ✅ Shared auth handlers implemented');
+  } else {
+    console.log('  ❌ Shared auth handlers missing');
+    allChecks = false;
+  }
 
-if (serverJs.includes('/api/health')) {
-  console.log('  ✅ Health check endpoint exists');
-} else {
-  console.log('  ❌ Health check endpoint missing');
-  allChecks = false;
+  if (serverJs.includes('/api/health')) {
+    console.log('  ✅ Health check endpoint exists');
+  } else {
+    console.log('  ❌ Health check endpoint missing');
+    allChecks = false;
+  }
 }
 
 // Check 5: Frontend API URLs
 console.log('\n✓ Checking frontend API URLs...');
-const apiJs = fs.readFileSync(
-  path.join(__dirname, 'js/api.js'), 'utf8'
+const apiJs = safeReadFile(
+  path.join(__dirname, 'js/api.js'),
+  'Failed to read js/api.js'
 );
-const loginHtml = fs.readFileSync(
-  path.join(__dirname, 'login.html'), 'utf8'
+const loginHtml = safeReadFile(
+  path.join(__dirname, 'login.html'),
+  'Failed to read login.html'
 );
 
-if (apiJs.includes('https://ym-realestate-api.onrender.com/api')) {
+if (apiJs && apiJs.includes('https://ym-realestate-api.onrender.com/api')) {
   console.log('  ✅ Production API URL in js/api.js');
-} else {
+} else if (apiJs) {
   console.log('  ⚠️  Production API URL needs to be updated in js/api.js');
 }
 
-if (loginHtml.includes('https://ym-realestate-api.onrender.com/api')) {
+if (loginHtml && loginHtml.includes('https://ym-realestate-api.onrender.com/api')) {
   console.log('  ✅ Production API URL in login.html');
-} else {
+} else if (loginHtml) {
   console.log('  ⚠️  Production API URL needs to be updated in login.html');
 }
 
 // Check 6: CORS configuration
 console.log('\n✓ Checking CORS configuration...');
-if (serverJs.includes('vercel.app') && 
+if (serverJs && serverJs.includes('vercel.app') && 
     serverJs.match(/origin\.match\(/)) {
   console.log('  ✅ CORS pattern matching for Vercel');
 } else {
@@ -105,33 +134,33 @@ if (serverJs.includes('vercel.app') &&
   allChecks = false;
 }
 
-if (serverJs.includes('NODE_ENV') && 
+if (serverJs && serverJs.includes('NODE_ENV') && 
     serverJs.includes('Not allowed by CORS')) {
   console.log('  ✅ CORS rejects unauthorized origins in production');
-} else {
+} else if (serverJs) {
   console.log('  ❌ Production CORS security not configured');
   allChecks = false;
 }
 
 // Check 7: Auth endpoints
 console.log('\n✓ Checking auth endpoints...');
-if (serverJs.includes("app.post('/api/register'") && 
+if (serverJs && serverJs.includes("app.post('/api/register'") && 
     serverJs.includes("app.post('/api/auth/register'") &&
     serverJs.includes("app.post('/api/login'") && 
     serverJs.includes("app.post('/api/auth/login'")) {
   console.log('  ✅ All auth endpoints configured');
-} else {
+} else if (serverJs) {
   console.log('  ❌ Auth endpoints incomplete');
   allChecks = false;
 }
 
 // Check 8: Team codes
 console.log('\n✓ Checking team codes...');
-if (serverJs.includes('YM2024TEAM') && serverJs.includes('YMTEAM2024')) {
+if (serverJs && serverJs.includes('YM2024TEAM') && serverJs.includes('YMTEAM2024')) {
   console.log('  ✅ Team codes configured');
   console.log('     - YM2024TEAM for /api/register');
   console.log('     - YMTEAM2024 for /api/register/team');
-} else {
+} else if (serverJs) {
   console.log('  ❌ Team codes not configured');
   allChecks = false;
 }
@@ -152,9 +181,9 @@ files.forEach(file => {
 
 // Check 10: Redirects after auth
 console.log('\n✓ Checking auth redirects...');
-if (loginHtml.includes("window.location.href = 'index.html'")) {
+if (loginHtml && loginHtml.includes("window.location.href = 'index.html'")) {
   console.log('  ✅ Redirects to index.html after auth');
-} else {
+} else if (loginHtml) {
   console.log('  ❌ Auth redirects not configured');
   allChecks = false;
 }
