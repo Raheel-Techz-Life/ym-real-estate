@@ -1,0 +1,385 @@
+/* ===== DARK/LIGHT THEME SYSTEM ===== */
+
+:root {
+  /* Light Theme (Default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6faff;
+  --bg-tertiary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-header: rgba(255, 255, 255, 0.95);
+  
+  --text-primary: #263f6e;
+  --text-secondary: #455d8f;
+  --text-tertiary: #718096;
+  --text-muted: #666666;
+  
+  --accent-primary: #263f6e;
+  --accent-secondary: #18284b;
+  --accent-gold: #ffd700;
+  --accent-gold-dark: #ffc800;
+  
+  --border-color: #e0e7ff;
+  --border-light: rgba(38, 63, 110, 0.1);
+  
+  --shadow-sm: 0 2px 4px rgba(38, 63, 110, 0.08);
+  --shadow-md: 0 4px 12px rgba(38, 63, 110, 0.1);
+  --shadow-lg: 0 10px 30px rgba(38, 63, 110, 0.12);
+  
+  --gradient-primary: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
+  --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  
+  --overlay-light: rgba(255, 255, 255, 0.95);
+  --overlay-dark: rgba(0, 0, 0, 0.5);
+  
+  /* Transition for smooth theme switching */
+  --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-primary: #0f1419;
+  --bg-secondary: #1a1f2e;
+  --bg-tertiary: #242938;
+  --bg-card: #1e2433;
+  --bg-header: rgba(15, 20, 25, 0.95);
+  
+  --text-primary: #e8ecf4;
+  --text-secondary: #b8c5db;
+  --text-tertiary: #8899a6;
+  --text-muted: #6e7a8a;
+  
+  --accent-primary: #4a7dff;
+  --accent-secondary: #3366cc;
+  --accent-gold: #ffd700;
+  --accent-gold-dark: #e6c200;
+  
+  --border-color: #2d3748;
+  --border-light: rgba(255, 255, 255, 0.08);
+  
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+  
+  --gradient-primary: linear-gradient(135deg, #1e2433 0%, #0f1419 100%);
+  --gradient-card: linear-gradient(135deg, #1e2433 0%, #242938 100%);
+  
+  --overlay-light: rgba(30, 36, 51, 0.95);
+  --overlay-dark: rgba(0, 0, 0, 0.7);
+}
+
+/* ===== BASE STYLES ===== */
+* {
+  transition: var(--theme-transition);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--bg-header);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.nav a {
+  color: var(--text-primary);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+}
+
+.nav a:hover {
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== THEME TOGGLE BUTTON ===== */
+.theme-toggle {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  border: 2px solid var(--accent-gold);
+  color: var(--accent-gold);
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+}
+
+.theme-toggle .fa-sun {
+  display: none;
+}
+
+.theme-toggle .fa-moon {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .fa-sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .fa-moon {
+  display: none;
+}
+
+/* ===== CARDS & SECTIONS ===== */
+.intro-section,
+.property-card,
+.value-card,
+.testimonial-card,
+.team-card,
+.contact-info,
+.contact-form,
+.auth-container {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+
+.property-card {
+  border: 2px solid var(--border-color);
+}
+
+.property-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent-primary);
+}
+
+/* ===== TEXT COLORS ===== */
+.section-title,
+.intro-section h2,
+.value-card h3,
+.team-title,
+.contact-title,
+.auth-title,
+.property-desc {
+  color: var(--text-primary);
+}
+
+.text,
+.value-card p,
+.testimonial-text,
+.description {
+  color: var(--text-secondary);
+}
+
+/* ===== BACKGROUNDS ===== */
+.properties-section,
+.testimonials-section,
+.team-section {
+  background: var(--bg-secondary);
+}
+
+.quick-facts,
+.highlight-item,
+.amenity {
+  background: var(--bg-tertiary);
+}
+
+/* ===== STATS CIRCLES ===== */
+.stat-circle {
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ===== OWNER SECTION ===== */
+.owner-section {
+  background: var(--gradient-primary);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--gradient-primary);
+}
+
+[data-theme="dark"] .footer {
+  background: linear-gradient(135deg, #0a0d12 0%, #0f1419 100%);
+}
+
+.footer-col p,
+.footer-col ul li,
+.footer-col ul li a {
+  color: var(--text-secondary);
+}
+
+/* ===== FORMS ===== */
+.form-group input,
+.form-group textarea {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--accent-primary);
+  background: var(--bg-card);
+}
+
+.form-group label {
+  color: var(--text-primary);
+}
+
+/* ===== BUTTONS ===== */
+.submit-btn,
+.google-btn {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+.google-btn {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.google-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-primary);
+}
+
+/* ===== USER PROFILE ===== */
+.user-profile button {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.user-profile button:hover {
+  background: var(--bg-secondary) !important;
+}
+
+#userName {
+  color: var(--text-primary) !important;
+}
+
+/* ===== LOGO TEXT ===== */
+.logo,
+.header .logo-area span {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .logo,
+[data-theme="dark"] .header .logo-area span {
+  color: var(--accent-gold);
+}
+
+/* ===== HERO SECTION (stays dark in both themes for dramatic effect) ===== */
+.hero-section {
+  background: linear-gradient(rgba(15, 20, 25, 0.85), rgba(10, 13, 18, 0.9)),
+              url('https://images.unsplash.com/photo-1582407947304-fd86f028f716?ixlib=rb-4.0.3');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* ===== INSTAGRAM CARDS ===== */
+.insta-card::before {
+  background: var(--bg-card);
+}
+
+.insta-placeholder p {
+  color: var(--text-primary);
+}
+
+/* ===== DIVIDER ===== */
+.divider::before,
+.divider::after {
+  background: var(--border-color);
+}
+
+.divider span {
+  background: var(--bg-card);
+  color: var(--text-tertiary);
+}
+
+/* ===== SCROLLBAR (Dark Mode) ===== */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 5px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-gold);
+}
+
+/* ===== SELECTION COLOR ===== */
+::selection {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+[data-theme="dark"] ::selection {
+  background: var(--accent-gold);
+  color: #000;
+}
+
+/* ===== PROPERTY DETAILS PAGE ===== */
+.main-content,
+.sidebar {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
+}
+
+.section-title {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-gold);
+}
+
+.fact-row {
+  border-bottom-color: var(--border-light);
+}
+
+.fact-label {
+  color: var(--text-tertiary);
+}
+
+.fact-value {
+  color: var(--text-primary);
+}
+
+/* ===== CONTACT CARD ===== */
+.contact-card {
+  background: var(--gradient-primary);
+}
+
+[data-theme="dark"] .contact-card {
+  border: 1px solid var(--border-color);
+}
+
+/* ===== MOBILE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .theme-toggle {
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+  }
+}

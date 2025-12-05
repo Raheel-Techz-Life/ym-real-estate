@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Our Team - Y M REAL ESTATE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+    }
+    .header {
+      background: #263f6e;
+      color: #fff;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #fff;
+    }
+    .nav {
+      display: flex;
+      gap: 24px;
+    }
+    .nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 16px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .nav a:hover { background: #18284b; }
+    
+    .hero {
+      background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
+      color: white;
+      padding: 80px 20px 60px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 3em;
+      margin-bottom: 15px;
+    }
+    .hero p {
+      font-size: 1.2em;
+      opacity: 0.9;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: -40px auto 60px;
+      padding: 0 20px;
+    }
+    
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 25px;
+      margin-top: 40px;
+    }
+    
+    .team-member-card {
+      background: white;
+      border-radius: 15px;
+      padding: 35px;
+      box-shadow: 0 5px 20px rgba(38,63,110,0.1);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 35px;
+      align-items: start;
+    }
+    .team-member-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #263f6e, #ffd700);
+    }
+    .team-member-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(38,63,110,0.15);
+    }
+    
+    .member-photo {
+      width: 180px;
+      height: 180px;
+      border-radius: 15px;
+      border: 5px solid #263f6e;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .team-member-card:hover .member-photo {
+      transform: scale(1.05);
+    }
+    
+    .member-info {
+      flex: 1;
+    }
+    
+    .member-name {
+      font-size: 1.8em;
+      color: #263f6e;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .member-role {
+      color: #666;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    
+    .member-bio {
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 25px;
+      font-size: 1.05em;
+    }
+    
+    .member-contact {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+    }
+    .member-contact a {
+      width: 45px;
+      height: 45px;
+      background: #f6faff;
+      border: 2px solid #263f6e;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #263f6e;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 1.2em;
+    }
+    .member-contact a:hover {
+      background: #263f6e;
+      color: white;
+      transform: translateY(-3px);
+    }
+    
+    .edit-member-btn {
+      display: none;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .edit-member-btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+    .edit-member-btn.show {
+      display: inline-block;
+    }
+    
+    .delete-member-btn {
+      display: none;
+      margin-top: 10px;
+      margin-left: 10px;
+      padding: 10px 20px;
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .delete-member-btn:hover {
+      background: #b91c1c;
+      transform: translateY(-2px);
+    }
+    .delete-member-btn.show {
+      display: inline-block;
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2em; }
+      .team-member-card {
+        grid-template-columns: 1fr;
+        padding: 25px;
+        text-align: center;
+        gap: 20px;
+      }
+      .member-photo {
+        margin: 0 auto;
+        width: 150px;
+        height: 150px;
+      }
+      .member-contact {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="index.html" class="logo-area">
+      <img src="assets/Screenshot-2025-11-07175543.jpg" alt="Y" class="logo-img">
+      <span style="font-size: 1.4em; font-weight: bold; color: #fff;">Y M REAL ESTATE</span>
+    </a>
+    <div class="nav">
+      <a href="index.html">Home</a>
+      <a href="properties.html">Properties</a>
+      <a href="team.html">Our Team</a>
+      <a href="login.html" id="navLoginLink">Login / Signup</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 12px; margin-left: auto;">
+      <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff;">
+      <span id="userName" style="color: #fff; font-weight: 500;"></span>
+      <button onclick="api.logout()" style="padding: 8px 16px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer;">Logout</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>Meet Our Team</h1>
+    <p>Dedicated professionals committed to your real estate success</p>
+  </div>
+
+  <div class="container">
+    <!-- FOUNDER SECTION -->
+    <div style="background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); color: white; border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 40px rgba(38,63,110,0.2);">
+      <h2 style="color: #ffd700; margin-bottom: 30px; font-size: 2em;">
+        <i class="fas fa-star"></i> Founder & CEO
+      </h2>
+      <img src="https://via.placeholder.com/150?text=Owner" alt="Founder" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #ffd700; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <h3 style="font-size: 2em; margin-bottom: 10px;">Yunus Mulla</h3>
+      <p style="font-size: 1.2em; opacity: 0.95; font-style: italic; margin-bottom: 20px;">Founder & CEO</p>
+      <p style="font-size: 1.1em; max-width: 800px; margin: 0 auto; line-height: 1.8; opacity: 0.9;">
+        "Passionate about helping you unlock your dream property and creating lasting value for our clients. With years of experience in real estate, I founded Y M Real Estate to transform the property buying experience through trust, transparency, and personalized service."
+      </p>
+    </div>
+
+    <!-- WEBSITE DEVELOPER SECTION -->
+    <div style="background: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%); border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(38,63,110,0.1);">
+      <h2 style="color: #263f6e; margin-bottom: 30px; font-size: 2em; text-align: center;">
+        <i class="fas fa-code"></i> Website Developer
+      </h2>
+      <div style="display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(38,63,110,0.1);">
+        <img src="https://via.placeholder.com/150?text=Dev" alt="Developer" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #ffd700;">
+        <div>
+          <h3 style="color: #263f6e; font-size: 1.8em; margin-bottom: 8px;">Raheel Hosmani</h3>
+          <p style="color: #666; font-size: 1.1em; margin-bottom: 15px;">Full Stack Web Developer</p>
+          <p style="color: #555; line-height: 1.8; margin-bottom: 20px;">
+            Passionate about creating modern, responsive, and user-friendly websites. Specializing in full-stack development with expertise in React, Node.js, MongoDB, and modern web technologies. Dedicated to delivering high-quality digital solutions that help businesses grow online.
+          </p>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fab fa-react"></i> React</span>
+            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fab fa-node"></i> Node.js</span>
+            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fas fa-database"></i> MongoDB</span>
+            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fab fa-html5"></i> HTML/CSS</span>
+            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fab fa-js"></i> JavaScript</span>
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 15px;">
+            <a href="https://github.com/Raheel-Techz-Life" target="_blank" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/raheel-hosmani-78ab92315/" target="_blank" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fab fa-linkedin"></i></a>
+            <a href="raheelhosmani05@gmail.com" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fas fa-envelope"></i></a>          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAM MEMBERS -->
+    <h2 style="text-align: center; color: #263f6e; font-size: 2em; margin-bottom: 40px;">
+      <i class="fas fa-users"></i> Our Team Members
+    </h2>
+    <div class="team-grid" id="teamGrid">
+      <!-- Team members loaded dynamically -->
+    </div>
+  </div>
+
+  <!-- Add Member FAB (Team Only) -->
+  <div class="add-member-fab" id="addMemberFab" onclick="openMemberEditor()">
+    <i class="fas fa-plus"></i>
+  </div>
+
+  <!-- Member Editor Modal -->
+  <div id="memberEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; overflow-y: auto;">
+    <div style="max-width: 600px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
+      <button onclick="closeMemberEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px;">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <h2 style="color: #263f6e; margin-bottom: 30px; text-align: center;">
+        <i class="fas fa-user-edit"></i> <span id="editorTitle">Add Team Member</span>
+      </h2>
+      
+      <div style="display: grid; gap: 20px;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Photo URL</label>
+          <input type="text" id="memberPhoto" placeholder="https://..." style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Name</label>
+          <input type="text" id="memberName" required style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Role / Position</label>
+          <input type="text" id="memberRole" required style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Bio / Description</label>
+          <textarea id="memberBio" rows="4" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px; resize: vertical;"></textarea>
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Email</label>
+          <input type="email" id="memberEmail" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Phone</label>
+          <input type="tel" id="memberPhone" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">LinkedIn URL</label>
+          <input type="url" id="memberLinkedIn" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+        <button onclick="saveMember()" style="padding: 12px 30px; background: #263f6e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+          <i class="fas fa-save"></i> Save
+        </button>
+        <button onclick="closeMemberEditor()" style="padding: 12px 30px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const defaultTeam = [
+      {
+        name: 'Saif Ali Abbunavar',
+        role: 'Heavy Driver',
+        photo: 'https://via.placeholder.com/150?text=Saif',
+        bio: 'Professional driver with expertise in property site visits and client transportation.',
+        email: '',
+        phone: '',
+        linkedin: ''
+      },
+      {
+        name: 'Nijagowda Patil',
+        role: 'Lead Editor',
+        photo: 'https://via.placeholder.com/150?text=Nija',
+        bio: 'Creative video editor specializing in property showcase videos and marketing content.',
+        email: '',
+        phone: '',
+        linkedin: ''
+      },
+      {
+        name: 'Ahsan Ali',
+        role: 'NEET Aspirant',
+        photo: 'https://via.placeholder.com/150?text=Ahsan',
+        bio: 'Dedicated student aspiring for medical profession while supporting the team.',
+        email: '',
+        phone: '',
+        linkedin: ''
+      }
+    ];
+
+    let editingIndex = -1;
+
+    function getTeamMembers() {
+      const stored = localStorage.getItem('ym_team_members');
+      return stored ? JSON.parse(stored) : defaultTeam;
+    }
+
+    function saveTeamMembers(members) {
+      localStorage.setItem('ym_team_members', JSON.stringify(members));
+    }
+
+    function renderTeam() {
+      const team = getTeamMembers();
+      const grid = document.getElementById('teamGrid');
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const isTeam = currentUser && (currentUser.role === 'team' || currentUser.role === 'admin');
+
+      grid.innerHTML = team.map((member, index) => `
+        <div class="team-member-card">
+          <img src="${member.photo}" alt="${member.name}" class="member-photo">
+          <div class="member-info">
+            <h3 class="member-name">${member.name}</h3>
+            <p class="member-role">${member.role}</p>
+            <p class="member-bio">${member.bio || 'No bio available yet.'}</p>
+            <div class="member-contact">
+              ${member.email ? `<a href="mailto:${member.email}" title="Email"><i class="fas fa-envelope"></i></a>` : ''}
+              ${member.phone ? `<a href="tel:${member.phone}" title="Call"><i class="fas fa-phone"></i></a>` : ''}
+              ${member.linkedin ? `<a href="${member.linkedin}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>` : ''}
+            </div>
+            ${isTeam ? `
+              <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="edit-member-btn show" onclick="editMember(${index})">
+                  <i class="fas fa-edit"></i> Edit Member
+                </button>
+                <button class="delete-member-btn show" onclick="deleteMember(${index})">
+                  <i class="fas fa-trash"></i> Delete Member
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openMemberEditor(index = -1) {
+      editingIndex = index;
+      const modal = document.getElementById('memberEditorModal');
+      const title = document.getElementById('editorTitle');
+
+      if (index >= 0) {
+        const member = getTeamMembers()[index];
+        title.textContent = 'Edit Team Member';
+        document.getElementById('memberPhoto').value = member.photo || '';
+        document.getElementById('memberName').value = member.name || '';
+        document.getElementById('memberRole').value = member.role || '';
+        document.getElementById('memberBio').value = member.bio || '';
+        document.getElementById('memberEmail').value = member.email || '';
+        document.getElementById('memberPhone').value = member.phone || '';
+        document.getElementById('memberLinkedIn').value = member.linkedin || '';
+      } else {
+        title.textContent = 'Add Team Member';
+        document.getElementById('memberPhoto').value = '';
+        document.getElementById('memberName').value = '';
+        document.getElementById('memberRole').value = '';
+        document.getElementById('memberBio').value = '';
+        document.getElementById('memberEmail').value = '';
+        document.getElementById('memberPhone').value = '';
+        document.getElementById('memberLinkedIn').value = '';
+      }
+
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMemberEditor() {
+      document.getElementById('memberEditorModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+      editingIndex = -1;
+    }
+
+    function editMember(index) {
+      openMemberEditor(index);
+    }
+
+    function saveMember() {
+      const name = document.getElementById('memberName').value.trim();
+      const role = document.getElementById('memberRole').value.trim();
+
+      if (!name || !role) {
+        alert('Name and Role are required!');
+        return;
+      }
+
+      const member = {
+        photo: document.getElementById('memberPhoto').value.trim() || 'https://via.placeholder.com/150?text=Member',
+        name,
+        role,
+        bio: document.getElementById('memberBio').value.trim(),
+        email: document.getElementById('memberEmail').value.trim(),
+        phone: document.getElementById('memberPhone').value.trim(),
+        linkedin: document.getElementById('memberLinkedIn').value.trim()
+      };
+
+      const team = getTeamMembers();
+      if (editingIndex >= 0) {
+        team[editingIndex] = member;
+      } else {
+        team.push(member);
+      }
+
+      saveTeamMembers(team);
+      renderTeam();
+      closeMemberEditor();
+      alert('Team member saved successfully!');
+    }
+
+    function deleteMember(index) {
+      const team = getTeamMembers();
+      const member = team[index];
+      
+      if (!confirm(`Are you sure you want to delete ${member.name} from the team?`)) {
+        return;
+      }
+      
+      team.splice(index, 1);
+      saveTeamMembers(team);
+      renderTeam();
+      alert('Team member deleted successfully!');
+    }
+
+    function checkTeamAccess() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const addBtn = document.getElementById('addMemberFab');
+
+      if (currentUser && (currentUser.role === 'team' || currentUser.role === 'admin')) {
+        addBtn.classList.add('show');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      ui.updateAuthStatus();
+      checkTeamAccess();
+      renderTeam();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMemberEditor();
+    });
+
+    /* Add media query for developer section responsiveness */
+    const style = document.createElement('style');
+    style.textContent = `
+      @media (max-width: 768px) {
+        div[style*="grid-template-columns: auto 1fr"] {
+          grid-template-columns: 1fr !important;
+          text-align: center;
+          gap: 25px !important;
+        }
+        div[style*="grid-template-columns: auto 1fr"] img {
+          margin: 0 auto;
+        }
+        div[style*="grid-template-columns: auto 1fr"] > div {
+          text-align: center;
+        }
+        div[style*="grid-template-columns: auto 1fr"] div[style*="display: flex"] {
+          justify-content: center;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

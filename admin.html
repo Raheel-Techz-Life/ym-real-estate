@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - Y M REAL ESTATE</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:20px;background:#f6f9ff;color:#263f6e}
+    .wrap{max-width:980px;margin:0 auto}
+    h1{color:#263f6e}
+    .form{background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(38,63,110,0.08)}
+    .row{display:flex;gap:12px;margin-bottom:12px}
+    label{width:140px;font-weight:600;padding-top:6px}
+    input[type=text], input[type=file], textarea{flex:1;padding:8px;border:1px solid #dce7ff;border-radius:6px}
+    textarea{min-height:80px}
+    button{background:#263f6e;color:#fff;padding:10px 14px;border:0;border-radius:8px;cursor:pointer}
+    .list{margin-top:20px}
+    .card{background:#fff;padding:12px;border-radius:10px;margin-bottom:10px;display:flex;gap:12px;align-items:center}
+    .card img{width:120px;height:70px;object-fit:cover;border-radius:6px;border:1px solid #eee}
+    .meta{flex:1}
+    .controls{display:flex;gap:8px}
+    .note{font-size:0.9em;color:#556}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Admin — Manage Properties (prototype)</h1>
+    <p class="note">This is a client-side prototype: data is stored in your browser localStorage. For a production site, a backend and secure auth are required. See admin instructions below.</p>
+
+    <div class="form">
+      <div class="row">
+        <label>Title</label>
+        <input id="title" type="text" placeholder="e.g. Modern Apartment in Mumbai">
+      </div>
+      <div class="row">
+        <label>Price / Tag</label>
+        <input id="price" type="text" placeholder="e.g. ₹2.5 Cr | 3 BHK">
+      </div>
+      <div class="row">
+        <label>Slug (optional)</label>
+        <input id="slug" type="text" placeholder="e.g. properties/modern-apartment-mumbai.html">
+      </div>
+      <div class="row">
+        <label>Image</label>
+        <input id="image" type="file" accept="image/*">
+      </div>
+      <div class="row">
+        <label>Description</label>
+        <textarea id="desc" placeholder="Short description (shown on cards)"></textarea>
+      </div>
+      <div style="text-align:right">
+        <button id="saveBtn">Save Property</button>
+      </div>
+    </div>
+
+    <div class="list">
+      <h2>Saved Properties</h2>
+      <div id="items"></div>
+    </div>
+
+    <hr>
+    <h3>Admin notes</h3>
+    <ol>
+      <li>This prototype stores properties in localStorage under the key <code>ym_properties</code>.</li>
+      <li>To make changes visible for all visitors you need a server-side datastore and media hosting (I can scaffold that).</li>
+      <li>You can export the stored data manually from console: <code>localStorage.getItem('ym_properties')</code>.</li>
+    </ol>
+  </div>
+
+  <script>
+    // helper: read/write properties array
+    function readProps(){ try{ return JSON.parse(localStorage.getItem('ym_properties')||'[]') }catch(e){return[]} }
+    function writeProps(arr){ localStorage.setItem('ym_properties', JSON.stringify(arr)); }
+
+    const saveBtn = document.getElementById('saveBtn');
+    const itemsEl = document.getElementById('items');
+
+    function renderList(){
+      const list = readProps();
+      itemsEl.innerHTML = '';
+      list.forEach((p, idx)=>{
+        const div = document.createElement('div'); div.className='card';
+        const img = document.createElement('img'); img.src = p.image || 'https://via.placeholder.com/240x140?text=No+Image';
+        const meta = document.createElement('div'); meta.className='meta';
+        meta.innerHTML = '<strong>'+escapeHtml(p.title||'Untitled')+'</strong><div class="note">'+escapeHtml(p.price||'')+'</div><div>'+escapeHtml(p.desc||'')+'</div>';
+        const controls = document.createElement('div'); controls.className='controls';
+        const edit = document.createElement('button'); edit.textContent='Edit'; edit.onclick = ()=>loadForEdit(idx);
+        const del = document.createElement('button'); del.textContent='Delete'; del.style.background='#b33'; del.onclick = ()=>{ if(confirm('Delete?')){ list.splice(idx,1); writeProps(list); renderList(); alert('Deleted') } };
+        controls.appendChild(edit); controls.appendChild(del);
+        div.appendChild(img); div.appendChild(meta); div.appendChild(controls);
+        itemsEl.appendChild(div);
+      })
+    }
+
+    function loadForEdit(idx){ const arr = readProps(); const p = arr[idx]; if(!p) return; document.getElementById('title').value=p.title||''; document.getElementById('price').value=p.price||''; document.getElementById('slug').value=p.slug||''; document.getElementById('desc').value=p.desc||''; document._editIndex=idx; }
+
+    function escapeHtml(s){ return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    saveBtn.addEventListener('click', ()=>{
+      const title = document.getElementById('title').value.trim();
+      const price = document.getElementById('price').value.trim();
+      const slug = document.getElementById('slug').value.trim();
+      const desc = document.getElementById('desc').value.trim();
+      if(!title){ alert('Title required'); return }
+      const arr = readProps();
+      const idx = (typeof document._editIndex==='number')? document._editIndex : -1;
+      const fileInput = document.getElementById('image');
+
+      function commit(base64){
+        const item = { title, price, slug, desc, image: base64 };
+        if(idx>=0) arr[idx]=item; else arr.unshift(item);
+        writeProps(arr); renderList(); document._editIndex = undefined; document.getElementById('title').value=''; document.getElementById('price').value=''; document.getElementById('slug').value=''; document.getElementById('desc').value=''; document.getElementById('image').value=''; alert('Saved locally');
+      }
+
+      if(fileInput.files && fileInput.files[0]){
+        const reader = new FileReader();
+        reader.onload = ()=>commit(reader.result);
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        // if editing, keep existing image
+        if(idx>=0){ const existing = arr[idx]||{}; commit(existing.image||''); }
+        else commit('');
+      }
+    });
+
+    // initial render
+    renderList();
+  </script>
+</body>
+</html>
