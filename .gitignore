@@ -28,6 +28,9 @@ desktop.ini
 # Temporary files
 *.tmp
 *.temp
+*.backup
+*_corrupted.*
+*_old.*
 
 # Build outputs
 dist/
