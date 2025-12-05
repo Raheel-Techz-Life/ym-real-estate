@@ -46,7 +46,14 @@ app.use(cors({
         origin.match(/^https:\/\/.*\.vercel\.app$/)) {
       callback(null, true);
     } else {
-      callback(null, true); // In production, you might want to restrict this
+      // In production, reject unauthorized origins
+      if (process.env.NODE_ENV === 'production') {
+        console.warn(`⚠️  Rejected CORS request from unauthorized origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      } else {
+        // In development, allow all origins for easier testing
+        callback(null, true);
+      }
     }
   },
   credentials: true,
@@ -253,70 +260,48 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 // ============ ROUTES ============
 
-// Health check
-app.get('/', (req, res) => res.json({ message: 'YM Real Estate API' }));
+// Health check - basic API status
+app.get('/', (req, res) => res.json({ message: 'YM Real Estate API', status: 'OK' }));
 
-// ============ AUTH ROUTES ============
-
-// Team Registration with specific team code (YMTEAM2024)
-// This endpoint is for backward compatibility with test endpoints
-app.post('/api/register/team', async (req, res) => {
-  console.log('📝 Team registration request received');
-  console.log('Request body:', req.body);
-  
+// Health check with database connectivity
+app.get('/api/health', async (req, res) => {
   try {
-    const { name, email, password, phone, teamCode } = req.body;
+    const dbState = mongoose.connection.readyState;
+    const dbStatus = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
     
-    console.log('Team code received:', teamCode);
-    console.log('Expected team code:', 'YMTEAM2024');
+    const health = {
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      database: {
+        status: dbStatus[dbState] || 'unknown',
+        connected: dbState === 1
+      },
+      environment: process.env.NODE_ENV || 'development'
+    };
     
-    // Verify team code (case-insensitive comparison)
-    if (!teamCode || teamCode.trim().toUpperCase() !== 'YMTEAM2024') {
-      console.log('❌ Invalid team code. Received:', teamCode);
-      return res.status(400).json({
-        success: false,
-        error: `Invalid team code. Please contact admin for the correct code.`
-      });
+    // If DB is not connected, return 503
+    if (dbState !== 1) {
+      return res.status(503).json({ ...health, status: 'Service Unavailable' });
     }
     
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      console.log('❌ Email already exists:', email);
-      return res.status(400).json({ success: false, error: 'Email already registered' });
-    }
-    
-    if (!password || password.length < 8) {
-      return res.status(400).json({ success: false, error: 'Password must be at least 8 characters' });
-    }
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      phone,
-      role: 'team',
-      isApproved: true
-    });
-    
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '30d' });
-    
-    console.log('✅ Team member registered:', user.email, 'Role:', user.role);
-    
-    res.json({
-      success: true,
-      token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
-    });
+    res.json(health);
   } catch (error) {
-    console.error('❌ Team registration error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ 
+      status: 'Error', 
+      message: error.message 
+    });
   }
 });
 
-// Regular registration - handles both user and team roles
-// For production deployment: Frontend should POST to /api/auth/register
-app.post('/api/register', async (req, res) => {
+// ============ AUTH ROUTES ============
+
+// Shared registration handler
+async function handleRegistration(req, res) {
   try {
     const { name, email, password, phone, address, role, teamCode } = req.body;
     
@@ -377,18 +362,10 @@ app.post('/api/register', async (req, res) => {
       error: error.message || 'Registration failed'
     });
   }
-});
+}
 
-// Alias for /api/auth/register (for consistency with auth routes)
-app.post('/api/auth/register', async (req, res) => {
-  // Forward to main register endpoint
-  req.url = '/api/register';
-  app._router.handle(req, res);
-});
-
-// Login endpoint
-// For production deployment: Frontend should POST to /api/auth/login
-app.post('/api/login', async (req, res) => {
+// Shared login handler
+async function handleLogin(req, res) {
   try {
     const { email, password } = req.body;
     
@@ -416,14 +393,77 @@ app.post('/api/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
+}
+
+// Team Registration with specific team code (YMTEAM2024)
+// This endpoint is for backward compatibility with test endpoints
+app.post('/api/register/team', async (req, res) => {
+  console.log('📝 Team registration request received');
+  console.log('Request body:', req.body);
+  
+  try {
+    const { name, email, password, phone, teamCode } = req.body;
+    
+    console.log('Team code received:', teamCode);
+    console.log('Expected team code:', 'YMTEAM2024');
+    
+    // Verify team code (case-insensitive comparison)
+    if (!teamCode || teamCode.trim().toUpperCase() !== 'YMTEAM2024') {
+      console.log('❌ Invalid team code. Received:', teamCode);
+      return res.status(400).json({
+        success: false,
+        error: `Invalid team code. Please contact admin for the correct code.`
+      });
+    }
+    
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.log('❌ Email already exists:', email);
+      return res.status(400).json({ success: false, error: 'Email already registered' });
+    }
+    
+    if (!password || password.length < 8) {
+      return res.status(400).json({ success: false, error: 'Password must be at least 8 characters' });
+    }
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      role: 'team',
+      isApproved: true
+    });
+    
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '30d' });
+    
+    console.log('✅ Team member registered:', user.email, 'Role:', user.role);
+    
+    res.json({
+      success: true,
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (error) {
+    console.error('❌ Team registration error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
-// Alias for /api/auth/login (for consistency with auth routes)
-app.post('/api/auth/login', async (req, res) => {
-  // Forward to main login endpoint
-  req.url = '/api/login';
-  app._router.handle(req, res);
-});
+// Regular registration endpoint
+// For production deployment: Frontend should POST to /api/register or /api/auth/register
+app.post('/api/register', handleRegistration);
+
+// Auth namespace alias (both work the same way)
+app.post('/api/auth/register', handleRegistration);
+
+// Login endpoint
+// For production deployment: Frontend can POST to /api/login or /api/auth/login
+app.post('/api/login', handleLogin);
+
+// Auth namespace alias (both work the same way)
+app.post('/api/auth/login', handleLogin);
 
 // Google OAuth routes
 app.get('/api/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
