@@ -38,25 +38,15 @@ if (process.env.NODE_ENV === 'production' || process.env.VERCEL_URL) {
 
 // CORS middleware with dynamic origin validation
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin is in allowed list or matches Vercel pattern
-    if (allowedOrigins.indexOf(origin) !== -1 || 
-        origin.match(/^https:\/\/.*\.vercel\.app$/)) {
-      callback(null, true);
-    } else {
-      // In production, reject unauthorized origins
-      if (process.env.NODE_ENV === 'production') {
-        console.warn(`⚠️  Rejected CORS request from unauthorized origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      } else {
-        // In development, allow all origins for easier testing
-        callback(null, true);
-      }
-    }
-  },
+  origin: [
+    "https://ym-real-estate.vercel.app", // Your Vercel app
+    "http://localhost:5173",             // Vite (Frontend dev)
+    "http://localhost:5000",             // Backend (Standard)
+    "http://127.0.0.1:5500"              // VS Code Live Server
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
