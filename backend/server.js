@@ -93,12 +93,8 @@ const apiLimiter = rateLimit({
 
 // ============ MONGODB CONNECTION ============
 // For production: Set MONGO_URI environment variable in Render dashboard
-const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/ym-realestate';
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 10000,
-})
+const dbUrl = process.env.MONGO_URI || "mongodb://localhost:27017/real-estate";
+mongoose.connect(dbUrl)
   .then(() => {
     console.log('✅ MongoDB Connected');
     console.log(`   Database: ${mongoURI.includes('mongodb+srv') ? 'Atlas Cloud' : 'Local'}`);
