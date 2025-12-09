@@ -206,6 +206,120 @@
       .main-container { margin: 20px; }
       .auth-container { padding: 25px; }
     }
+
+    /* =========================================
+     MOBILE RESPONSIVENESS FIXES
+     ========================================= */
+  @media (max-width: 768px) {
+    
+    /* 1. Header Fix: Stack Logo and Nav */
+    .header {
+      flex-direction: column;
+      padding: 15px;
+      gap: 15px;
+      position: relative; /* Un-fix header if it takes too much space, or keep fixed */
+    }
+    
+    .nav {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+    
+    .nav a {
+      font-size: 13px;
+      padding: 8px 12px;
+      flex-grow: 1; /* Make buttons stretch */
+      justify-content: center;
+    }
+
+    .user-profile {
+      width: 100%;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    /* 2. Hero Section: Adjust Height & Text */
+    .hero-section {
+      height: auto;
+      min-height: 60vh;
+      padding: 100px 20px 60px; /* Top padding for fixed header */
+    }
+    
+    .hero-title {
+      font-size: 2.2rem; /* Smaller title */
+    }
+    
+    .hero-subtitle {
+      font-size: 1.1rem;
+    }
+
+    /* 3. Stats Circles: Stack on small screens */
+    .stats-circles {
+      gap: 30px;
+    }
+    
+    .stat-circle {
+      width: 140px;
+      height: 140px;
+    }
+    
+    .circle-number {
+      font-size: 2.2em;
+    }
+
+    /* 4. Grids: Force Single Column */
+    .properties-row, 
+    .team-members, 
+    .instagram-grid,
+    .footer-content {
+      grid-template-columns: 1fr !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .property-card, .team-card, .insta-card {
+      width: 100%;
+      max-width: 350px; /* Prevent them from getting too wide */
+    }
+
+    /* 5. Footer Alignment */
+    .footer-content {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .footer-col {
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .footer-col h3::after {
+      left: 50%;
+      transform: translateX(-50%); /* Center the underline */
+    }
+
+    .footer-social {
+      justify-content: center;
+    }
+
+    /* 6. Fix Developer Section */
+    .developer-section div[style*="display:flex"] {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    /* 7. Floating Buttons (FAB) */
+    .edit-reels-fab, .add-property-fab {
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+    }
+  }
   </style>
 </head>
 <body>
