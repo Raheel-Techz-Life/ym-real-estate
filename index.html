@@ -1698,22 +1698,28 @@
   @media (max-width: 768px) {
     
     /* 1. Fix the "Too Wide" Issue (Mobile Only) */
-    .properties-section, .footer {
-      width: 100% !important;
-      left: auto !important;
-      right: auto !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      padding-left: 15px !important;
-      padding-right: 15px !important;
-    }
+    /* --- 2. SAFE FULL-WIDTH SECTIONS --- */
+.properties-section, .footer {
+  position: relative;
+  
+  /* Use calc to subtract scrollbar width, preventing the white gap */
+  width: 100vw; 
+  margin-left: calc(-50vw + 50%); /* The "Magic" centering calculation */
+  margin-right: calc(-50vw + 50%);
+  left: 0; /* Reset left/right */
+  right: 0;
+  
+  padding: 40px 0;
+}
 
     /* 2. Header Fix: Stack Logo and Nav */
     .header {
-      flex-direction: column;
-      padding: 15px;
-      gap: 15px;
-      position: relative; 
+      width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    left: auto !important;
+    right: auto !important;
+    box-sizing: border-box;
     }
     
     .nav {
@@ -1732,9 +1738,12 @@
 
     /* 3. Hero Section: Adjust Height & Text */
     .hero-section {
-      height: auto;
-      min-height: 50vh;
-      padding: 120px 20px 60px; /* Extra top padding for stacked header */
+      width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    left: auto !important;
+    right: auto !important;
+    box-sizing: border-box; 
     }
     
     .hero-title {
