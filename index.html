@@ -1296,15 +1296,22 @@
             }
         }
 
-        /* FOOTER - FULL WIDTH REDESIGN */
-        /* --- PREMIUM FOOTER DESIGN --- */
+        /* --- FULL WIDTH FOOTER FIX --- */
 .footer {
-  background-color: #0f172a; /* Deep, dark blue */
-  color: #94a3b8; /* Soft grey text */
-  font-size: 0.95rem;
-  position: relative;
-  width: 100%; /* Fixes the 100vw issue */
+  background: linear-gradient(135deg, #1a2744 0%, #0d1829 100%);
+  color: #fff;
   margin-top: 80px;
+  padding: 0;
+  
+  /* FORCE FULL WIDTH (The Magic Code) */
+  width: 100vw; 
+  position: relative;
+  left: 50%; 
+  right: 50%; 
+  margin-left: -50vw; 
+  margin-right: -50vw;
+  
+  box-sizing: border-box; /* Ensures padding doesn't break width */
 }
 
 /* The Gold Top Border */
@@ -1316,15 +1323,17 @@
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, #263f6e, #ffd700, #263f6e);
+  z-index: 10;
 }
 
+/* Keeps the text centered and neat */
 .footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 80px 20px 40px;
+  max-width: 1200px; /* Text stays in the middle */
+  margin: 0 auto;    /* Centers the text block */
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.2fr; /* Optimized columns */
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
   gap: 40px;
+  padding: 80px 20px 40px;
 }
 
 /* Column Headings */
@@ -1421,10 +1430,11 @@
 
 /* Bottom Bar */
 .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 25px 20px;
   text-align: center;
-  background: #0b1120; /* Slightly darker */
+  padding: 25px 20px;
+  background: rgba(0,0,0,0.3); /* Slightly darker than main footer */
+  color: #b8c5db;
+  border-top: 1px solid rgba(255,255,255,0.05);
 }
 
 .footer-bottom p {
