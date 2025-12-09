@@ -1,3 +1,6 @@
+const teamRoutes = require('./routes/team');
+const socialsRoutes = require('./routes/socials');
+const contactRoutes = require('./routes/contact');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
