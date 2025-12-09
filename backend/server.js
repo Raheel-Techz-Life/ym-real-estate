@@ -37,14 +37,13 @@ if (process.env.NODE_ENV === 'production' || process.env.VERCEL_URL) {
 }
 
 // CORS middleware with dynamic origin validation
-app.use(cors({
+app.use(cors({               // <--- Note the opening {
   origin: [
-    "https://ym-real-estate.vercel.app", // Your Vercel app
-    "http://localhost:5173",             // Vite (Frontend dev)
-    "http://localhost:5000",             // Backend (Standard)
-    "http://127.0.0.1:5500"              // VS Code Live Server
+    "https://ym-real-estate.vercel.app",
+    "http://localhost:5000",
+    "http://localhost:5173"
   ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
   credentials: true,
