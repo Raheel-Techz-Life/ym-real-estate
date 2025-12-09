@@ -438,7 +438,9 @@
     }, { threshold: 0.1 });
 
     document.addEventListener('DOMContentLoaded', async () => {
-      ui.updateAuthStatus();
+      // Safely try to update auth status if API exists
+      if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
+      
       checkTeamAccess();
       await loadProperties();
       setupFilters();
@@ -448,13 +450,16 @@
       try {
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
           ? 'http://localhost:5011/api'
-          : 'https://ym-real-estate.onrender.com/api'; // REPLACE with your actual Render URL
+          : 'https://ym-real-estate.onrender.com/api'; 
         
         const response = await fetch(`${API_URL}/properties`);
-        const data = await response.json();
+        const json = await response.json();
         
-        if (data.success && data.data.length > 0) {
-          allProperties = data.data;
+        // Handle both data formats {data: []} or []
+        const data = json.data || json;
+        
+        if (json.success !== false && data.length > 0) {
+          allProperties = data;
           filteredProperties = allProperties;
           populateCityFilters();
           renderProperties(filteredProperties);
@@ -470,7 +475,7 @@
     function populateCityFilters() {
       const cityCounts = {};
       allProperties.forEach(p => {
-        const city = p.address.city;
+        const city = p.address?.city || 'Unknown';
         cityCounts[city] = (cityCounts[city] || 0) + 1;
       });
 
@@ -480,6 +485,9 @@
 
       // Populate dropdown
       const citySelect = document.getElementById('cityFilter');
+      // Keep first option
+      citySelect.innerHTML = '<option value="">All Cities</option>'; 
+      
       sortedCities.forEach(({ city, count }) => {
         const option = document.createElement('option');
         option.value = city;
@@ -489,6 +497,7 @@
 
       // Populate compact badges for top 5 cities
       const cityBadges = document.getElementById('cityBadges');
+      cityBadges.innerHTML = ''; // Clear existing
       sortedCities.slice(0, 5).forEach(({ city, count }) => {
         const badge = document.createElement('div');
         badge.className = 'city-badge';
@@ -515,8 +524,10 @@
     function setupFilters() {
       document.getElementById('searchInput').addEventListener('input', applyFilters);
       document.getElementById('cityFilter').addEventListener('change', () => {
+        const val = document.getElementById('cityFilter').value;
         document.querySelectorAll('.city-badge').forEach(b => {
-          b.classList.toggle('active', b.textContent.startsWith(document.getElementById('cityFilter').value));
+          // Simple check for text content match
+          b.classList.toggle('active', b.innerText.includes(val) && val !== '');
         });
         applyFilters();
       });
@@ -529,12 +540,16 @@
       const statusFilter = document.getElementById('statusFilter').value;
 
       filteredProperties = allProperties.filter(property => {
+        const title = property.title || '';
+        const city = property.address?.city || '';
+        const state = property.address?.state || '';
+
         const matchesSearch = !searchTerm || 
-          property.title.toLowerCase().includes(searchTerm) ||
-          property.address.city.toLowerCase().includes(searchTerm) ||
-          property.address.state.toLowerCase().includes(searchTerm);
+          title.toLowerCase().includes(searchTerm) ||
+          city.toLowerCase().includes(searchTerm) ||
+          state.toLowerCase().includes(searchTerm);
         
-        const matchesCity = !cityFilter || property.address.city === cityFilter;
+        const matchesCity = !cityFilter || city === cityFilter;
         const matchesStatus = !statusFilter || property.status === statusFilter;
 
         return matchesSearch && matchesCity && matchesStatus;
@@ -565,15 +580,15 @@
 
       container.innerHTML = properties.map(property => `
         <div class="property-card" onclick="window.location.href='property-details.html?id=${property._id}'">
-          <img src="${property.images[0] || 'https://via.placeholder.com/500x200?text=Property'}" alt="${property.title}">
+          <img src="${property.images[0] || 'https://placehold.co/500x300?text=No+Image'}" alt="${property.title}">
           <div class="property-desc">${property.title}</div>
-          <div class="property-price">₹${property.price.toLocaleString('en-IN')}</div>
+          <div class="property-price">₹${Number(property.price).toLocaleString('en-IN')}</div>
           <div style="text-align: center; margin-top: 10px; color: #666; font-size: 0.9em;">
-            <i class="fas fa-map-marker-alt"></i> ${property.address.city}, ${property.address.state}
+            <i class="fas fa-map-marker-alt"></i> ${property.address?.city || 'City'}, ${property.address?.state || 'State'}
           </div>
           <div style="text-align: center; margin-top: 10px;">
             <span style="background: #263f6e; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85em;">
-              ${property.features.bedrooms || 0} BHK | ${property.features.area || 0} sqft
+              ${property.features?.bedrooms || 0} BHK | ${property.features?.area || 0} sqft
             </span>
           </div>
         </div>
@@ -584,21 +599,29 @@
 
     // Check if user is team member and show add button
     function checkTeamAccess() {
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      const addPropertyBtn = document.getElementById('addPropertyFab');
+      // ✅ FIX: Check BOTH possible keys
+      const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
       
-      // ✅ TRUST TEAM@TEST.COM AUTOMATICALLY
-if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'team' || currentUser.email === 'team@test.com')) {
-        addPropertyBtn.classList.add('show');
-      } else {
-        addPropertyBtn.classList.remove('show');
+      if (!userStr) return;
+
+      try {
+        const currentUser = JSON.parse(userStr);
+        const addPropertyBtn = document.getElementById('addPropertyFab');
+        
+        // ✅ TRUST TEAM@TEST.COM AUTOMATICALLY
+        if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'team' || currentUser.email === 'team@test.com')) {
+          addPropertyBtn.classList.add('show');
+        } else {
+          addPropertyBtn.classList.remove('show');
+        }
+      } catch (e) {
+        console.error("Auth check error", e);
       }
     }
     
-    // Redirect to team dashboard add property section
+    // Redirect to ADMIN page (where the form is)
     function redirectToAddProperty() {
-      window.location.href = 'team-dashboard.html';
+      // ✅ FIX: Point to the actual admin page
+      window.location.href = 'admin.html';
     }
   </script>
-</body>
-</html>
