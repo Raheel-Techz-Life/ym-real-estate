@@ -3,7 +3,7 @@ const router = express.Router();
 const Socials = require('../models/Socials');
 const jwt = require('jsonwebtoken');
 
-// Middleware to check auth
+// Middleware
 const isAuthorized = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Access denied' });
@@ -14,25 +14,19 @@ const isAuthorized = (req, res, next) => {
   } catch (err) { res.status(400).json({ error: 'Invalid token' }); }
 };
 
-// GET (Public - Returns the config)
+// GET Socials
 router.get('/', async (req, res) => {
   try {
     let socials = await Socials.findOne({ identifier: 'main_socials' });
     if (!socials) {
-        // Create default if not exists
-        socials = new Socials({ 
-            identifier: 'main_socials',
-            instagram: [],
-            youtube: [],
-            facebook: []
-        });
+        socials = new Socials({ instagram: [], youtube: [], facebook: [] });
         await socials.save();
     }
     res.json(socials);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// POST (Update the config - Protected)
+// POST Socials
 router.post('/', isAuthorized, async (req, res) => {
   try {
     const { instagram, youtube, facebook } = req.body;
