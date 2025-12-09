@@ -223,14 +223,12 @@
   </div>
 
   <div class="main-container">
-    <!-- Tab Buttons -->
     <div class="tab-buttons">
       <button class="tab-btn active" onclick="showTab('login')">Login</button>
       <button class="tab-btn" onclick="showTab('signup')">Sign Up</button>
     </div>
 
     <div class="auth-container">
-      <!-- LOGIN FORM -->
       <div id="loginTab">
         <h2 class="auth-title">Welcome Back</h2>
         
@@ -263,11 +261,9 @@
         </div>
       </div>
 
-      <!-- SIGNUP FORM -->
       <div id="signupTab" class="hidden">
         <h2 class="auth-title">Create Account</h2>
         
-        <!-- Role Toggle -->
         <div class="role-toggle">
           <button class="role-btn active" onclick="selectRole('user')" id="roleUser">
             <i class="fas fa-user"></i> User
@@ -330,9 +326,7 @@
   </div>
 
   <script>
-    // API Configuration - For Production Deployment
-    // When deployed to Vercel, always use the Render backend API URL
-    // Update 'https://ym-realestate-api.onrender.com/api' with your actual Render deployment URL
+    // --- SMART API URL (Auto-Detects Localhost or Live) ---
     const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:5011/api'
       : 'https://ym-real-estate.onrender.com/api';
@@ -357,6 +351,7 @@
     }
 
     function handleGoogleLogin() {
+      // Directs to the Render Backend for Google Auth
       window.location.href = `${API_URL}/auth/google`;
     }
 
@@ -372,17 +367,23 @@
           body: JSON.stringify({ email, password })
         });
         
+        const data = await res.json();
+        
         if (!res.ok) {
-          const data = await res.json();
           throw new Error(data.error || 'Login failed');
         }
         
-        const data = await res.json();
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        // --- CRITICAL FIX: Standardized Keys for Admin Panel ---
+        localStorage.setItem('token', data.token);      // Changed from authToken
+        localStorage.setItem('user', JSON.stringify(data.user)); // Changed from currentUser
         
-        // Always redirect to home page
-        window.location.href = 'index.html';
+        // Redirect to admin if Team/Admin, otherwise Home
+        if (data.user.role === 'admin' || data.user.role === 'team') {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'index.html';
+        }
+
       } catch (error) {
         alert('Login failed: ' + error.message);
         console.error('Login error:', error);
@@ -399,17 +400,16 @@
         phone: document.getElementById('signupPhone').value
       };
 
-      // Use single endpoint for both user and team
       let endpoint = `${API_URL}/register`;
       
       if (selectedRole === 'team') {
         userData.teamCode = document.getElementById('teamCode').value;
-        // Verify team code on frontend first (must match backend code 'YM2024TEAM')
+        // Basic frontend check (Backend verifies securely)
         if (userData.teamCode !== 'YM2024TEAM') {
           alert('Invalid team code. Contact admin for access.');
           return;
         }
-        userData.role = 'team'; // Add role to request
+        userData.role = 'team';
       } else {
         userData.address = document.getElementById('signupAddress').value;
         userData.role = 'user';
@@ -428,8 +428,9 @@
           throw new Error(data.error || 'Registration failed');
         }
         
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        // --- CRITICAL FIX: Standardized Keys ---
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         
         alert('Registration successful!');
         window.location.href = 'index.html';
@@ -439,15 +440,21 @@
       }
     }
 
-    // Check OAuth callback
+    // Check OAuth callback (Google Login Success)
     (function() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('auth') === 'success') {
         const userData = JSON.parse(decodeURIComponent(params.get('user')));
-        localStorage.setItem('authToken', userData.token);
+        
+        // --- CRITICAL FIX: Standardized Keys ---
+        localStorage.setItem('token', userData.token); // Saved correctly
+        
+        // Remove token from object before saving user details
+        const token = userData.token;
         delete userData.token;
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-        // Always redirect to home page
+        
+        localStorage.setItem('user', JSON.stringify(userData)); // Saved correctly
+        
         window.location.href = 'index.html';
       }
     })();
