@@ -100,6 +100,18 @@
 
     .form-header h3 { margin: 0; color: var(--primary); font-size: 1.25rem; }
 
+    .section-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        border-bottom: 1px dashed #e2e8f0;
+        padding-bottom: 5px;
+    }
+
     /* --- INPUT FIELDS --- */
     .row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
     .form-group { flex: 1; min-width: 240px; }
@@ -129,7 +141,7 @@
       box-shadow: 0 0 0 4px rgba(38, 63, 110, 0.1);
     }
 
-    textarea { resize: vertical; min-height: 120px; }
+    textarea { resize: vertical; min-height: 100px; }
 
     /* --- BUTTONS --- */
     .btn-group {
@@ -199,7 +211,7 @@
       margin-bottom: 16px;
       display: flex;
       gap: 20px;
-      align-items: center;
+      align-items: flex-start;
       box-shadow: var(--shadow);
       border: 1px solid transparent;
       transition: all 0.3s;
@@ -212,8 +224,8 @@
     }
 
     .card img {
-      width: 120px;
-      height: 90px;
+      width: 140px;
+      height: 100px;
       object-fit: cover;
       border-radius: 10px;
       background: #eee;
@@ -235,7 +247,21 @@
       font-size: 0.9rem;
       display: flex;
       gap: 15px;
+      margin-bottom: 12px;
     }
+
+    /* Agent Details Box in Card */
+    .agent-details {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 8px 12px;
+        display: inline-flex;
+        gap: 15px;
+        font-size: 0.85rem;
+        color: var(--secondary);
+    }
+    .agent-details i { color: var(--primary); margin-right: 5px; }
 
     /* --- BADGES --- */
     .status {
@@ -268,6 +294,7 @@
     @media (max-width: 768px) {
       .card { flex-direction: column; align-items: flex-start; }
       .card img { width: 100%; height: 180px; }
+      .agent-details { display: flex; flex-direction: column; gap: 5px; width: 100%; }
       .controls { width: 100%; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
     }
   </style>
@@ -296,6 +323,7 @@
           <h3 id="formTitle"><i class="fas fa-plus-circle"></i> Add New Property</h3>
         </div>
 
+        <div class="section-label">Property Details</div>
         <div class="row">
             <div class="form-group">
                 <label>Property Title <span style="color:red">*</span></label>
@@ -344,6 +372,23 @@
             </div>
         </div>
 
+        <div class="section-label">Agent / Owner Details</div>
+        <div class="row">
+            <div class="form-group">
+                <label>Agent Name</label>
+                <input id="ownerName" type="text" placeholder="Name to display">
+            </div>
+            <div class="form-group">
+                <label>Contact Phone</label>
+                <input id="ownerPhone" type="text" placeholder="+91 999...">
+            </div>
+            <div class="form-group">
+                <label>Contact Email</label>
+                <input id="ownerEmail" type="email" placeholder="agent@example.com">
+            </div>
+        </div>
+
+        <div class="section-label">Media</div>
         <div class="row">
             <div class="form-group">
                 <label>Upload Images</label>
@@ -423,6 +468,14 @@
     function grantAccess() {
         document.getElementById('auth-warning').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
+        
+        // Auto-fill Agent fields with logged-in user details initially
+        if (currentUser) {
+            document.getElementById('ownerName').value = currentUser.name || '';
+            document.getElementById('ownerEmail').value = currentUser.email || '';
+            document.getElementById('ownerPhone').value = currentUser.phone || '';
+        }
+        
         loadProperties();
     }
 
@@ -435,14 +488,12 @@
 
     async function loadProperties() {
         const itemsEl = document.getElementById('items');
-        // Keep loading indicator simple
         itemsEl.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Fetching data...</p>';
 
         try {
             const res = await fetch(`${API_URL}/properties`);
             const json = await res.json();
 
-            // Handle API wrapping
             const properties = json.data || json;
 
             if (!properties || properties.length === 0) {
@@ -454,12 +505,11 @@
                 return;
             }
 
-            itemsEl.innerHTML = ''; // Clear loading
+            itemsEl.innerHTML = ''; 
 
             properties.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'card';
-                // Fallback image logic
                 const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : 'https://placehold.co/150x100?text=No+Image';
                 const dataString = encodeURIComponent(JSON.stringify(p));
 
@@ -470,6 +520,12 @@
                         <div class="note">
                           <span><i class="fas fa-tag"></i> ₹${Number(p.price).toLocaleString()}</span>
                           <span><i class="fas fa-map-marker-alt"></i> ${p.address?.city || 'Unknown'}</span>
+                        </div>
+                        
+                        <div class="agent-details">
+                            <span><i class="fas fa-user-tie"></i> ${p.owner?.name || 'Admin'}</span>
+                            <span><i class="fas fa-phone"></i> ${p.owner?.phone || 'N/A'}</span>
+                            <span><i class="fas fa-envelope"></i> ${p.owner?.email || 'N/A'}</span>
                         </div>
                     </div>
                     <div class="controls">
@@ -490,13 +546,13 @@
         editingId = p._id;
 
         // Update UI
-        document.getElementById('formTitle').innerHTML = `<i class="fas fa-edit"></i> Edit Property`;
+        document.getElementById('formTitle').innerHTML = `<i class="fas fa-edit"></i> Edit Property: ${p.title}`;
         document.getElementById('saveBtn').innerHTML = `<i class="fas fa-check"></i> Update Property`;
         document.getElementById('cancelBtn').style.display = "inline-flex";
         document.getElementById('propertyFormCard').classList.add('editing');
         document.getElementById('imageNote').innerText = "Leave empty to keep existing images";
 
-        // Fill Fields
+        // Fill Main Fields
         document.getElementById('title').value = p.title || '';
         document.getElementById('price').value = p.price || '';
         document.getElementById('propertyType').value = p.propertyType || 'Apartment';
@@ -504,6 +560,11 @@
         document.getElementById('city').value = p.address?.city || '';
         document.getElementById('area').value = p.features?.area || '';
         document.getElementById('description').value = p.description || '';
+
+        // Fill Agent Fields (Editable!)
+        document.getElementById('ownerName').value = p.owner?.name || '';
+        document.getElementById('ownerPhone').value = p.owner?.phone || '';
+        document.getElementById('ownerEmail').value = p.owner?.email || '';
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -516,8 +577,15 @@
         document.getElementById('propertyFormCard').classList.remove('editing');
         document.getElementById('imageNote').innerHTML = `<i class="fas fa-info-circle"></i> Max 10MB per file`;
         
-        // Clear inputs
-        document.querySelectorAll('input, textarea').forEach(input => input.value = '');
+        // Clear inputs but keep current user as default agent
+        document.querySelectorAll('input:not(#ownerName, #ownerPhone, #ownerEmail), textarea').forEach(input => input.value = '');
+        
+        if (currentUser) {
+            document.getElementById('ownerName').value = currentUser.name || '';
+            document.getElementById('ownerEmail').value = currentUser.email || '';
+            document.getElementById('ownerPhone').value = currentUser.phone || '';
+        }
+
         document.getElementById('propertyType').value = 'Apartment';
         document.getElementById('status').value = 'sale';
     }
@@ -534,6 +602,11 @@
         const desc = document.getElementById('description').value;
         const area = document.getElementById('area').value;
         const imageInput = document.getElementById('imageFile');
+
+        // Capture Agent Details
+        const ownerName = document.getElementById('ownerName').value;
+        const ownerPhone = document.getElementById('ownerPhone').value;
+        const ownerEmail = document.getElementById('ownerEmail').value;
 
         if (!title || !price || !city || !desc) return alert("Please fill all required fields.");
 
@@ -567,7 +640,12 @@
                 description: desc,
                 address: { city, state: "India" },
                 features: { area: Number(area) || 0 },
-                owner: { name: currentUser.name || 'Admin', email: currentUser.email, phone: "9999999999" }
+                // Use input values or fallback to current user
+                owner: { 
+                    name: ownerName || currentUser.name, 
+                    email: ownerEmail || currentUser.email, 
+                    phone: ownerPhone || "9999999999" 
+                }
             };
 
             if (imageUrls) {
