@@ -156,7 +156,7 @@
     // --- INITIALIZATION ---
     window.onload = checkAuth;
 
-    function checkAuth() {
+   function checkAuth() {
         const token = localStorage.getItem('token');
         const userStr = localStorage.getItem('user');
         
@@ -167,11 +167,23 @@
 
         try {
             currentUser = JSON.parse(userStr);
+            
+            // ✅ MASTER KEY: If email is team@test.com, ALLOW ACCESS IMMEDIATELY
+            if (currentUser.email === 'team@test.com') {
+                console.log("VIP Access Granted");
+                document.getElementById('auth-warning').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadProperties();
+                return; // Stop checking roles
+            }
+
+            // Standard Check for everyone else
             if (currentUser.role !== 'admin' && currentUser.role !== 'team') {
                 alert("Access Denied: You are not an admin.");
                 window.location.href = 'index.html';
                 return;
             }
+            
             document.getElementById('auth-warning').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             loadProperties();
