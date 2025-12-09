@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +8,7 @@
     <title>Y M REAL ESTATE</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <script src="js/api.js" defer></script>
-    
     <style>
         :root {
             --primary-color: #263f6e;
@@ -26,59 +26,61 @@
             --gradient-accent: linear-gradient(135deg, #ffd700 0%, #ffc800 100%);
         }
 
-        body {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden !important;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+       /* --- 1. STRICT OVERFLOW RESET --- */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important; /* ✂️ Cuts off white space */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+       /* --- HEADER FIX --- */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 30px; /* Reduced side padding so it's not "pushed in" */
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-sizing: border-box; /* Ensures padding stays inside */
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 12px;
+    }
+
+    .logo-img {
+      height: 50px;       /* Fixed Height */
+      width: auto;        /* ✅ Auto Width prevents squashing ("pushed in" look) */
+      max-width: 120px;   /* Safety limit so it doesn't get huge */
+      object-fit: contain;/* Ensures the whole logo is visible */
+      border-radius: 5px; /* Softer corners */
+    }
+        .logo-img:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
         }
 
-        *, *::before, *::after { box-sizing: inherit; }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 40px;
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow-sm);
+        .nav {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: fixed; /* ✅ Fixed typo here */
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            box-sizing: border-box;
-            backdrop-filter: blur(6px);
-            gap: 30px;
+            gap: 24px;
         }
 
-        .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-
-        .logo-img {
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            border: 2px solid var(--primary-color);
-            background: var(--primary-color);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 700;
-            object-fit: cover;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
-        }
-
-        .logo-img:hover { transform: scale(1.05); box-shadow: var(--shadow-lg); }
-
-        .nav { display: flex; gap: 24px; }
-
+        /* Navigation pills: white background with site-blue text for visibility */
         .nav a {
             color: var(--text-dark);
             background: var(--white);
@@ -93,124 +95,1563 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .nav a i { font-size: 1.1rem; }
-        .nav a.active { background: var(--primary-color); color: var(--white); }
-        .nav a:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(38, 63, 110, 0.12); background: #f3f7ff; }
+        .nav a i {
+            font-size: 1.1rem;
+        }
+
+        .nav a.active {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .logo-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-left: 15px;
+        }
+
+        .nav a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 6px;
+            left: 50%;
+            background: #263f6e;
+            /* underline uses site blue */
+            transition: all 0.22s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .nav a:hover:after {
+            width: 60%;
+        }
+
+        .nav a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(38, 63, 110, 0.12);
+            background: #f3f7ff;
+        }
 
         .hero-section {
             height: 90vh;
             background: linear-gradient(rgba(38, 63, 110, 0.8), rgba(24, 40, 75, 0.9)),
             url('https://images.unsplash.com/photo-1582407947304-fd86f028f716?ixlib=rb-4.0.3');
-            background-size: cover; background-position: center; background-attachment: fixed;
-            display: flex; align-items: center; justify-content: center; text-align: center;
-            color: var(--white); padding: 0 20px; margin-bottom: 80px; position: relative; overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            padding: 0 20px;
+            margin-bottom: 80px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-content { max-width: 1000px; position: relative; z-index: 2; animation: fadeInUp 1s ease-out; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-content {
+            max-width: 1000px;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+        }
 
-        .hero-title { font-size: 3.5rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.2; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
-        .hero-subtitle { font-size: 1.5rem; margin-bottom: 2rem; font-weight: 400; opacity: 0.9; }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
 
         .hero-cta {
-            display: inline-block; padding: 15px 40px; background: var(--accent-color);
-            color: var(--primary-dark); text-decoration: none; border-radius: 50px;
-            font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease;
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--accent-color);
+            color: var(--primary-dark);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
-        .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); background: #ffe033; }
 
-        .stats-circles-section { margin: 60px 0; text-align: center; }
-        .stats-circles { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; }
-        .stat-circle {
-            width: 170px; height: 170px; border-radius: 50%; background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 10px 30px rgba(38,63,110,0.3); position: relative; padding: 10px; transition: all 0.3s ease;
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            background: #ffe033;
         }
+
+        .search-bar {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 50px;
+            display: flex;
+            gap: 15px;
+            max-width: 800px;
+            margin: 40px auto 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1rem;
+            border-radius: 25px;
+            background: var(--primary-light);
+            color: var(--text-dark);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: #fff;
+            box-shadow: inset 0 2px 4px rgba(38, 63, 110, 0.1);
+        }
+
+        .search-btn {
+            background: var(--gradient-primary);
+            color: var(--white);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-select {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            background: var(--primary-light);
+            color: var(--text-dark);
+            font-size: 1rem;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .search-select:focus {
+            outline: none;
+            background: #fff;
+            box-shadow: inset 0 2px 4px rgba(38, 63, 110, 0.1);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 60px;
+        }
+
+        .stat-item {
+            text-align: center;
+            animation: fadeInUp 1s ease-out 0.5s backwards;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 60px;
+        }
+
+        .features-section {
+            padding: 100px 0;
+            background: var(--primary-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features-section::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, var(--white) 0%, transparent 60%);
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: var(--primary-color);
+            font-size: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--primary-color);
+            color: var(--white);
+            transform: rotateY(180deg);
+        }
+
+        .feature-card h3 {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .properties-section {
+            padding: 100px 0;
+            background: var(--white);
+        }
+
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .property-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .property-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .property-card:hover .property-img {
+            transform: scale(1.05);
+        }
+
+        .property-tag {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
+            color: var(--primary-dark);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .property-details {
+            padding: 25px;
+        }
+
+        .property-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .property-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .property-features {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-top: 1px solid rgba(38, 63, 110, 0.1);
+            border-bottom: 1px solid rgba(38, 63, 110, 0.1);
+            margin: 15px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .feature-item i {
+            color: var(--primary-color);
+        }
+
+        .property-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                gap: 10px;
+            }
+
+            .nav a {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .search-input,
+            .search-select,
+            .search-btn {
+                width: 100%;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .features-grid,
+            .properties-grid {
+                grid-template-columns: 1fr;
+                padding: 0 15px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 40px;
+            }
+        }
+
+        .hero-content h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #fff;
+            color: #263f6e;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 32px auto 0;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: #263f6e;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #263f6e;
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        .intro-section {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 60px;
+            padding: 40px;
+            background: #f8faff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(38, 63, 110, 0.1);
+        }
+
+        .intro-section h2 {
+            color: #263f6e;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .text {
+            font-size: 1.1em;
+            color: #455d8f;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        /* EDGE-TO-EDGE PROPERTIES SECTION - FULL ROW */
+        .properties-section {
+            margin-bottom: 32px;
+            width: 100%;
+            position: relative;
+            left: 0;
+            right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            background: #f6faff;
+            padding: 32px 0 32px 0;
+        }
+
+        .properties-section a:hover h2 {
+            color: #18284b !important;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+
+        .properties-section h2 {
+            transition: all 0.3s ease;
+        }
+
+        /* Ensure the heading anchor is visible and interactive */
+        .properties-section a {
+            color: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .properties-section a h2 {
+            color: #263f6e;
+            margin-left: 32px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2em;
+        }
+
+        .properties-section .arrow {
+            display: inline-block;
+            font-size: 1.1em;
+            color: #263f6e;
+            transition: transform 0.25s ease, color 0.25s ease;
+        }
+
+        .properties-section a:hover .arrow {
+            transform: translateX(6px);
+            color: #18284b;
+        }
+
+        .properties-row {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 24px;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            padding: 0 32px;
+        }
+
+        .property-card {
+            flex: 1 1 0;
+            background: #fff;
+            border: 2px solid #263f6e;
+            border-radius: 14px;
+            transition: box-shadow 0.3s, transform 0.3s;
+            box-shadow: 0 2px 12px rgba(38, 63, 110, 0.06);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 0;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .property-card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            object-fit: cover;
+            height: 200px;
+            max-width: 100%;
+            background: #eee;
+        }
+
+        .property-desc {
+            font-size: 18px;
+            text-align: center;
+            color: #263f6e;
+            margin-bottom: 2px;
+            font-weight: bold;
+        }
+
+        .property-card .details {
+            display: none;
+        }
+
+        .owner-section {
+            text-align: center;
+            margin: 80px 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
+            color: white;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(38, 63, 110, 0.2);
+        }
+
+        .owner-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            object-fit: cover;
+            margin-bottom: 16px;
+            background: #f0f0f0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .owner-bio {
+            font-size: 1.2em;
+            color: #fff;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .owner-bio b {
+            font-size: 1.5em;
+            display: block;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .owner-bio span {
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .team-section {
+            margin: 80px 0 60px 0;
+            background: #f8faff;
+            padding: 60px 0;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(38, 63, 110, 0.1);
+        }
+
+        .team-title {
+            font-size: 2.5em;
+            color: #263f6e;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+        }
+
+        .team-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #263f6e;
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        .team-members {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .team-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(38, 63, 110, 0.1);
+            text-align: center;
+            min-width: 250px;
+            border: 1px solid rgba(38, 63, 110, 0.2);
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(38, 63, 110, 0.2);
+        }
+
+        .team-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #263f6e;
+            margin-bottom: 8px;
+            background: #f0f0f0;
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .team-card .team-name {
+            color: #263f6e;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 15px 0 5px;
+        }
+
+        .team-card .team-role {
+            color: #18284b;
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .properties-row {
+                flex-direction: column;
+                gap: 24px;
+                padding: 0 8px;
+            }
+
+            .property-card img {
+                height: 180px;
+            }
+
+            .hero-section {
+                height: 70vh;
+            }
+
+            .hero-content h1 {
+                font-size: 2.8em;
+            }
+
+            .owner-section {
+                margin: 40px 10px;
+                padding: 20px;
+            }
+
+            .owner-img {
+                width: 140px;
+                height: 140px;
+            }
+
+            .team-card {
+                min-width: 200px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                padding: 0 6px;
+            }
+
+            .property-card img {
+                height: 120px;
+            }
+
+            .hero-section {
+                height: 60vh;
+            }
+
+            .hero-content h1 {
+                font-size: 2.2em;
+            }
+
+            .hero-content p {
+                font-size: 1.1em;
+            }
+
+            .owner-section {
+                margin: 20px 10px;
+            }
+
+            .owner-img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .team-card {
+                min-width: 100%;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav {
+                gap: 10px;
+            }
+
+            .nav a {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* STATS CIRCLES */
+        .stats-circles-section {
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .stats-circles {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            flex-wrap: wrap;
+        }
+
+        .stat-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(38, 63, 110, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
         .stat-circle::before {
-            content: ''; position: absolute; inset: -5px; border-radius: 50%; padding: 5px;
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            padding: 5px;
             background: linear-gradient(135deg, #ffd700, #ffc800);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude;
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
         }
-        .stat-circle:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 15px 40px rgba(38,63,110,0.4); }
-        .circle-number { font-size: 2.8em; font-weight: 700; color: #ffd700; line-height: 1; margin-bottom: 5px; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .circle-label { font-size: 0.95em; color: #fff; line-height: 1.2; text-align: center; z-index: 2; max-width: 90%; }
 
-        .main-container { max-width: 1200px; margin: 32px auto 0; padding: 0 20px; }
-        .section-title { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #263f6e; position: relative; }
-        .intro-section { text-align: center; max-width: 800px; margin: 0 auto 60px; padding: 40px; background: #f8faff; border-radius: 20px; box-shadow: 0 10px 30px rgba(38, 63, 110, 0.1); }
-        .intro-section h2 { color: #263f6e; font-size: 2em; margin-bottom: 20px; }
-        .text { font-size: 1.1em; color: #455d8f; line-height: 1.8; margin-bottom: 20px; }
-
-        /* PROPERTIES */
-        .properties-section {
-            margin-bottom: 32px; width: 100vw; position: relative; left: 50%; right: 50%;
-            margin-left: -50vw; margin-right: -50vw; background: #f6faff; padding: 32px 0 32px 0;
+        .stat-circle:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(38, 63, 110, 0.4);
         }
-        .properties-row { display: flex; justify-content: center; align-items: stretch; gap: 24px; width: 100%; max-width: 1600px; margin: 0 auto; box-sizing: border-box; padding: 0 32px; }
-        .property-card {
-            flex: 1 1 0; background: #fff; border: 2px solid #263f6e; border-radius: 14px;
-            transition: box-shadow 0.3s, transform 0.3s; box-shadow: 0 2px 12px rgba(38, 63, 110, 0.06);
-            padding: 16px; display: flex; flex-direction: column; align-items: center; min-width: 0;
-            cursor: pointer; position: relative;
-        }
-        .property-card img { width: 100%; border-radius: 10px; margin-bottom: 10px; object-fit: cover; height: 200px; max-width: 100%; background: #eee; }
-        .property-desc { font-size: 18px; text-align: center; color: #263f6e; margin-bottom: 2px; font-weight: bold; }
 
-        /* CORE VALUES */
-        .core-values-section { margin: 80px 0; }
-        .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 40px; }
-        .value-card { background: #fff; padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(38, 63, 110, 0.1); transition: all 0.3s ease; border: 2px solid transparent; }
-        .value-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(38, 63, 110, 0.2); border-color: #263f6e; }
-        .value-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #fff; font-size: 2em; }
-        .value-card h3 { color: #263f6e; font-size: 1.5em; margin-bottom: 15px; }
-        .value-card p { color: #666; line-height: 1.6; }
+        .circle-number {
+            font-size: 3.5em;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .circle-label {
+            font-size: 1.1em;
+            color: #fff;
+            margin-top: 10px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* CORE VALUES SECTION */
+        .core-values-section {
+            margin: 80px 0;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .value-card {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(38, 63, 110, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(38, 63, 110, 0.2);
+            border-color: #263f6e;
+        }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #fff;
+            font-size: 2em;
+        }
+
+        .value-card h3 {
+            color: #263f6e;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .value-card p {
+            color: #666;
+            line-height: 1.6;
+        }
 
         /* TESTIMONIALS */
-        .testimonials-section { margin: 80px 0; background: #f8faff; padding: 60px 30px; border-radius: 20px; }
-        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
-        .testimonial-card { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(38, 63, 110, 0.1); position: relative; transition: all 0.3s ease; }
-        .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(38, 63, 110, 0.15); }
-        .quote-icon { font-size: 2.5em; color: #ffd700; margin-bottom: 15px; }
-        .testimonial-text { color: #666; font-style: italic; line-height: 1.8; margin-bottom: 20px; }
-        .testimonial-author { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .testimonial-author img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #263f6e; }
-        .testimonial-author h4 { color: #263f6e; margin: 0; }
-        .testimonial-author p { color: #999; margin: 5px 0 0; font-size: 0.9em; }
-        .rating { color: #ffd700; font-size: 1.2em; }
+        .testimonials-section {
+            margin: 80px 0;
+            background: #f8faff;
+            padding: 60px 30px;
+            border-radius: 20px;
+        }
 
-        /* INSTAGRAM */
-        .instagram-section { margin: 80px 0; }
-        .instagram-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
-        .insta-card { aspect-ratio: 1; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); border-radius: 15px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s ease; overflow: hidden; position: relative; }
-        .insta-card::before { content: ''; position: absolute; inset: 2px; background: #fff; border-radius: 13px; }
-        .insta-card-video { position: absolute; inset: 2px; width: calc(100% - 4px); height: calc(100% - 4px); object-fit: cover; border-radius: 13px; z-index: 1; }
-        .insta-card-overlay { position: absolute; inset: 2px; background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent); border-radius: 13px; z-index: 2; opacity: 0; transition: opacity 0.3s; display: flex; align-items: flex-end; padding: 20px; }
-        .insta-card:hover .insta-card-overlay { opacity: 1; }
-        .insta-overlay-text { color: white; font-weight: 600; font-size: 1em; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
-        .insta-placeholder { position: relative; z-index: 1; text-align: center; color: #263f6e; }
-        .insta-placeholder i { font-size: 4em; color: #e1306c; margin-bottom: 10px; }
-        .insta-placeholder p { margin: 0; font-weight: 600; color: #263f6e; }
-        .insta-card:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(129, 58, 180, 0.3); }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
 
-        /* DEVELOPER & OWNER */
-        .developer-section-compact { margin: 60px 0; }
-        .developer-section { display: none; } /* Hide old one */
-        .owner-section { text-align: center; margin: 80px 0; padding: 40px; background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); color: white; border-radius: 30px; box-shadow: 0 15px 40px rgba(38, 63, 110, 0.2); }
-        .owner-img { width: 180px; height: 180px; border-radius: 50%; border: 6px solid #fff; object-fit: cover; margin-bottom: 16px; background: #f0f0f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
-        .owner-bio { font-size: 1.2em; color: #fff; margin: 20px 0; line-height: 1.8; }
+        .testimonial-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(38, 63, 110, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(38, 63, 110, 0.15);
+        }
+
+        .quote-icon {
+            font-size: 2.5em;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-text {
+            color: #666;
+            font-style: italic;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #263f6e;
+        }
+
+        .testimonial-author h4 {
+            color: #263f6e;
+            margin: 0;
+        }
+
+        .testimonial-author p {
+            color: #999;
+            margin: 5px 0 0;
+            font-size: 0.9em;
+        }
+
+        .rating {
+            color: #ffd700;
+            font-size: 1.2em;
+        }
+
+        /* INSTAGRAM SECTION */
+        .instagram-section {
+            margin: 80px 0;
+        }
+
+        .instagram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .insta-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .insta-card::before {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: #fff;
+            border-radius: 13px;
+        }
+
+        .insta-card-video {
+            position: absolute;
+            inset: 2px;
+            width: calc(100% - 4px);
+            height: calc(100% - 4px);
+            object-fit: cover;
+            border-radius: 13px;
+            z-index: 1;
+        }
+
+        .insta-card-overlay {
+            position: absolute;
+            inset: 2px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            border-radius: 13px;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+
+        .insta-card:hover .insta-card-overlay {
+            opacity: 1;
+        }
+
+        .insta-overlay-text {
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .insta-placeholder {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #263f6e;
+        }
+
+        .insta-placeholder i {
+            font-size: 4em;
+            color: #e1306c;
+            margin-bottom: 10px;
+        }
+
+        .insta-placeholder p {
+            margin: 0;
+            font-weight: 600;
+            color: #263f6e;
+        }
+
+        .insta-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(129, 58, 180, 0.3);
+        }
+
+        /* WEBSITE DEVELOPER SECTION */
+        .developer-section {
+            margin: 80px 0;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%);
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(38, 63, 110, 0.1);
+        }
+
+        .developer-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 50px;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(38, 63, 110, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .developer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(38, 63, 110, 0.18);
+        }
+
+        .developer-avatar {
+            text-align: center;
+        }
+
+        .developer-info {
+            flex: 1;
+        }
+
+        .developer-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .skill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #263f6e;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: #ffd700;
+            color: #263f6e;
+            transform: translateY(-2px);
+        }
+
+        .skill-tag i {
+            font-size: 1.1em;
+        }
+
+        .developer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .developer-social a {
+            width: 45px;
+            height: 45px;
+            background: #263f6e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(38, 63, 110, 0.2);
+        }
+
+        .developer-social a:hover {
+            background: #ffd700;
+            color: #263f6e;
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .developer-section {
+                padding: 40px 20px;
+            }
+
+            .developer-card {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 30px;
+                text-align: center;
+            }
+
+            .developer-skills {
+                justify-content: center;
+            }
+
+            .developer-social {
+                justify-content: center;
+            }
+        }
+
         
-        .team-section { margin: 80px 0 60px 0; background: #f8faff; padding: 60px 0; border-radius: 30px; box-shadow: 0 10px 30px rgba(38, 63, 110, 0.1); }
-        .team-title { font-size: 2.5em; color: #263f6e; margin-bottom: 50px; text-align: center; position: relative; }
-        .team-members { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .team-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(38, 63, 110, 0.1); text-align: center; min-width: 250px; border: 1px solid rgba(38, 63, 110, 0.2); margin-bottom: 18px; transition: all 0.3s ease; }
-        .team-card img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #263f6e; margin-bottom: 8px; background: #f0f0f0; }
-        .team-card .team-name { color: #263f6e; font-weight: bold; font-size: 1.2em; margin: 15px 0 5px; }
-        .team-card .team-role { color: #18284b; font-size: 1em; opacity: 0.8; }
+        /* --- PREMIUM FOOTER DESIGN --- */
+.footer {
+  background-color: #0f172a; /* Deep, dark blue */
+  color: #94a3b8; /* Soft grey text */
+  font-size: 0.95rem;
+  position: relative;
+  width: 100%; /* Fixes the 100vw issue */
+  margin-top: 80px;
+}
 
-        /* FOLLOW BUTTONS (Preserved Style) */
+/* The Gold Top Border */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #263f6e, #ffd700, #263f6e);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 20px 40px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr; /* Optimized columns */
+  gap: 40px;
+}
+
+/* Column Headings */
+.footer-col h3 {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  position: relative;
+  padding-left: 15px;
+}
+
+/* Gold border indicator next to headings */
+.footer-col h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  height: 18px;
+  width: 3px;
+  background: #ffd700;
+  border-radius: 2px;
+}
+
+.footer-col p {
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+/* Links List */
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 12px;
+}
+
+.footer-col ul li a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-col ul li a:hover {
+  color: #ffd700;
+  transform: translateX(5px); /* Slide effect */
+}
+
+/* Social Icons */
+.footer-social {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.social-icon:hover {
+  background: #ffd700;
+  color: #0f172a;
+  transform: translateY(-3px);
+  border-color: #ffd700;
+}
+
+/* Contact Items */
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.contact-item i {
+  color: #ffd700;
+  margin-top: 5px;
+}
+
+/* Bottom Bar */
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 25px 20px;
+  text-align: center;
+  background: #0b1120; /* Slightly darker */
+}
+
+.footer-bottom p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Mobile Responsiveness for Footer */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr; /* Stack vertically */
+    text-align: center;
+    gap: 50px;
+  }
+  
+  .footer-col h3::before {
+    display: none; /* Remove side border on mobile */
+  }
+  
+  .footer-col h3 {
+    padding-left: 0;
+    text-decoration: underline;
+    text-decoration-color: #ffd700;
+    text-underline-offset: 8px;
+  }
+
+  .footer-social, .contact-item {
+    justify-content: center;
+  }
+
+
+        /* SCROLL ANIMATIONS - SLIDE FROM SIDES */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-reveal:nth-child(even) {
+            transform: translateX(100px);
+        }
+
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Stagger animation for children - alternate sides */
+        .scroll-reveal-container>* {
+            opacity: 0;
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-reveal-container>*:nth-child(odd) {
+            transform: translateX(-80px);
+        }
+
+        .scroll-reveal-container>*:nth-child(even) {
+            transform: translateX(80px);
+        }
+
+        .scroll-reveal-container.active>* {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scroll-reveal-container.active>*:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .scroll-reveal-container.active>*:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .scroll-reveal-container.active>*:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        .scroll-reveal-container.active>*:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+
+        .scroll-reveal-container.active>*:nth-child(5) {
+            transition-delay: 0.5s;
+        }
+
+        .scroll-reveal-container.active>*:nth-child(6) {
+            transition-delay: 0.6s;
+        }
+
+        /* Scale animation for owner section */
+        .scroll-reveal.reveal-scale {
+            transform: scale(0.85) translateY(30px);
+        }
+
+        .scroll-reveal.reveal-scale.active {
+            transform: scale(1) translateY(0);
+        }
+
+        @media (max-width: 1024px) {
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
+                padding: 60px 30px 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-circles {
+                gap: 40px;
+            }
+
+            .stat-circle {
+                width: 140px;
+                height: 140px;
+            }
+
+            .circle-number {
+                font-size: 2.5em;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .instagram-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Simplify animations on mobile */
+            .scroll-reveal,
+            .scroll-reveal-container>* {
+                transform: translateY(30px) !important;
+            }
+
+            .scroll-reveal.active,
+            .scroll-reveal-container.active>* {
+                transform: translateY(0) !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 35px;
+                padding: 50px 20px 25px;
+            }
+
+            .footer-col h3::after {
+                width: 30px;
+            }
+        }
+
+        /* Floating Edit Reels Button - Only for Team Members */
+        .edit-reels-fab {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #e1306c, #c13584);
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            border: 3px solid #fff;
+            animation: pulseInstagram 2s infinite;
+        }
+
+        .edit-reels-fab:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 30px rgba(225, 48, 108, 0.6);
+        }
+
+        .edit-reels-fab.show {
+            display: flex;
+        }
+
+        @keyframes pulseInstagram {
+            0%,
+            100% {
+                box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 4px 30px rgba(193, 53, 132, 0.6);
+            }
+        }
+
+        /* Tooltip for the button */
+        .edit-reels-fab::before {
+            content: 'Edit Instagram Reels';
+            position: absolute;
+            right: 70px;
+            background: #263f6e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-reels-fab:hover::before {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .edit-reels-fab {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+                bottom: 80px;
+                right: 20px;
+            }
+
+            .edit-reels-fab::before {
+                display: none;
+            }
+        }
+
+        /* Add Follow Button Style */
         .follow-btn {
             display: inline-flex; align-items: center; gap: 10px; padding: 15px 40px;
             color: #fff; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.1em;
@@ -218,45 +1659,103 @@
         }
         .follow-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(129, 58, 180, 0.4); }
 
-        /* FOOTER */
-        .footer { background: linear-gradient(135deg, #1a2744 0%, #0d1829 100%); color: #fff; margin-top: 80px; padding: 0; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; box-sizing: border-box; }
-        .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #263f6e, #ffd700, #263f6e); z-index: 10; }
-        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 40px; padding: 80px 20px 40px; }
-        .footer-col h3 { color: #fff; font-size: 1.2rem; font-weight: 600; margin-bottom: 25px; position: relative; padding-left: 15px; }
-        .footer-col h3::before { content: ''; position: absolute; left: 0; top: 4px; height: 18px; width: 3px; background: #ffd700; border-radius: 2px; }
-        .footer-col ul { list-style: none; padding: 0; }
-        .footer-col ul li { margin-bottom: 12px; }
-        .footer-col ul li a { color: #94a3b8; text-decoration: none; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
-        .footer-col ul li a:hover { color: #ffd700; transform: translateX(5px); }
-        .footer-social { display: flex; gap: 15px; margin-top: 20px; }
-        .social-icon { width: 40px; height: 40px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .contact-item { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
-        .contact-item i { color: #ffd700; margin-top: 5px; }
-        .footer-bottom { text-align: center; padding: 25px 20px; background: rgba(0,0,0,0.3); color: #b8c5db; border-top: 1px solid rgba(255,255,255,0.05); }
-
-        /* ANIMATIONS & FAB */
-        .scroll-reveal { opacity: 0; transform: translateX(-100px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .scroll-reveal.active { opacity: 1; transform: translateX(0); }
-        
-        .edit-reels-fab { position: fixed; bottom: 100px; right: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, #e1306c, #c13584); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4); cursor: pointer; z-index: 999; border: 3px solid #fff; animation: pulseInstagram 2s infinite; }
-        .edit-reels-fab.show { display: flex !important; }
-        @keyframes pulseInstagram { 0%, 100% { box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4); } 50% { box-shadow: 0 4px 30px rgba(193, 53, 132, 0.6); } }
-
-        /* MOBILE FIXES */
-        @media (max-width: 768px) {
-            .properties-section, .footer { width: 100% !important; left: auto !important; right: auto !important; margin-left: 0 !important; margin-right: 0 !important; padding: 40px 0; }
-            .header { flex-direction: column; padding: 15px; gap: 15px; position: relative; }
-            .nav { flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
-            .nav a { font-size: 13px; padding: 8px 12px; flex-grow: 1; justify-content: center; }
-            .hero-section { height: auto; min-height: 50vh; padding: 120px 20px 60px; }
-            .hero-title { font-size: 2rem; }
-            .stats-circles { gap: 30px; }
-            .properties-row, .team-members, .instagram-grid, .footer-content { grid-template-columns: 1fr !important; display: flex; flex-direction: column; align-items: center; }
-            .property-card, .team-card, .insta-card { width: 100%; max-width: 100%; margin-bottom: 20px; }
-            .edit-reels-fab { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 20px; }
-            .footer-col h3::before { display: none; }
-            .footer-social, .contact-item { justify-content: center; }
+        /* COMPACT DEVELOPER SECTION */
+        .developer-section-compact {
+            margin: 60px 0;
         }
+
+        /* Remove old developer section styles or keep for backward compatibility */
+        .developer-section {
+            display: none;
+        }
+
+        /* =========================================
+     MOBILE ONLY FIXES (Desktop remains untouched)
+     ========================================= */
+  @media (max-width: 768px) {
+    
+    /* 1. Fix the "Too Wide" Issue (Mobile Only) */
+    .properties-section, .footer {
+      width: 100% !important;
+      left: auto !important;
+      right: auto !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+    }
+
+    /* 2. Header Fix: Stack Logo and Nav */
+    .header {
+      flex-direction: column;
+      padding: 15px;
+      gap: 15px;
+      position: relative; 
+    }
+    
+    .nav {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+    
+    .nav a {
+      font-size: 13px;
+      padding: 8px 12px;
+      flex-grow: 1; 
+      justify-content: center;
+    }
+
+    /* 3. Hero Section: Adjust Height & Text */
+    .hero-section {
+      height: auto;
+      min-height: 50vh;
+      padding: 120px 20px 60px; /* Extra top padding for stacked header */
+    }
+    
+    .hero-title {
+      font-size: 2rem; 
+    }
+
+    /* 4. Fix the Circles (Stack them) */
+    .stats-circles {
+      gap: 30px;
+    }
+
+    /* 5. Force Cards to Stack Vertically */
+    .properties-row, 
+    .team-members, 
+    .instagram-grid,
+    .footer-content {
+      grid-template-columns: 1fr !important; /* Force 1 column */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .property-card, .team-card, .insta-card {
+      width: 100%;
+      max-width: 100%; /* Use full phone width */
+      margin-bottom: 20px;
+    }
+    
+    /* 6. Fix Developer Section Layout */
+    .developer-section div[style*="display:flex"],
+    .developer-section div[style*="display: flex"] {
+      flex-direction: column !important;
+      text-align: center !important;
+    }
+
+    /* 7. Hide/Adjust Floating Buttons */
+    .edit-reels-fab, .add-property-fab {
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+    }
+  }
     </style>
 </head>
 
@@ -275,7 +1774,7 @@
         <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 10px; margin-left: auto;">
             <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #666;">
             <span id="userName" style="color: #666; font-weight: 500; white-space: nowrap;"></span>
-            <button onclick="logout()" style="padding: 8px 16px; background: #f0f0f0; color: #666; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">Logout</button>
+            <button onclick="api.logout()" style="padding: 8px 16px; background: #f0f0f0; color: #666; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.3s; font-weight: 500; white-space: nowrap;">Logout</button>
         </div>
     </div>
 
@@ -291,40 +1790,89 @@
         <div class="intro-section scroll-reveal">
             <h2>Welcome to Y M Real Estate</h2>
             <div class="text">
-                <p>At <b>Y M Real Estate</b>, we’re redefining the real estate experience with a focus on trust, transparency, and personalized service. Whether you’re buying, selling, or investing, our goal is to help you make confident decisions backed by local expertise and market insight.</p>
-                <p>We specialize in connecting clients with properties that perfectly match their goals...</p>
+                <p>At <b>Y M Real Estate</b>, we’re redefining the real estate experience with a focus on trust, transparency, and personalized service. Whether you’re buying, selling, or investing, our goal is to help you make confident decisions backed by local expertise and market insight. </p>
+                <p>We specialize in connecting clients with properties that perfectly match their goals — from dream homes and prime commercial spaces to profitable investments. With a commitment to professionalism and integrity, we aim to make every real estate journey smooth, informed, and rewarding.
+                </p>
                 <p>Your vision is our mission — and we're here to turn it into reality.</p>
             </div>
         </div>
 
         <div class="stats-circles-section scroll-reveal">
             <div class="stats-circles scroll-reveal-container">
-                <div class="stat-circle"><div class="circle-number">6</div><div class="circle-label">Completed<br>Projects</div></div>
-                <div class="stat-circle"><div class="circle-number">8</div><div class="circle-label">Upcoming<br>Projects</div></div>
-                <div class="stat-circle"><div class="circle-number">02+</div><div class="circle-label">Cities</div></div>
+                <div class="stat-circle">
+                    <div class="circle-number">6</div>
+                    <div class="circle-label">Completed
+                        Projects</div>
+                </div>
+                <div class="stat-circle">
+                    <div class="circle-number">8</div>
+                    <div class="circle-label">Upcoming
+                        Projects</div>
+                </div>
+                <div class="stat-circle">
+                    <div class="circle-number">02+</div>
+                    <div class="circle-label">Cities</div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="properties-section scroll-reveal">
         <a href="properties.html" class="properties-link">
-            <h2><span class="arrow" aria-hidden="true">➜</span> Featured Properties</h2>
+            <h2>
+                <span class="arrow" aria-hidden="true">➜</span>
+                Featured Properties
+            </h2>
         </a>
         <div class="properties-row" id="featuredProperties">
-            <p style="width:100%; text-align:center;">Loading...</p>
-        </div>
+            </div>
     </div>
-
     <div class="main-container">
         <div class="core-values-section scroll-reveal">
             <h2 class="section-title">Our Core Principles</h2>
             <div class="values-grid scroll-reveal-container">
-                <div class="value-card"><div class="value-icon"><i class="fas fa-gem"></i></div><h3>Values</h3><p>Trust, transparency, and integrity.</p></div>
-                <div class="value-card"><div class="value-icon"><i class="fas fa-eye"></i></div><h3>Vision</h3><p>To be the most trusted real estate partner.</p></div>
-                <div class="value-card"><div class="value-icon"><i class="fas fa-bullseye"></i></div><h3>Mission</h3><p>Connecting people with their dream properties.</p></div>
-                <div class="value-card"><div class="value-icon"><i class="fas fa-heart"></i></div><h3>Passion</h3><p>We are passionate about real estate.</p></div>
-                <div class="value-card"><div class="value-icon"><i class="fas fa-chart-line"></i></div><h3>Performance</h3><p>Delivering results that exceed expectations.</p></div>
-                <div class="value-card"><div class="value-icon"><i class="fas fa-handshake"></i></div><h3>Trust</h3><p>Building long-term relationships.</p></div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Values</h3>
+                    <p>Trust, transparency, and integrity in every transaction. We build lasting relationships based on honesty and ethical practices.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Vision</h3>
+                    <p>To be the most trusted real estate partner in India, transforming the property buying experience through innovation and excellence.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Mission</h3>
+                    <p>Connecting people with their dream properties while providing exceptional service and creating lasting value for our clients.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Passion</h3>
+                    <p>We are passionate about real estate and dedicated to helping you find the perfect property that matches your aspirations.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Performance</h3>
+                    <p>Delivering results that exceed expectations through market expertise, dedication, and commitment to excellence.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Trust</h3>
+                    <p>Building long-term relationships through reliability and consistent delivery of promises. Your trust is our foundation.</p>
+                </div>
             </div>
         </div>
 
@@ -334,20 +1882,58 @@
                 <div class="testimonial-card">
                     <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                     <p class="testimonial-text">"Y M Real Estate helped us find our dream home in Hubballi. Their professionalism and attention to detail made the entire process smooth and stress-free."</p>
-                    <div class="testimonial-author"><img src="https://via.placeholder.com/60?text=RK" alt="Client"><div><h4>Rajesh Kumar</h4><p>Hubballi</p></div></div>
-                    <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <div class="testimonial-author">
+                        <img src="https://via.placeholder.com/60?text=RK" alt="Client">
+                        <div>
+                            <h4>Rajesh Kumar</h4>
+                            <p>Hubballi</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
                 </div>
+
                 <div class="testimonial-card">
                     <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                     <p class="testimonial-text">"Excellent service! Yunus and his team went above and beyond to help us sell our property at the best price. Highly recommended!"</p>
-                    <div class="testimonial-author"><img src="https://via.placeholder.com/60?text=PS" alt="Client"><div><h4>Priya Sharma</h4><p>Dharwad</p></div></div>
-                    <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <div class="testimonial-author">
+                        <img src="https://via.placeholder.com/60?text=PS" alt="Client">
+                        <div>
+                            <h4>Priya Sharma</h4>
+                            <p>Dharwad</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
                 </div>
+
                 <div class="testimonial-card">
                     <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                    <p class="testimonial-text">"Very professional and trustworthy. They helped us invest in a great commercial property with excellent returns."</p>
-                    <div class="testimonial-author"><img src="https://via.placeholder.com/60?text=AM" alt="Client"><div><h4>Arjun Mehta</h4><p>Hubballi</p></div></div>
-                    <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">"Very professional and trustworthy. They helped us invest in a great commercial property with excellent returns. Thank you Y M Real Estate!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://via.placeholder.com/60?text=AM" alt="Client">
+                        <div>
+                            <h4>Arjun Mehta</h4>
+                            <p>Hubballi</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -355,27 +1941,36 @@
         <div class="instagram-section scroll-reveal">
             <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram Reels</h2>
             <p style="text-align: center; color: #666; margin-bottom: 30px;">Latest property tours and updates</p>
-            <div class="instagram-grid scroll-reveal-container" id="instagramGrid"></div>
+            <div class="instagram-grid scroll-reveal-container" id="instagramGrid">
+            </div>
             <div style="text-align:center; margin-top:20px;">
-                <a href="https://www.instagram.com/y.m_real.estate/" target="_blank" class="follow-btn" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">Follow on Instagram</a>
+                <a href="https://www.instagram.com/y.m_real.estate/" target="_blank" class="follow-btn" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
+                    Follow on Instagram
+                </a>
             </div>
         </div>
 
         <div class="instagram-section scroll-reveal" style="background: #fff0f0;">
             <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-youtube" style="color:#FF0000"></i> YouTube Channel</h2>
             <p style="text-align: center; color: #666; margin-bottom: 30px;">Full walkthroughs and market analysis</p>
-            <div class="instagram-grid scroll-reveal-container" id="youtubeGrid"></div>
+            <div class="instagram-grid scroll-reveal-container" id="youtubeGrid">
+            </div>
             <div style="text-align:center; margin-top:20px;">
-                <a href="https://youtube.com" target="_blank" class="follow-btn" style="background: #FF0000;">Subscribe on YouTube</a>
+                <a href="https://youtube.com" target="_blank" class="follow-btn" style="background: #FF0000;">
+                    Subscribe on YouTube
+                </a>
             </div>
         </div>
 
         <div class="instagram-section scroll-reveal" style="background: #f0f6ff;">
             <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook Posts</h2>
             <p style="text-align: center; color: #666; margin-bottom: 30px;">Community updates and news</p>
-            <div class="instagram-grid scroll-reveal-container" id="facebookGrid"></div>
+            <div class="instagram-grid scroll-reveal-container" id="facebookGrid">
+            </div>
             <div style="text-align:center; margin-top:20px;">
-                <a href="https://facebook.com" target="_blank" class="follow-btn" style="background: #1877F2;">Like us on Facebook</a>
+                <a href="https://facebook.com" target="_blank" class="follow-btn" style="background: #1877F2;">
+                    Like us on Facebook
+                </a>
             </div>
         </div>
 
@@ -390,11 +1985,13 @@
 
         <div class="developer-section-compact scroll-reveal">
             <div style="text-align: center; max-width: 600px; margin: 0 auto;">
-                <h3 style="color: #263f6e; font-size: 1.5em; margin-bottom: 15px;"><i class="fas fa-code"></i> Website Developer</h3>
+                <h3 style="color: #263f6e; font-size: 1.5em; margin-bottom: 15px;">
+                    <i class="fas fa-code"></i> Website Developer
+                </h3>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(38,63,110,0.1);">
                     <img src="https://via.placeholder.com/80?text=Dev" alt="Developer" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ffd700;">
                     <div style="text-align: left;">
-                        <h4 style="color: #263f6e; margin: 0 0 5px 0; font-size: 1.2em;">Raheel Hosmani</h4>
+                        <h4 style="color: #263f6e; margin: 0 0 5px 0; font-size: 1.2em;">Your Name</h4>
                         <p style="color: #666; margin: 0 0 10px 0; font-size: 0.9em;">Full Stack Developer</p>
                         <div style="display: flex; gap: 10px;">
                             <a href="https://github.com/yourusername" target="_blank" style="color: #263f6e; font-size: 1.2em;"><i class="fab fa-github"></i></a>
@@ -408,240 +2005,402 @@
 
         <div class="team-section scroll-reveal">
             <div class="team-title">Meet Our Team</div>
-            <p style="text-align: center; color: #666; margin-bottom: 40px;">Dedicated professionals committed to your real estate success</p>
+            <p style="text-align: center; color: #666; margin-bottom: 40px;">
+                Dedicated professionals committed to your real estate success
+            </p>
+
             <div class="team-members scroll-reveal-container">
-                <div class="team-card"><img src="https://via.placeholder.com/60?text=Team+1"><div class="team-name">Saif Ali Abbunavar</div><div class="team-role">Heavy Driver</div></div>
-                <div class="team-card"><img src="https://via.placeholder.com/60?text=Team+2"><div class="team-name">Nijagowda Patil</div><div class="team-role">Lead Editor</div></div>
-                <div class="team-card"><img src="https://via.placeholder.com/60?text=Team+3"><div class="team-name">Ahsan Ali</div><div class="team-role">NEET Aspirant</div></div>
+                <div class="team-card">
+                    <img src="https://via.placeholder.com/60?text=Team+1" alt="Team Member 1">
+                    <div class="team-name">Saif Ali Abbunavar</div>
+                    <div class="team-role">Heavy Driver</div>
+                </div>
+                <div class="team-card">
+                    <img src="https://via.placeholder.com/60?text=Team+2" alt="Team Member 2">
+                    <div class="team-name">Nijagowda Patil</div>
+                    <div class="team-role">Lead Editor</div>
+                </div>
+                <div class="team-card">
+                    <img src="https://via.placeholder.com/60?text=Team+3" alt="Team Member 3">
+                    <div class="team-name">Ahsan Ali</div>
+                    <div class="team-role">NEET Aspirant</div>
+                </div>
             </div>
         </div>
 
-        <footer class="footer scroll-reveal">
-            <div class="footer-content">
-                <div class="footer-col">
-                    <h3>Y M Real Estate</h3>
-                    <p>Redefining real estate with trust and transparency. We help you find not just a house, but a place to call home.</p>
-                    <div class="footer-social">
-                        <a href="https://instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
-                        <a href="https://facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://youtube.com" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
-                        <a href="https://linkedin.com" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="properties.html">Featured Properties</a></li>
-                        <li><a href="team.html">Meet the Team</a></li>
-                        <li><a href="contact.html">Contact Support</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h3>Information</h3>
-                    <ul>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="login.html">Admin Login</a></li>
-                        <li><a href="#">Sitemap</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h3>Get in Touch</h3>
-                    <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Hubballi, Karnataka, India<br>580020</span></div>
-                    <div class="contact-item"><i class="fas fa-phone-alt"></i><span>+91 77958 11097</span></div>
-                    <div class="contact-item"><i class="fas fa-envelope"></i><span>info@ymrealestate.com</span></div>
-                </div>
-            </div>
-            <div class="footer-bottom"><p>&copy; 2025 Y M Real Estate. All rights reserved. | Built by Raheel Hosmani</p></div>
-        </footer>
+       <footer class="footer scroll-reveal">
+  <div class="footer-content">
+    
+    <div class="footer-col">
+      <h3>Y M Real Estate</h3>
+      <p>Redefining real estate with trust and transparency. We help you find not just a house, but a place to call home.</p>
+      <div class="footer-social">
+        <a href="https://instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="https://facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://youtube.com" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+        <a href="https://linkedin.com" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="properties.html">Featured Properties</a></li>
+        <li><a href="team.html">Meet the Team</a></li>
+        <li><a href="contact.html">Contact Support</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>Information</h3>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="login.html">Admin Login</a></li>
+        <li><a href="#">Sitemap</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>Get in Touch</h3>
+      <div class="contact-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Hubballi, Karnataka, India<br>580020</span>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-phone-alt"></i>
+        <span>+91 77958 11097</span>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <span>info@ymrealestate.com</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 Y M Real Estate. All rights reserved. | Built by Raheel Hosmani</p>
+  </div>
+</footer>
     </div>
 
     <div id="reelsEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; overflow-y: auto;">
         <div style="max-width: 900px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
-            <button onclick="closeReelsEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
-            <h2 style="color: #263f6e; margin-bottom: 30px; text-align: center;">Manage Social Media</h2>
+            <button onclick="closeReelsEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <h2 style="color: #263f6e; margin-bottom: 30px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <i class="fab fa-instagram" style="color: #e1306c; font-size: 1.3em;"></i>
+                Manage Instagram Reels
+            </h2>
+
             <div id="reelsEditorContent" style="display: grid; gap: 20px;"></div>
+
             <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <button onclick="addNewReelSlot()" style="padding: 12px 25px; background: #10b981; color: white; border: none; border-radius: 10px; cursor: pointer;">Add Slot</button>
-                <button onclick="saveReels()" style="padding: 12px 25px; background: #263f6e; color: white; border: none; border-radius: 10px; cursor: pointer;">Save Changes</button>
-                <button onclick="closeReelsEditor()" style="padding: 12px 25px; background: #666; color: white; border: none; border-radius: 10px; cursor: pointer;">Cancel</button>
+                <button onclick="addNewReelSlot()" style="padding: 12px 25px; background: #10b981; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-plus"></i> Add Reel Slot
+                </button>
+                <button onclick="saveReels()" style="padding: 12px 25px; background: #263f6e; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button onclick="closeReelsEditor()" style="padding: 12px 25px; background: #666; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
             </div>
         </div>
     </div>
 
-    <div class="edit-reels-fab" id="editReelsFab" onclick="openReelsEditor()"><i class="fab fa-instagram"></i></div>
+    <div class="edit-reels-fab" id="editReelsFab" onclick="openReelsEditor()">
+        <i class="fab fa-instagram"></i>
+    </div>
 
+    <script src="js/api.js"></script>
     <script>
-        const FEATURED_API = window.location.hostname.includes('localhost') ? 'http://localhost:5011/api' : 'https://ym-real-estate.onrender.com/api';
-        
-        let currentSocials = { instagram: [], youtube: [], facebook: [] };
-
-        // 1. INIT
-        document.addEventListener('DOMContentLoaded', async () => {
-            // OAuth Handler
+        // ==========================================
+        // 1. AUTHENTICATION & OAUTH HANDLER
+        // ==========================================
+        (function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('auth') === 'success') {
+            const authSuccess = urlParams.get('auth');
+            const userData = urlParams.get('user');
+
+            if (authSuccess === 'success' && userData) {
                 try {
-                    const user = JSON.parse(decodeURIComponent(urlParams.get('user')));
-                    localStorage.setItem('token', user.token);
-                    delete user.token;
-                    localStorage.setItem('user', JSON.stringify(user));
+                    const user = JSON.parse(decodeURIComponent(userData));
+                    // Save using the standardized keys
+                    localStorage.setItem('token', user.token || 'google-oauth-token');
+                    // Remove token from user object before saving
+                    if (user.token) delete user.token;
+                    localStorage.setItem('user', JSON.stringify(user)); // Standard key: 'user'
+
+                    // Clean URL
                     window.history.replaceState({}, document.title, window.location.pathname);
                     window.location.reload();
-                } catch(e) {}
+                } catch (e) {
+                    console.error('OAuth error:', e);
+                }
             }
+        })();
 
-            if(typeof ui !== 'undefined') ui.updateAuthStatus();
-            
-            checkTeamAccessForReels(); 
-            await loadFeaturedProperties();
-            await loadSocialsFromDB(); // Real DB Load
-
-            // Scroll Reveal
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('active'); });
+        // ==========================================
+        // 2. SCROLL ANIMATIONS
+        // ==========================================
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.scroll-reveal, .scroll-reveal-container').forEach(el => observer.observe(el));
         });
 
-        // 2. PROPERTIES LOADER
-        async function loadFeaturedProperties() {
+        // ==========================================
+        // 3. FEATURED PROPERTIES LOADER
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const res = await fetch(`${FEATURED_API}/properties`);
-                const json = await res.json();
-                const props = json.data || json;
-                if(Array.isArray(props) && props.length > 0) {
-                    document.getElementById('featuredProperties').innerHTML = props.slice(0,3).map(p => `
-                        <div class="property-card" onclick="window.location.href='property-details.html?id=${p._id}'">
-                            <img src="${(p.images&&p.images[0]) || 'https://placehold.co/400x300?text=No+Image'}" alt="${p.title}">
-                            <div class="property-details">
-                                <div class="property-title">${p.title}</div>
-                                <div class="property-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
-                                <div class="property-location"><i class="fas fa-map-marker-alt"></i> ${p.address?.city || 'India'}</div>
-                            </div>
-                        </div>
-                    `).join('');
+                // RENAMED variable to avoid conflict with api.js
+                const FEATURED_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ?
+                    'http://localhost:5011/api' :
+                    'https://ym-real-estate.onrender.com/api'; // ✅ Correct Render URL
+
+                const response = await fetch(`${FEATURED_API}/properties`);
+                const json = await response.json();
+
+                // Handle data whether it comes as {data: []} or just []
+                const properties = json.data || json;
+
+                if (properties && properties.length > 0) {
+                    const container = document.getElementById('featuredProperties');
+                    container.innerHTML = properties.slice(0, 3).map(property => `
+             <div class="property-card" onclick="window.location.href='property-details.html?id=${property._id}'">
+               <img src="${property.images[0] || 'https://placehold.co/600x400?text=No+Image'}" alt="${property.title}">
+               <div class="property-details">
+                   <div class="property-title">${property.title}</div>
+                   <div class="property-price">₹${Number(property.price).toLocaleString('en-IN')}</div>
+                   <div class="property-location"><i class="fas fa-map-marker-alt"></i> ${property.address?.city || 'India'}</div>
+               </div>
+             </div>
+           `).join('');
                 }
-            } catch(e) { console.error("Props Error", e); }
+            } catch (error) {
+                console.error('Error loading featured properties:', error);
+            }
+        });
+
+        // ==========================================
+        // 4. SOCIAL MEDIA MANAGER (Insta + YT + FB)
+        // ==========================================
+
+        const defaultSocials = {
+            instagram: [{
+                    label: 'Latest Reel',
+                    url: 'https://instagram.com',
+                    video: ''
+                },
+                {
+                    label: 'Property Tour',
+                    url: 'https://instagram.com',
+                    video: ''
+                },
+                {
+                    label: 'Highlights',
+                    url: 'https://instagram.com',
+                    video: ''
+                }
+            ],
+            youtube: [{
+                    label: 'Market Update',
+                    url: 'https://youtube.com',
+                    video: ''
+                },
+                {
+                    label: 'Virtual Tour',
+                    url: 'https://youtube.com',
+                    video: ''
+                }
+            ],
+            facebook: [{
+                    label: 'Community',
+                    url: 'https://facebook.com',
+                    video: ''
+                },
+                {
+                    label: 'New Listing',
+                    url: 'https://facebook.com',
+                    video: ''
+                }
+            ]
+        };
+
+        function getSocials() {
+            const stored = localStorage.getItem('ym_social_content');
+            return stored ? JSON.parse(stored) : defaultSocials;
         }
 
-        // 3. SOCIALS LOADER (DB)
-        async function loadSocialsFromDB() {
-            try {
-                const res = await fetch(`${FEATURED_API}/socials`);
-                const data = await res.json();
-                if(data) {
-                    currentSocials = data;
-                    renderAllSocials();
-                }
-            } catch(e) { console.error("Socials Error", e); }
+        function saveSocials(data) {
+            localStorage.setItem('ym_social_content', JSON.stringify(data));
         }
 
         function renderAllSocials() {
-            renderGrid('instagramGrid', currentSocials.instagram, 'fa-instagram');
-            renderGrid('youtubeGrid', currentSocials.youtube, 'fa-youtube');
-            renderGrid('facebookGrid', currentSocials.facebook, 'fa-facebook');
+            const data = getSocials();
+            renderGrid('instagramGrid', data.instagram, 'instagram', 'fa-instagram');
+            renderGrid('youtubeGrid', data.youtube, 'youtube', 'fa-youtube');
+            renderGrid('facebookGrid', data.facebook, 'facebook', 'fa-facebook-f');
         }
 
-        function renderGrid(id, items, icon) {
-            const el = document.getElementById(id);
-            if(!el) return;
-            if(!items || !items.length) { el.innerHTML = ''; return; }
-            el.innerHTML = items.map(item => `
-                <a href="${item.url||'#'}" target="_blank" class="insta-card">
-                   ${item.video ? `<video src="${item.video}" class="insta-card-video" autoplay loop muted playsinline></video>` : 
-                   `<div class="insta-placeholder"><i class="fab ${icon}"></i><p>${item.label}</p></div>`}
-                </a>
-            `).join('');
+        function renderGrid(elementId, items, platform, iconClass) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+
+            container.innerHTML = items.map((item) => `
+         <a href="${item.url}" target="_blank" class="insta-card">
+           ${item.video ? `
+             <video class="insta-card-video" autoplay loop muted playsinline>
+               <source src="${item.video}" type="video/mp4">
+             </video>
+             <div class="insta-card-overlay">
+               <span class="insta-overlay-text"><i class="fab ${iconClass}"></i> ${item.label}</span>
+             </div>
+           ` : `
+             <div class="insta-card-overlay" style="opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
+             <div class="insta-placeholder">
+               <i class="fab ${iconClass}" style="margin-bottom:10px;"></i>
+               <p>${item.label}</p>
+             </div>
+           `}
+         </a>
+       `).join('');
         }
 
-        // 4. SAVE TO DB
-        async function saveReels() {
-            const token = localStorage.getItem('token');
-            if(!token) return alert("Login required.");
-
-            ['instagram','youtube','facebook'].forEach(k => {
-                if(!currentSocials[k]) currentSocials[k] = [];
-                currentSocials[k].forEach((item, i) => {
-                    const l = document.getElementById(`${k}_l_${i}`);
-                    const u = document.getElementById(`${k}_u_${i}`);
-                    if(l) item.label = l.value;
-                    if(u) item.url = u.value;
-                });
-            });
+        // --- CHECK TESTER ACCESS ---
+        function checkTeamAccessForReels() {
+            // Check both possible key names to be safe
+            const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
+            if (!userStr) return;
 
             try {
-                const res = await fetch(`${FEATURED_API}/socials`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(currentSocials)
-                });
-                if(!res.ok) throw new Error("Failed");
-                alert("Saved to Database!");
-                closeReelsEditor();
-                renderAllSocials();
-            } catch(e) { alert("Error saving."); }
-        }
+                const user = JSON.parse(userStr);
+                const editBtn = document.getElementById('editReelsFab');
 
-        function openReelsEditor() {
-            const c = document.getElementById('reelsEditorContent');
-            c.innerHTML = `
-                ${makeSec('Instagram', currentSocials.instagram, 'instagram', '#e1306c')}
-                ${makeSec('YouTube', currentSocials.youtube, 'youtube', '#ff0000')}
-                ${makeSec('Facebook', currentSocials.facebook, 'facebook', '#1877f2')}
-            `;
-            document.getElementById('reelsEditorModal').style.display = 'block';
-        }
-
-        function makeSec(title, items, key, color) {
-            let h = `<h3 style="color:${color}">${title}</h3>`;
-            if(!items) items = [];
-            items.forEach((item, i) => {
-                h += `<div style="background:#f9f9f9; padding:10px; margin-bottom:10px; border-left:3px solid ${color};">
-                    <input id="${key}_l_${i}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px;">
-                    <input id="${key}_u_${i}" value="${item.url}" placeholder="URL" style="width:100%; margin-bottom:5px;">
-                    <input type="file" onchange="upVid('${key}', ${i}, event)">
-                    ${item.video ? '<span style="color:green">✓ Video</span>' : ''}
-                    <button onclick="rmItem('${key}', ${i})" style="color:red; margin-left:10px;">Remove</button>
-                </div>`;
-            });
-            h += `<button onclick="addItem('${key}')" style="background:${color}; color:white; padding:5px 10px; border:none; border-radius:5px;">+ Add Slot</button><hr>`;
-            return h;
-        }
-
-        function addItem(key) {
-            if(!currentSocials[key]) currentSocials[key] = [];
-            currentSocials[key].push({label:'New', url:'', video:''});
-            openReelsEditor();
-        }
-
-        function rmItem(key, idx) {
-            currentSocials[key].splice(idx, 1);
-            openReelsEditor();
-        }
-
-        function upVid(key, idx, e) {
-            const f = e.target.files[0];
-            if(f.size > 5*1024*1024) return alert("Max 5MB");
-            const r = new FileReader();
-            r.onload = ev => { currentSocials[key][idx].video = ev.target.result; openReelsEditor(); };
-            r.readAsDataURL(f);
-        }
-
-        function addNewReelSlot() { addItem('instagram'); }
-        function closeReelsEditor() { document.getElementById('reelsEditorModal').style.display = 'none'; }
-
-        // ✅ CHECK ACCESS FUNCTION
-        function checkTeamAccessForReels() {
-            const u = localStorage.getItem('user');
-            if(!u) return;
-            const user = JSON.parse(u);
-            if(user.email === 'team@test.com' || user.role === 'admin' || user.role === 'team') {
-                const btn = document.getElementById('editReelsFab');
-                if(btn) btn.classList.add('show');
+                // ✅ CHEAT CODE: Allow team@test.com explicitly
+                if (user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com') {
+                    if (editBtn) editBtn.classList.add('show');
+                }
+            } catch (e) {
+                console.log("User parse error", e);
             }
         }
+
+        // --- EDITOR LOGIC ---
+        function openReelsEditor() {
+            const data = getSocials();
+            const modal = document.getElementById('reelsEditorModal');
+            const content = document.getElementById('reelsEditorContent');
+
+            content.innerHTML = `
+         ${generateEditorSection('Instagram', data.instagram, 'instagram', 'fab fa-instagram', '#e1306c')}
+         <hr style="margin: 30px 0; border: 1px solid #eee;">
+         ${generateEditorSection('YouTube', data.youtube, 'youtube', 'fab fa-youtube', '#FF0000')}
+         <hr style="margin: 30px 0; border: 1px solid #eee;">
+         ${generateEditorSection('Facebook', data.facebook, 'facebook', 'fab fa-facebook', '#1877F2')}
+       `;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function generateEditorSection(title, items, key, icon, color) {
+            let html = `<h3 style="color:${color}; margin-bottom:15px;"><i class="${icon}"></i> ${title}</h3>`;
+            items.forEach((item, idx) => {
+                html += `
+           <div style="background:#f9f9f9; padding:15px; margin-bottom:10px; border-radius:8px; border-left:4px solid ${color};">
+               <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                 <strong>Slot ${idx + 1}</strong>
+                 <button onclick="removeItem('${key}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
+               </div>
+               <input type="text" id="${key}_label_${idx}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px; padding:8px;">
+               <input type="text" id="${key}_url_${idx}" value="${item.url}" placeholder="Link URL" style="width:100%; margin-bottom:5px; padding:8px;">
+               <input type="file" onchange="uploadVideo('${key}', ${idx}, event)" accept="video/*" style="font-size:12px;">
+               ${item.video ? '<span style="color:green; font-size:12px;">✓ Video set</span>' : ''}
+           </div>
+         `;
+            });
+            html += `<button onclick="addItem('${key}')" style="background:${color}; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; margin-top:10px;">+ Add ${title} Slot</button>`;
+            return html;
+        }
+
+        function addItem(platform) {
+            const data = getSocials();
+            data[platform].push({
+                label: 'New Item',
+                url: '',
+                video: ''
+            });
+            saveSocials(data);
+            openReelsEditor();
+        }
+
+        function removeItem(platform, index) {
+            if (!confirm("Remove this slot?")) return;
+            const data = getSocials();
+            data[platform].splice(index, 1);
+            saveSocials(data);
+            openReelsEditor();
+        }
+
+        function uploadVideo(platform, index, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Video too big! Keep under 5MB.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = getSocials();
+                data[platform][index].video = e.target.result;
+                saveSocials(data);
+                openReelsEditor();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveReels() {
+            const data = getSocials();
+            ['instagram', 'youtube', 'facebook'].forEach(platform => {
+                data[platform].forEach((item, idx) => {
+                    const labelInput = document.getElementById(`${platform}_label_${idx}`);
+                    const urlInput = document.getElementById(`${platform}_url_${idx}`);
+                    if (labelInput) item.label = labelInput.value;
+                    if (urlInput) item.url = urlInput.value;
+                });
+            });
+            saveSocials(data);
+            renderAllSocials();
+            closeReelsEditor();
+            alert("All Social Grids Updated!");
+        }
+
+        function closeReelsEditor() {
+            document.getElementById('reelsEditorModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- INITIALIZE EVERYTHING ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAllSocials();
+            checkTeamAccessForReels();
+        });
     </script>
 </body>
+
 </html>
