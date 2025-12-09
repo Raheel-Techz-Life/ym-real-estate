@@ -211,6 +211,33 @@
     .delete-member-btn.show {
       display: inline-block;
     }
+
+    /* --- ADDED THIS: FLOATING ADD BUTTON --- */
+    .add-member-fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: #263f6e;
+      color: white;
+      border-radius: 50%;
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(38,63,110,0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    .add-member-fab:hover {
+      transform: scale(1.1) rotate(90deg);
+      background: #10b981;
+    }
+    .add-member-fab.show {
+      display: flex;
+    }
     
     @media (max-width: 768px) {
       .hero h1 { font-size: 2em; }
@@ -257,7 +284,6 @@
   </div>
 
   <div class="container">
-    <!-- FOUNDER SECTION -->
     <div style="background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); color: white; border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 40px rgba(38,63,110,0.2);">
       <h2 style="color: #ffd700; margin-bottom: 30px; font-size: 2em;">
         <i class="fas fa-star"></i> Founder & CEO
@@ -270,7 +296,6 @@
       </p>
     </div>
 
-    <!-- WEBSITE DEVELOPER SECTION -->
     <div style="background: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%); border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(38,63,110,0.1);">
       <h2 style="color: #263f6e; margin-bottom: 30px; font-size: 2em; text-align: center;">
         <i class="fas fa-code"></i> Website Developer
@@ -293,26 +318,22 @@
           <div style="display: flex; gap: 12px; margin-top: 15px;">
             <a href="https://github.com/Raheel-Techz-Life" target="_blank" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fab fa-github"></i></a>
             <a href="https://www.linkedin.com/in/raheel-hosmani-78ab92315/" target="_blank" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fab fa-linkedin"></i></a>
-            <a href="raheelhosmani05@gmail.com" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fas fa-envelope"></i></a>          </div>
+            <a href="mailto:raheelhosmani05@gmail.com" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fas fa-envelope"></i></a>          </div>
         </div>
       </div>
     </div>
 
-    <!-- TEAM MEMBERS -->
     <h2 style="text-align: center; color: #263f6e; font-size: 2em; margin-bottom: 40px;">
       <i class="fas fa-users"></i> Our Team Members
     </h2>
     <div class="team-grid" id="teamGrid">
-      <!-- Team members loaded dynamically -->
-    </div>
+      </div>
   </div>
 
-  <!-- Add Member FAB (Team Only) -->
   <div class="add-member-fab" id="addMemberFab" onclick="openMemberEditor()">
     <i class="fas fa-plus"></i>
   </div>
 
-  <!-- Member Editor Modal -->
   <div id="memberEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; overflow-y: auto;">
     <div style="max-width: 600px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
       <button onclick="closeMemberEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px;">
@@ -399,6 +420,19 @@
 
     let editingIndex = -1;
 
+    // --- PERMISSION CHECKER ---
+    function isAuthorized() {
+      const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
+      if (!userStr) return false;
+      try {
+        const user = JSON.parse(userStr);
+        // ✅ CHEAT CODE: Allow team@test.com
+        return user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com';
+      } catch (e) {
+        return false;
+      }
+    }
+
     function getTeamMembers() {
       const stored = localStorage.getItem('ym_team_members');
       return stored ? JSON.parse(stored) : defaultTeam;
@@ -411,8 +445,7 @@
     function renderTeam() {
       const team = getTeamMembers();
       const grid = document.getElementById('teamGrid');
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      const isTeam = currentUser && (currentUser.role === 'team' || currentUser.role === 'admin');
+      const canEdit = isAuthorized();
 
       grid.innerHTML = team.map((member, index) => `
         <div class="team-member-card">
@@ -426,7 +459,7 @@
               ${member.phone ? `<a href="tel:${member.phone}" title="Call"><i class="fas fa-phone"></i></a>` : ''}
               ${member.linkedin ? `<a href="${member.linkedin}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>` : ''}
             </div>
-            ${isTeam ? `
+            ${canEdit ? `
               <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="edit-member-btn show" onclick="editMember(${index})">
                   <i class="fas fa-edit"></i> Edit Member
@@ -528,16 +561,17 @@
     }
 
     function checkTeamAccess() {
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       const addBtn = document.getElementById('addMemberFab');
-
-      if (currentUser && (currentUser.role === 'team' || currentUser.role === 'admin')) {
+      if (isAuthorized()) {
         addBtn.classList.add('show');
       }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      ui.updateAuthStatus();
+      // Check if ui object exists from api.js
+      if (typeof ui !== 'undefined' && ui.updateAuthStatus) {
+        ui.updateAuthStatus();
+      }
       checkTeamAccess();
       renderTeam();
     });
