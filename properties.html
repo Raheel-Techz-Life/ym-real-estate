@@ -587,7 +587,8 @@
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       const addPropertyBtn = document.getElementById('addPropertyFab');
       
-      if (currentUser && (currentUser.role === 'team' || currentUser.role === 'admin')) {
+      // ✅ TRUST TEAM@TEST.COM AUTOMATICALLY
+if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'team' || currentUser.email === 'team@test.com')) {
         addPropertyBtn.classList.add('show');
       } else {
         addPropertyBtn.classList.remove('show');
