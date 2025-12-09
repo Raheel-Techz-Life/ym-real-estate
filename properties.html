@@ -448,7 +448,7 @@
       try {
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
           ? 'http://localhost:5011/api'
-          : 'https://ym-realestate-api.onrender.com/api'; // REPLACE with your actual Render URL
+          : 'https://y-m-real-estate.onrender.com/api'; // REPLACE with your actual Render URL
         
         const response = await fetch(`${API_URL}/properties`);
         const data = await response.json();
