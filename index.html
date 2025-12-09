@@ -905,20 +905,19 @@
             }
         }
 
-        /* STATS CIRCLES */
-       /* STATS CIRCLES - FIXED */
+/* STATS CIRCLES - RESTORED ANIMATION + NO LEAKING */
     .stats-circles-section { margin: 60px 0; text-align: center; }
     
     .stats-circles { 
       display: flex; 
       justify-content: center; 
-      gap: 40px; /* Reduced gap for better mobile fit */
+      gap: 50px; 
       flex-wrap: wrap; 
     }
     
     .stat-circle {
-      width: 160px;       /* Fixed comfortable width */
-      height: 160px;      /* Fixed comfortable height */
+      width: 170px;       /* Slightly wider to fit text */
+      height: 170px;
       border-radius: 50%;
       background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
       display: flex;
@@ -927,10 +926,11 @@
       justify-content: center;
       box-shadow: 0 10px 30px rgba(38,63,110,0.3);
       position: relative;
-      padding: 10px;      /* Keeps text away from edges */
-      overflow: hidden;   /* Cuts off any "leaking" content */
+      padding: 10px;      /* Safety zone for text */
+      transition: all 0.3s ease; /* ✅ ANIMATION RESTORED */
     }
 
+    /* THE YELLOW OUTLINE */
     .stat-circle::before {
       content: ''; 
       position: absolute; 
@@ -944,17 +944,24 @@
       mask-composite: exclude;
     }
 
+    /* ✅ HOVER EFFECT RESTORED */
+    .stat-circle:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 15px 40px rgba(38,63,110,0.4);
+    }
+
     .circle-number { 
-      font-size: 2.8em;   /* Reduced from 3.5em to fit */
+      font-size: 2.8em;   /* Optimized size */
       font-weight: 700; 
       color: #ffd700; 
-      line-height: 1;     /* Tighter line height */
+      line-height: 1;
       margin-bottom: 5px;
       z-index: 2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
     .circle-label { 
-      font-size: 0.95em;  /* Reduced from 1.1em */
+      font-size: 0.95em;  
       color: #fff; 
       line-height: 1.2; 
       text-align: center;
