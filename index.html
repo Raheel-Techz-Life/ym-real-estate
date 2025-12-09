@@ -24,14 +24,11 @@
             --gradient-accent: linear-gradient(135deg, #ffd700 0%, #ffc800 100%);
         }
 
-        body {
-            background: var(--white);
-            color: var(--text-dark);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            font-family: 'Poppins', sans-serif;
-            -webkit-font-smoothing: antialiased;
+         body {
+                max-width: 100%;
+                overflow-x: hidden; /* ✂️ Cuts off the white space */
+                margin: 0;
+                padding: 0;
         }
 
         .header {
