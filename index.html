@@ -25,12 +25,17 @@
         }
 
          body {
-                max-width: 100%;
-                overflow-x: hidden; /* ✂️ Cuts off the white space */
-                margin: 0;
-                padding: 0;
-        }
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important; /* ✂️ Cuts off white space */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+*, *::before, *::after {
+  box-sizing: inherit;
+}
         .header {
             background: rgba(255, 255, 255, 0.95);
             padding: 15px 40px;
