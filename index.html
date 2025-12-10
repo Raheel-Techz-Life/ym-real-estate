@@ -1880,7 +1880,7 @@ html, body {
                     <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                     <p class="testimonial-text">"Y M Real Estate helped us find our dream home in Hubballi. Their professionalism and attention to detail made the entire process smooth and stress-free."</p>
                     <div class="testimonial-author">
-                        <img src="https://via.placeholder.com/60?text=RK" alt="Client">
+                        <img src="https://placehold.co/60?text=RK" alt="Client">
                         <div>
                             <h4>Rajesh Kumar</h4>
                             <p>Hubballi</p>
@@ -1899,7 +1899,7 @@ html, body {
                     <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                     <p class="testimonial-text">"Excellent service! Yunus and his team went above and beyond to help us sell our property at the best price. Highly recommended!"</p>
                     <div class="testimonial-author">
-                        <img src="https://via.placeholder.com/60?text=PS" alt="Client">
+                        <img src="https://placehold.co/60?text=PS" alt="Client">
                         <div>
                             <h4>Priya Sharma</h4>
                             <p>Dharwad</p>
@@ -1918,7 +1918,7 @@ html, body {
                     <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                     <p class="testimonial-text">"Very professional and trustworthy. They helped us invest in a great commercial property with excellent returns. Thank you Y M Real Estate!"</p>
                     <div class="testimonial-author">
-                        <img src="https://via.placeholder.com/60?text=AM" alt="Client">
+                        <img src="https://placehold.co/60?text=AM" alt="Client">
                         <div>
                             <h4>Arjun Mehta</h4>
                             <p>Hubballi</p>
@@ -1972,7 +1972,7 @@ html, body {
         </div>
 
         <div class="owner-section scroll-reveal reveal-scale">
-            <img class="owner-img" src="https://via.placeholder.com/110?text=Owner" alt="Owner">
+            <img class="owner-img" src="https://placehold.co/110?text=Owner" alt="Owner">
             <div class="owner-bio">
                 <b>Yunus Mulla</b>
                 <div class="owner-title">Founder & CEO</div>
@@ -2008,17 +2008,17 @@ html, body {
 
             <div class="team-members scroll-reveal-container">
                 <div class="team-card">
-                    <img src="https://via.placeholder.com/60?text=Team+1" alt="Team Member 1">
+                    <img src="https://placehold.co/60?text=Team+1" alt="Team Member 1">
                     <div class="team-name">Saif Ali Abbunavar</div>
                     <div class="team-role">Heavy Driver</div>
                 </div>
                 <div class="team-card">
-                    <img src="https://via.placeholder.com/60?text=Team+2" alt="Team Member 2">
+                    <img src="https://placehold.co/60?text=Team+2" alt="Team Member 2">
                     <div class="team-name">Nijagowda Patil</div>
                     <div class="team-role">Lead Editor</div>
                 </div>
                 <div class="team-card">
-                    <img src="https://via.placeholder.com/60?text=Team+3" alt="Team Member 3">
+                    <img src="https://placehold.co/60?text=Team+3" alt="Team Member 3">
                     <div class="team-name">Ahsan Ali</div>
                     <div class="team-role">NEET Aspirant</div>
                 </div>
@@ -2117,6 +2117,20 @@ html, body {
     <script src="js/api.js"></script>
    
     <script>
+
+        <script>
+    // ==========================================
+    // 0. GLOBAL CONFIGURATION (Add this at the top!)
+    // ==========================================
+    
+    // Determine if we are on localhost or the live server
+    const IS_LOCALHOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // Define the base URLs - used by fetchSocials and Featured Properties
+    const API_BASE = IS_LOCALHOST ? 'http://localhost:5011/api' : 'https://ym-real-estate.onrender.com/api';
+    const FEATURED_API = API_BASE; // They are the same base URL
+    
+    // ... rest of your code ...
         // ==========================================
         // 1. AUTHENTICATION & OAUTH HANDLER
         // ==========================================
