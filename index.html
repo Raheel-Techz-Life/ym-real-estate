@@ -1651,7 +1651,7 @@ html, body {
 
     
         
-       
+        
 
         /* Add Follow Button Style */
        
@@ -1667,8 +1667,8 @@ html, body {
         }
 
         /* =========================================
-     MOBILE ONLY FIXES (Desktop remains untouched)
-     ========================================= */
+      MOBILE ONLY FIXES (Desktop remains untouched)
+      ========================================= */
   @media (max-width: 768px) {
     
     /* 1. Fix the "Too Wide" Issue (Mobile Only) */
@@ -2108,7 +2108,7 @@ html, body {
 
        <footer class="footer scroll-reveal">
   <div class="footer-content">
-    
+   
     <div class="footer-col">
       <h3>Y M Real Estate</h3>
       <p>Redefining real estate with trust and transparency. We help you find not just a house, but a place to call home.</p>
@@ -2176,7 +2176,7 @@ html, body {
         </div>
     </div>
 </div>
-        <div style="max-width: 900px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
+        <div style="display:none; max-width: 900px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
             <button onclick="closeReelsEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">
                 <i class="fas fa-times"></i>
             </button>
@@ -2186,7 +2186,7 @@ html, body {
                 Manage Instagram Reels
             </h2>
 
-            <div id="reelsEditorContent" style="display: grid; gap: 20px;"></div>
+            <div id="reelsEditorContent_Backup" style="display: grid; gap: 20px;"></div>
 
             <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <button onclick="addNewReelSlot()" style="padding: 12px 25px; background: #10b981; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
@@ -2200,8 +2200,7 @@ html, body {
                 </button>
             </div>
         </div>
-    </div>
-
+    
    <button id="editReelsFab" onclick="openReelsEditor()" class="admin-fab">
     <i class="fas fa-edit"></i> Edit Reels
 </button>
@@ -2268,12 +2267,8 @@ html, body {
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // RENAMED variable to avoid conflict with api.js
-                // Detect if local or production
-const API_BASE = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5011/api/socials' 
-  : 'https://ym-real-estate.onrender.com/api/socials'; // ✅ Correct Render URL
-
+                // We use the global FEATURED_API variable defined at top
+                
                 const response = await fetch(`${FEATURED_API}/properties`);
                 const json = await response.json();
 
@@ -2347,28 +2342,43 @@ const API_BASE = window.location.hostname === 'localhost'
 let currentSocialData = defaultSocials; 
 
 async function fetchSocials() {
-  try {
-    const res = await fetch(API_BASE);
-    const data = await res.json();
-    // Update global variable
-    currentSocialData = data;
-    return data;
-  } catch (error) {
-    console.error("Could not fetch socials, using defaults", error);
-    return defaultSocials;
-  }
+    try {
+        // 1. Try to get data from server
+        const res = await fetch(`${API_BASE}/socials`); 
+        if (!res.ok) throw new Error("API not reachable");
+        
+        const serverData = await res.json();
+
+        // 2. CHECK: Is the data "empty"? 
+        // If server has no instagram links, fallback to defaults
+        if (!serverData || !serverData.instagram || serverData.instagram.length === 0) {
+            console.warn("Server data empty, using Defaults.");
+            currentSocialData = defaultSocials; 
+        } else {
+            console.log("Loaded data from Server.");
+            currentSocialData = serverData;
+        }
+    } catch (error) {
+        // 3. Fallback: If API fails/crashes, use defaults immediately
+        console.error("Fetch failed (offline?), using Defaults.");
+        currentSocialData = defaultSocials;
+    }
+    
+    // 4. Return the data so the next function can use it
+    return currentSocialData;
 }
 
 // Helper to get data synchronously from memory after initial fetch
 function getLocalSocials() {
     return currentSocialData;
 }
+function getSocials() { return getLocalSocials(); } // Wrapper for backward compatibility
 
         async function saveSocials(data) {
   try {
     const token = localStorage.getItem('token'); // Get Auth Token
     
-    const res = await fetch(API_BASE, {
+    const res = await fetch(`${API_BASE}/socials`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -2430,12 +2440,16 @@ function getLocalSocials() {
         // --- CHECK TESTER ACCESS ---
        function checkTeamAccessForReels() {
     // ...
+    const userStr = localStorage.getItem('user');
+    if(!userStr) return;
+    
+    const user = JSON.parse(userStr);
     const editBtn = document.getElementById('editReelsFab'); // <--- This is returning null
 
     // SAFETY CHECK: Add this line!
     if (!editBtn) return; 
 
-    if (user.role === 'team' || ...) {
+    if (user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com') {
          editBtn.classList.add('show');
     }
 }
@@ -2462,17 +2476,17 @@ function getLocalSocials() {
             let html = `<h3 style="color:${color}; margin-bottom:15px;"><i class="${icon}"></i> ${title}</h3>`;
             items.forEach((item, idx) => {
                 html += `
-           <div style="background:#f9f9f9; padding:15px; margin-bottom:10px; border-radius:8px; border-left:4px solid ${color};">
-               <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                 <strong>Slot ${idx + 1}</strong>
-                 <button onclick="removeItem('${key}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
-               </div>
-               <input type="text" id="${key}_label_${idx}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px; padding:8px;">
-               <input type="text" id="${key}_url_${idx}" value="${item.url}" placeholder="Link URL" style="width:100%; margin-bottom:5px; padding:8px;">
-               <input type="file" onchange="uploadVideo('${key}', ${idx}, event)" accept="video/*" style="font-size:12px;">
-               ${item.video ? '<span style="color:green; font-size:12px;">✓ Video set</span>' : ''}
-           </div>
-         `;
+            <div style="background:#f9f9f9; padding:15px; margin-bottom:10px; border-radius:8px; border-left:4px solid ${color};">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                  <strong>Slot ${idx + 1}</strong>
+                  <button onclick="removeItem('${key}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
+                </div>
+                <input type="text" id="${key}_label_${idx}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px; padding:8px;">
+                <input type="text" id="${key}_url_${idx}" value="${item.url}" placeholder="Link URL" style="width:100%; margin-bottom:5px; padding:8px;">
+                <input type="file" onchange="uploadVideo('${key}', ${idx}, event)" accept="video/*" style="font-size:12px;">
+                ${item.video ? '<span style="color:green; font-size:12px;">✓ Video set</span>' : ''}
+            </div>
+          `;
             });
             html += `<button onclick="addItem('${key}')" style="background:${color}; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; margin-top:10px;">+ Add ${title} Slot</button>`;
             return html;
@@ -2547,14 +2561,11 @@ function getLocalSocials() {
     // 3. FORCE SHOW THE BUTTON (Delete this line later!)
     const btn = document.getElementById('editReelsFab');
     if(btn) btn.classList.add('show'); 
+    
+    // 4. Also check permissions normally in case we remove line 3
+    checkTeamAccessForReels();
 });
     </script>
 </body>
 
 </html>
-
-
-
-
-
-
