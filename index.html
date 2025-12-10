@@ -2447,15 +2447,17 @@ function getLocalSocials() {
         }
 
         // --- INITIALIZE EVERYTHING ---
-        document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Fetch data from Backend
+       document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Setup Variables
+    window.currentSocialData = defaultSocials; // Start with defaults
+
+    // 2. Try to fetch real data
     await fetchSocials(); 
-    
-    // 2. Render UI with the data we just got
     renderAllSocials();
     
-    // 3. Check permissions
-    checkTeamAccessForReels();
+    // 3. FORCE SHOW THE BUTTON (Delete this line later!)
+    const btn = document.getElementById('editReelsFab');
+    if(btn) btn.classList.add('show'); 
 });
     </script>
 </body>
