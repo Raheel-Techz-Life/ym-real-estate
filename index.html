@@ -1753,6 +1753,87 @@ html, body {
       font-size: 20px;
     }
   }
+
+    /* --- 1. THE FLOATING BUTTON (FAB) --- */
+.admin-fab {
+    display: none; /* Hidden by default until JS enables it */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #E1306C; /* Instagram Color */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 9999; /* Ensure it sits on top of everything */
+    transition: transform 0.2s ease;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-fab.show {
+    display: flex; /* This makes it visible */
+}
+
+.admin-fab:hover {
+    transform: scale(1.05);
+    background-color: #C13584;
+}
+
+/* --- 2. THE MODAL (POPUP WINDOW) --- */
+.editor-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Dark overlay */
+    z-index: 10000; /* Must be higher than the button */
+    overflow-y: auto;
+}
+
+.editor-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 25px;
+    border-radius: 15px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+}
+
+.close-btn:hover { color: #000; }
+
+.save-btn {
+    width: 100%;
+    background: #00A699;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.save-btn:hover { background: #00847a; }
     </style>
 </head>
 
