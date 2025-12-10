@@ -2286,11 +2286,19 @@ function getLocalSocials() {
 }
 
         function renderAllSocials() {
-            const data = getLocalSocials();
-            renderGrid('instagramGrid', data.instagram, 'instagram', 'fa-instagram');
-            renderGrid('youtubeGrid', data.youtube, 'youtube', 'fa-youtube');
-            renderGrid('facebookGrid', data.facebook, 'facebook', 'fa-facebook-f');
-        }
+    const data = getSocials();
+
+    // SAFETY CHECK: If data is null or undefined, stop here.
+    if (!data) {
+        console.error("Data is undefined. Check your API or LocalStorage.");
+        return;
+    }
+
+    // SAFETY CHECK: Ensure the arrays exist before rendering
+    renderGrid('instagramGrid', data.instagram || [], 'instagram', 'fa-instagram');
+    renderGrid('youtubeGrid', data.youtube || [], 'youtube', 'fa-youtube');
+    renderGrid('facebookGrid', data.facebook || [], 'facebook', 'fa-facebook-f');
+}
 
         function renderGrid(elementId, items, platform, iconClass) {
             const container = document.getElementById(elementId);
@@ -2317,23 +2325,17 @@ function getLocalSocials() {
         }
 
         // --- CHECK TESTER ACCESS ---
-        function checkTeamAccessForReels() {
-            // Check both possible key names to be safe
-            const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
-            if (!userStr) return;
+       function checkTeamAccessForReels() {
+    // ...
+    const editBtn = document.getElementById('editReelsFab'); // <--- This is returning null
 
-            try {
-                const user = JSON.parse(userStr);
-                const editBtn = document.getElementById('editReelsFab');
+    // SAFETY CHECK: Add this line!
+    if (!editBtn) return; 
 
-                // ✅ CHEAT CODE: Allow team@test.com explicitly
-                if (user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com') {
-                    if (editBtn) editBtn.classList.add('show');
-                }
-            } catch (e) {
-                console.log("User parse error", e);
-            }
-        }
+    if (user.role === 'team' || ...) {
+         editBtn.classList.add('show');
+    }
+}
 
         // --- EDITOR LOGIC ---
         function openReelsEditor() {
