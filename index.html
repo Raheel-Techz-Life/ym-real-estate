@@ -2116,176 +2116,287 @@ html, body {
 
     <script src="js/api.js"></script>
    <script>
-        // 1. Point to your Real Backend
-        const FEATURED_API = window.location.hostname.includes('localhost') 
-            ? 'http://localhost:5011/api' 
-            : 'https://ym-real-estate.onrender.com/api';
-        
-        let currentSocials = { instagram: [], youtube: [], facebook: [] };
-
-        // 2. Load Data from Server on Startup
-        document.addEventListener('DOMContentLoaded', async () => {
-            // OAuth Handler
+        // ==========================================
+        // 1. AUTHENTICATION & OAUTH HANDLER
+        // ==========================================
+        (function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('auth') === 'success') {
+            const authSuccess = urlParams.get('auth');
+            const userData = urlParams.get('user');
+
+            if (authSuccess === 'success' && userData) {
                 try {
-                    const user = JSON.parse(decodeURIComponent(urlParams.get('user')));
-                    localStorage.setItem('token', user.token);
-                    delete user.token;
-                    localStorage.setItem('user', JSON.stringify(user));
+                    const user = JSON.parse(decodeURIComponent(userData));
+                    // Save using the standardized keys
+                    localStorage.setItem('token', user.token || 'google-oauth-token');
+                    // Remove token from user object before saving
+                    if (user.token) delete user.token;
+                    localStorage.setItem('user', JSON.stringify(user)); // Standard key: 'user'
+
+                    // Clean URL
                     window.history.replaceState({}, document.title, window.location.pathname);
                     window.location.reload();
-                } catch(e) {}
+                } catch (e) {
+                    console.error('OAuth error:', e);
+                }
             }
+        })();
 
-            if(typeof ui !== 'undefined') ui.updateAuthStatus();
-            
-            checkTeamAccessForReels(); 
-            await loadFeaturedProperties();
-            await loadSocialsFromDB(); // <--- LOADS FROM MONGODB
+        // ==========================================
+        // 2. SCROLL ANIMATIONS
+        // ==========================================
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.scroll-reveal, .scroll-reveal-container').forEach(el => observer.observe(el));
         });
 
-        // 3. Load Properties
-        async function loadFeaturedProperties() {
+        // ==========================================
+        // 3. FEATURED PROPERTIES LOADER
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const res = await fetch(`${FEATURED_API}/properties`);
-                const json = await res.json();
-                const props = json.data || json;
-                if(Array.isArray(props) && props.length > 0) {
-                    document.getElementById('featuredProperties').innerHTML = props.slice(0,3).map(p => `
-                        <div class="property-card" onclick="window.location.href='property-details.html?id=${p._id}'">
-                            <img src="${(p.images&&p.images[0]) || 'https://placehold.co/400x300?text=No+Image'}" alt="${p.title}">
-                            <div class="property-details">
-                                <div class="property-title">${p.title}</div>
-                                <div class="property-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
-                                <div class="property-location"><i class="fas fa-map-marker-alt"></i> ${p.address?.city || 'India'}</div>
-                            </div>
-                        </div>
-                    `).join('');
+                // RENAMED variable to avoid conflict with api.js
+                const FEATURED_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ?
+                    'http://localhost:5011/api' :
+                    'https://ym-real-estate.onrender.com/api'; // ✅ Correct Render URL
+
+                const response = await fetch(`${FEATURED_API}/properties`);
+                const json = await response.json();
+
+                // Handle data whether it comes as {data: []} or just []
+                const properties = json.data || json;
+
+                if (properties && properties.length > 0) {
+                    const container = document.getElementById('featuredProperties');
+                    container.innerHTML = properties.slice(0, 3).map(property => `
+             <div class="property-card" onclick="window.location.href='property-details.html?id=${property._id}'">
+               <img src="${property.images[0] || 'https://placehold.co/600x400?text=No+Image'}" alt="${property.title}">
+               <div class="property-details">
+                   <div class="property-title">${property.title}</div>
+                   <div class="property-price">₹${Number(property.price).toLocaleString('en-IN')}</div>
+                   <div class="property-location"><i class="fas fa-map-marker-alt"></i> ${property.address?.city || 'India'}</div>
+               </div>
+             </div>
+           `).join('');
                 }
-            } catch(e) { console.error("Props Error", e); }
+            } catch (error) {
+                console.error('Error loading featured properties:', error);
+            }
+        });
+
+        // ==========================================
+        // 4. SOCIAL MEDIA MANAGER (Insta + YT + FB)
+        // ==========================================
+
+        const defaultSocials = {
+            instagram: [{
+                    label: 'Latest Reel',
+                    url: 'https://instagram.com',
+                    video: ''
+                },
+                {
+                    label: 'Property Tour',
+                    url: 'https://instagram.com',
+                    video: ''
+                },
+                {
+                    label: 'Highlights',
+                    url: 'https://instagram.com',
+                    video: ''
+                }
+            ],
+            youtube: [{
+                    label: 'Market Update',
+                    url: 'https://youtube.com',
+                    video: ''
+                },
+                {
+                    label: 'Virtual Tour',
+                    url: 'https://youtube.com',
+                    video: ''
+                }
+            ],
+            facebook: [{
+                    label: 'Community',
+                    url: 'https://facebook.com',
+                    video: ''
+                },
+                {
+                    label: 'New Listing',
+                    url: 'https://facebook.com',
+                    video: ''
+                }
+            ]
+        };
+
+        function getSocials() {
+            const stored = localStorage.getItem('ym_social_content');
+            return stored ? JSON.parse(stored) : defaultSocials;
         }
 
-        // 4. Load Socials from MongoDB (GET)
-        async function loadSocialsFromDB() {
-            try {
-                const res = await fetch(`${FEATURED_API}/socials`);
-                const data = await res.json();
-                if(data) {
-                    currentSocials = data;
-                    renderAllSocials();
-                }
-            } catch(e) { console.error("Socials Error", e); }
+        function saveSocials(data) {
+            localStorage.setItem('ym_social_content', JSON.stringify(data));
         }
 
         function renderAllSocials() {
-            renderGrid('instagramGrid', currentSocials.instagram, 'fa-instagram');
-            renderGrid('youtubeGrid', currentSocials.youtube, 'fa-youtube');
-            renderGrid('facebookGrid', currentSocials.facebook, 'fa-facebook');
+            const data = getSocials();
+            renderGrid('instagramGrid', data.instagram, 'instagram', 'fa-instagram');
+            renderGrid('youtubeGrid', data.youtube, 'youtube', 'fa-youtube');
+            renderGrid('facebookGrid', data.facebook, 'facebook', 'fa-facebook-f');
         }
 
-        function renderGrid(id, items, icon) {
-            const el = document.getElementById(id);
-            if(!el) return;
-            if(!items || !items.length) { el.innerHTML = ''; return; }
-            el.innerHTML = items.map(item => `
-                <a href="${item.url||'#'}" target="_blank" class="insta-card">
-                   ${item.video ? `<video src="${item.video}" class="insta-card-video" autoplay loop muted playsinline></video>` : 
-                   `<div class="insta-placeholder"><i class="fab ${icon}"></i><p>${item.label}</p></div>`}
-                </a>
-            `).join('');
+        function renderGrid(elementId, items, platform, iconClass) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+
+            container.innerHTML = items.map((item) => `
+         <a href="${item.url}" target="_blank" class="insta-card">
+           ${item.video ? `
+             <video class="insta-card-video" autoplay loop muted playsinline>
+               <source src="${item.video}" type="video/mp4">
+             </video>
+             <div class="insta-card-overlay">
+               <span class="insta-overlay-text"><i class="fab ${iconClass}"></i> ${item.label}</span>
+             </div>
+           ` : `
+             <div class="insta-card-overlay" style="opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
+             <div class="insta-placeholder">
+               <i class="fab ${iconClass}" style="margin-bottom:10px;"></i>
+               <p>${item.label}</p>
+             </div>
+           `}
+         </a>
+       `).join('');
         }
 
-        // 5. Save to MongoDB (POST)
-        async function saveReels() {
-            const token = localStorage.getItem('token');
-            if(!token) return alert("Login required.");
-
-            // Update local object from inputs
-            ['instagram','youtube','facebook'].forEach(k => {
-                if(!currentSocials[k]) currentSocials[k] = [];
-                currentSocials[k].forEach((item, i) => {
-                    const l = document.getElementById(`${k}_l_${i}`);
-                    const u = document.getElementById(`${k}_u_${i}`);
-                    if(l) item.label = l.value;
-                    if(u) item.url = u.value;
-                });
-            });
+        // --- CHECK TESTER ACCESS ---
+        function checkTeamAccessForReels() {
+            // Check both possible key names to be safe
+            const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
+            if (!userStr) return;
 
             try {
-                // 👇 This sends data to the server
-                const res = await fetch(`${FEATURED_API}/socials`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(currentSocials)
-                });
-                if(!res.ok) throw new Error("Failed");
-                alert("Saved to Database!");
-                closeReelsEditor();
-                renderAllSocials();
-            } catch(e) { alert("Error saving to database."); }
-        }
+                const user = JSON.parse(userStr);
+                const editBtn = document.getElementById('editReelsFab');
 
-        function openReelsEditor() {
-            const c = document.getElementById('reelsEditorContent');
-            c.innerHTML = `
-                ${makeSec('Instagram', currentSocials.instagram, 'instagram', '#e1306c')}
-                ${makeSec('YouTube', currentSocials.youtube, 'youtube', '#ff0000')}
-                ${makeSec('Facebook', currentSocials.facebook, 'facebook', '#1877f2')}
-            `;
-            document.getElementById('reelsEditorModal').style.display = 'block';
-        }
-
-        function makeSec(title, items, key, color) {
-            let h = `<h3 style="color:${color}">${title}</h3>`;
-            if(!items) items = [];
-            items.forEach((item, i) => {
-                h += `<div style="background:#f9f9f9; padding:10px; margin-bottom:10px; border-left:3px solid ${color};">
-                    <input id="${key}_l_${i}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px;">
-                    <input id="${key}_u_${i}" value="${item.url}" placeholder="URL" style="width:100%; margin-bottom:5px;">
-                    <input type="file" onchange="upVid('${key}', ${i}, event)">
-                    ${item.video ? '<span style="color:green">✓ Video</span>' : ''}
-                    <button onclick="rmItem('${key}', ${i})" style="color:red; margin-left:10px;">Remove</button>
-                </div>`;
-            });
-            h += `<button onclick="addItem('${key}')" style="background:${color}; color:white; padding:5px 10px; border:none; border-radius:5px;">+ Add Slot</button><hr>`;
-            return h;
-        }
-
-        function addItem(key) {
-            if(!currentSocials[key]) currentSocials[key] = [];
-            currentSocials[key].push({label:'New', url:'', video:''});
-            openReelsEditor();
-        }
-
-        function rmItem(key, idx) {
-            currentSocials[key].splice(idx, 1);
-            openReelsEditor();
-        }
-
-        function upVid(key, idx, e) {
-            const f = e.target.files[0];
-            if(f.size > 5*1024*1024) return alert("Max 5MB");
-            const r = new FileReader();
-            r.onload = ev => { currentSocials[key][idx].video = ev.target.result; openReelsEditor(); };
-            r.readAsDataURL(f);
-        }
-
-        function addNewReelSlot() { addItem('instagram'); }
-        function closeReelsEditor() { document.getElementById('reelsEditorModal').style.display = 'none'; }
-
-        // ✅ CHECK ACCESS FUNCTION
-        function checkTeamAccessForReels() {
-            const u = localStorage.getItem('user');
-            if(!u) return;
-            const user = JSON.parse(u);
-            const email = user.email ? user.email.toLowerCase() : '';
-            
-            if(email === 'team@test.com' || user.role === 'admin' || user.role === 'team') {
-                const btn = document.getElementById('editReelsFab');
-                if(btn) btn.classList.add('show');
+                // ✅ CHEAT CODE: Allow team@test.com explicitly
+                if (user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com') {
+                    if (editBtn) editBtn.classList.add('show');
+                }
+            } catch (e) {
+                console.log("User parse error", e);
             }
         }
+
+        // --- EDITOR LOGIC ---
+        function openReelsEditor() {
+            const data = getSocials();
+            const modal = document.getElementById('reelsEditorModal');
+            const content = document.getElementById('reelsEditorContent');
+
+            content.innerHTML = `
+         ${generateEditorSection('Instagram', data.instagram, 'instagram', 'fab fa-instagram', '#e1306c')}
+         <hr style="margin: 30px 0; border: 1px solid #eee;">
+         ${generateEditorSection('YouTube', data.youtube, 'youtube', 'fab fa-youtube', '#FF0000')}
+         <hr style="margin: 30px 0; border: 1px solid #eee;">
+         ${generateEditorSection('Facebook', data.facebook, 'facebook', 'fab fa-facebook', '#1877F2')}
+       `;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function generateEditorSection(title, items, key, icon, color) {
+            let html = `<h3 style="color:${color}; margin-bottom:15px;"><i class="${icon}"></i> ${title}</h3>`;
+            items.forEach((item, idx) => {
+                html += `
+           <div style="background:#f9f9f9; padding:15px; margin-bottom:10px; border-radius:8px; border-left:4px solid ${color};">
+               <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                 <strong>Slot ${idx + 1}</strong>
+                 <button onclick="removeItem('${key}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
+               </div>
+               <input type="text" id="${key}_label_${idx}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px; padding:8px;">
+               <input type="text" id="${key}_url_${idx}" value="${item.url}" placeholder="Link URL" style="width:100%; margin-bottom:5px; padding:8px;">
+               <input type="file" onchange="uploadVideo('${key}', ${idx}, event)" accept="video/*" style="font-size:12px;">
+               ${item.video ? '<span style="color:green; font-size:12px;">✓ Video set</span>' : ''}
+           </div>
+         `;
+            });
+            html += `<button onclick="addItem('${key}')" style="background:${color}; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; margin-top:10px;">+ Add ${title} Slot</button>`;
+            return html;
+        }
+
+        function addItem(platform) {
+            const data = getSocials();
+            data[platform].push({
+                label: 'New Item',
+                url: '',
+                video: ''
+            });
+            saveSocials(data);
+            openReelsEditor();
+        }
+
+        function removeItem(platform, index) {
+            if (!confirm("Remove this slot?")) return;
+            const data = getSocials();
+            data[platform].splice(index, 1);
+            saveSocials(data);
+            openReelsEditor();
+        }
+
+        function uploadVideo(platform, index, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Video too big! Keep under 5MB.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = getSocials();
+                data[platform][index].video = e.target.result;
+                saveSocials(data);
+                openReelsEditor();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveReels() {
+            const data = getSocials();
+            ['instagram', 'youtube', 'facebook'].forEach(platform => {
+                data[platform].forEach((item, idx) => {
+                    const labelInput = document.getElementById(`${platform}_label_${idx}`);
+                    const urlInput = document.getElementById(`${platform}_url_${idx}`);
+                    if (labelInput) item.label = labelInput.value;
+                    if (urlInput) item.url = urlInput.value;
+                });
+            });
+            saveSocials(data);
+            renderAllSocials();
+            closeReelsEditor();
+            alert("All Social Grids Updated!");
+        } 
+
+        function closeReelsEditor() {
+            document.getElementById('reelsEditorModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- INITIALIZE EVERYTHING ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAllSocials();
+            checkTeamAccessForReels();
+        });
     </script>
 </body>
 
