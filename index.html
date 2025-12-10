@@ -25,17 +25,17 @@
         }
 
        /* --- 1. STRICT OVERFLOW RESET --- */
-        html, body {
-          width: 100%;
-          max-width: 100%;
-          overflow-x: hidden !important; /* ✂️ Cuts off white space */
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important; /* ✂️ Cuts off white space */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
         *, *::before, *::after {
-          box-sizing: inherited;
-        }
+  box-sizing: inherited;
+}
 
 
        /* --- HEADER FIX --- */
@@ -1302,7 +1302,72 @@
             }
         }
 
-/* --- PREMIUM FOOTER DESIGN --- */
+ /* Floating Edit Reels Button - Only for Team Members */
+        .edit-reels-fab {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: linear-gradient(135deg, #e1306c, #c13584); color: white;
+            border-radius: 50%; display: none; /* JS toggles this */
+            align-items: center; justify-content: center;
+            font-size: 22px; box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+            cursor: pointer; z-index: 9999; border: 3px solid #fff;
+        }
+
+        .edit-reels-fab:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 30px rgba(225, 48, 108, 0.6);
+        }
+
+        .edit-reels-fab.show { display: flex !important; }
+
+        @keyframes pulseInstagram {
+            0%,
+            100% {
+                box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 4px 30px rgba(193, 53, 132, 0.6);
+            }
+        }
+
+        /* Tooltip for the button */
+        .edit-reels-fab::before {
+            content: 'Edit Instagram Reels';
+            position: absolute;
+            right: 70px;
+            background: #263f6e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-reels-fab:hover::before {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .edit-reels-fab {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+                bottom: 80px;
+                right: 20px;
+            }
+
+            .edit-reels-fab::before {
+                display: none;
+            }
+        }
+
+        
+        /* --- PREMIUM FOOTER DESIGN --- */
 .footer {
   background-color: #0f172a; /* Deep, dark blue */
   color: #94a3b8; /* Soft grey text */
@@ -1689,56 +1754,37 @@
     }
   }
 
-/* --- EYE-CATCHING EDIT REELS BUTTON & MODAL FIX --- */
-
-/* 1. The Floating Button (Enhanced Style) */
+    /* --- 1. THE FLOATING BUTTON (FAB) --- */
 .admin-fab {
-    display: none; /* Hidden until JS activates it */
+    display: none; /* Hidden by default until JS enables it */
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); /* Instagram Gradient */
-    background-size: 200% 200%;
+    background-color: #E1306C; /* Instagram Color */
     color: white;
-    border: 3px solid white;
+    border: none;
     border-radius: 50px;
-    padding: 15px 30px;
+    padding: 15px 25px;
     font-size: 16px;
-    font-weight: 700;
-    box-shadow: 0 10px 25px rgba(220, 39, 67, 0.5);
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     cursor: pointer;
-    z-index: 10000; /* Ensure it sits on top */
+    z-index: 9999; /* Ensure it sits on top of everything */
+    transition: transform 0.2s ease;
     align-items: center;
-    gap: 12px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: gradientShift 5s ease infinite, floatBtn 3s ease-in-out infinite;
+    gap: 10px;
 }
 
-/* Force visible when class 'show' is added */
 .admin-fab.show {
-    display: flex !important;
+    display: flex; /* This makes it visible */
 }
 
-/* Hover Effect */
 .admin-fab:hover {
-    transform: scale(1.1) translateY(-5px);
-    box-shadow: 0 15px 35px rgba(220, 39, 67, 0.6);
+    transform: scale(1.05);
+    background-color: #C13584;
 }
 
-/* Button Animations */
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-@keyframes floatBtn {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-/* 2. The Modal Background (Dark Overlay) */
+/* --- 2. THE MODAL (POPUP WINDOW) --- */
 .editor-modal {
     display: none; /* Hidden by default */
     position: fixed;
@@ -1746,433 +1792,421 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
-    backdrop-filter: blur(5px); /* Modern blur effect */
-    z-index: 10001; /* Higher than button */
+    background-color: rgba(0, 0, 0, 0.85); /* Dark overlay */
+    z-index: 10000; /* Must be higher than the button */
     overflow-y: auto;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 50px;
 }
 
-/* 3. The Modal Content Box */
 .editor-content {
     background: white;
     width: 90%;
-    max-width: 650px;
-    margin: 0 auto 50px;
-    padding: 40px;
-    border-radius: 20px;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 25px;
+    border-radius: 15px;
     position: relative;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    animation: slideDown 0.3s ease-out;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 4. Close Button */
 .close-btn {
     position: absolute;
-    top: 20px;
-    right: 25px;
+    top: 15px;
+    right: 20px;
     font-size: 28px;
-    color: #999;
+    font-weight: bold;
+    color: #666;
     cursor: pointer;
-    transition: color 0.2s;
-    line-height: 1;
 }
 
-.close-btn:hover { color: #dc2626; }
+.close-btn:hover { color: #000; }
 
-/* 5. Save Button Inside Modal */
 .save-btn {
     width: 100%;
-    background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
+    background: #00A699;
     color: white;
-    padding: 15px;
+    padding: 12px;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: bold;
     cursor: pointer;
-    margin-top: 25px;
-    transition: transform 0.2s;
+    margin-top: 20px;
 }
 
-.save-btn:hover { transform: scale(1.02); }
-    </style>
+.save-btn:hover { background: #00847a; }
+    </style>
 </head>
 
 <body>
-    <div class="header">
-        <a href="index.html" class="logo-area" style="text-decoration: none;">
-            <img src="ymr.jpg" alt="Y" class="logo-img">
-            <span style="font-size: 1.4em; font-weight: bold; color: #263f6e; margin-left: 15px;">Y M REAL ESTATE</span>
-        </a>
-        <div class="nav">
-            <a href="/properties">View Properties</a>
-            <a href="/team">Our Team</a>
-            <a href="/login" id="navLoginLink">Login / Signup</a>
-            <a href="/contact">Contact Us</a>
-        </div>
-        <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 10px; margin-left: auto;">
-            <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #666;">
-            <span id="userName" style="color: #666; font-weight: 500; white-space: nowrap;"></span>
-            <button onclick="api.logout()" style="padding: 8px 16px; background: #f0f0f0; color: #666; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.3s; font-weight: 500; white-space: nowrap;">Logout</button>
-        </div>
-    </div>
+    <div class="header">
+        <a href="index.html" class="logo-area" style="text-decoration: none;">
+            <img src="ymr.jpg" alt="Y" class="logo-img">
+            <span style="font-size: 1.4em; font-weight: bold; color: #263f6e; margin-left: 15px;">Y M REAL ESTATE</span>
+        </a>
+        <div class="nav">
+            <a href="/properties">View Properties</a>
+            <a href="/team">Our Team</a>
+            <a href="/login" id="navLoginLink">Login / Signup</a>
+            <a href="/contact">Contact Us</a>
+        </div>
+        <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 10px; margin-left: auto;">
+            <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #666;">
+            <span id="userName" style="color: #666; font-weight: 500; white-space: nowrap;"></span>
+            <button onclick="api.logout()" style="padding: 8px 16px; background: #f0f0f0; color: #666; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.3s; font-weight: 500; white-space: nowrap;">Logout</button>
+        </div>
+    </div>
 
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1>Your Dream Home Awaits</h1>
-            <p>Discover exceptional properties with India's most trusted real estate partner</p>
-            <a href="properties.html" class="cta-button">Explore Properties</a>
-        </div>
-    </div>
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Your Dream Home Awaits</h1>
+            <p>Discover exceptional properties with India's most trusted real estate partner</p>
+            <a href="properties.html" class="cta-button">Explore Properties</a>
+        </div>
+    </div>
 
-    <div class="main-container">
-        <div class="intro-section scroll-reveal">
-            <h2>Welcome to Y M Real Estate</h2>
-            <div class="text">
-                <p>At <b>Y M Real Estate</b>, we’re redefining the real estate experience with a focus on trust, transparency, and personalized service. Whether you’re buying, selling, or investing, our goal is to help you make confident decisions backed by local expertise and market insight. </p>
-                <p>We specialize in connecting clients with properties that perfectly match their goals — from dream homes and prime commercial spaces to profitable investments. With a commitment to professionalism and integrity, we aim to make every real estate journey smooth, informed, and rewarding.
-                </p>
-                <p>Your vision is our mission — and we're here to turn it into reality.</p>
-            </div>
-        </div>
+    <div class="main-container">
+        <div class="intro-section scroll-reveal">
+            <h2>Welcome to Y M Real Estate</h2>
+            <div class="text">
+                <p>At <b>Y M Real Estate</b>, we’re redefining the real estate experience with a focus on trust, transparency, and personalized service. Whether you’re buying, selling, or investing, our goal is to help you make confident decisions backed by local expertise and market insight. </p>
+                <p>We specialize in connecting clients with properties that perfectly match their goals — from dream homes and prime commercial spaces to profitable investments. With a commitment to professionalism and integrity, we aim to make every real estate journey smooth, informed, and rewarding.
+                </p>
+                <p>Your vision is our mission — and we're here to turn it into reality.</p>
+            </div>
+        </div>
 
-        <div class="stats-circles-section scroll-reveal">
-            <div class="stats-circles scroll-reveal-container">
-                <div class="stat-circle">
-                    <div class="circle-number">6</div>
-                    <div class="circle-label">Completed
-                        Projects</div>
-                </div>
-                <div class="stat-circle">
-                    <div class="circle-number">8</div>
-                    <div class="circle-label">Upcoming
-                        Projects</div>
-                </div>
-                <div class="stat-circle">
-                    <div class="circle-number">02+</div>
-                    <div class="circle-label">Cities</div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <div class="stats-circles-section scroll-reveal">
+            <div class="stats-circles scroll-reveal-container">
+                <div class="stat-circle">
+                    <div class="circle-number">6</div>
+                    <div class="circle-label">Completed
+                        Projects</div>
+                </div>
+                <div class="stat-circle">
+                    <div class="circle-number">8</div>
+                    <div class="circle-label">Upcoming
+                        Projects</div>
+                </div>
+                <div class="stat-circle">
+                    <div class="circle-number">02+</div>
+                    <div class="circle-label">Cities</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div class="properties-section scroll-reveal">
-        <a href="properties.html" class="properties-link">
-            <h2>
-                <span class="arrow" aria-hidden="true">➜</span>
-                Featured Properties
-            </h2>
-        </a>
-        <div class="properties-row" id="featuredProperties">
-            </div>
-    </div>
-    <div class="main-container">
-        <div class="core-values-section scroll-reveal">
-            <h2 class="section-title">Our Core Principles</h2>
-            <div class="values-grid scroll-reveal-container">
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-gem"></i>
-                    </div>
-                    <h3>Values</h3>
-                    <p>Trust, transparency, and integrity in every transaction. We build lasting relationships based on honesty and ethical practices.</p>
-                </div>
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <h3>Vision</h3>
-                    <p>To be the most trusted real estate partner in India, transforming the property buying experience through innovation and excellence.</p>
-                </div>
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <h3>Mission</h3>
-                    <p>Connecting people with their dream properties while providing exceptional service and creating lasting value for our clients.</p>
-                </div>
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3>Passion</h3>
-                    <p>We are passionate about real estate and dedicated to helping you find the perfect property that matches your aspirations.</p>
-                </div>
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Performance</h3>
-                    <p>Delivering results that exceed expectations through market expertise, dedication, and commitment to excellence.</p>
-                </div>
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h3>Trust</h3>
-                    <p>Building long-term relationships through reliability and consistent delivery of promises. Your trust is our foundation.</p>
-                </div>
-            </div>
-        </div>
+    <div class="properties-section scroll-reveal">
+        <a href="properties.html" class="properties-link">
+            <h2>
+                <span class="arrow" aria-hidden="true">➜</span>
+                Featured Properties
+            </h2>
+        </a>
+        <div class="properties-row" id="featuredProperties">
+            </div>
+    </div>
+    <div class="main-container">
+        <div class="core-values-section scroll-reveal">
+            <h2 class="section-title">Our Core Principles</h2>
+            <div class="values-grid scroll-reveal-container">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Values</h3>
+                    <p>Trust, transparency, and integrity in every transaction. We build lasting relationships based on honesty and ethical practices.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Vision</h3>
+                    <p>To be the most trusted real estate partner in India, transforming the property buying experience through innovation and excellence.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Mission</h3>
+                    <p>Connecting people with their dream properties while providing exceptional service and creating lasting value for our clients.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Passion</h3>
+                    <p>We are passionate about real estate and dedicated to helping you find the perfect property that matches your aspirations.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Performance</h3>
+                    <p>Delivering results that exceed expectations through market expertise, dedication, and commitment to excellence.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Trust</h3>
+                    <p>Building long-term relationships through reliability and consistent delivery of promises. Your trust is our foundation.</p>
+                </div>
+            </div>
+        </div>
 
-        <div class="testimonials-section scroll-reveal">
-            <h2 class="section-title">What Our Clients Say</h2>
-            <div class="testimonials-grid scroll-reveal-container">
-                <div class="testimonial-card">
-                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                    <p class="testimonial-text">"Y M Real Estate helped us find our dream home in Hubballi. Their professionalism and attention to detail made the entire process smooth and stress-free."</p>
-                    <div class="testimonial-author">
-                        <img src="https://placehold.co/60?text=RK" alt="Client">
-                        <div>
-                            <h4>Rajesh Kumar</h4>
-                            <p>Hubballi</p>
-                        </div>
-                    </div>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
+        <div class="testimonials-section scroll-reveal">
+            <h2 class="section-title">What Our Clients Say</h2>
+            <div class="testimonials-grid scroll-reveal-container">
+                <div class="testimonial-card">
+                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                    <p class="testimonial-text">"Y M Real Estate helped us find our dream home in Hubballi. Their professionalism and attention to detail made the entire process smooth and stress-free."</p>
+                    <div class="testimonial-author">
+                        <img src="https://placehold.co/60?text=RK" alt="Client">
+                        <div>
+                            <h4>Rajesh Kumar</h4>
+                            <p>Hubballi</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
 
-                <div class="testimonial-card">
-                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                    <p class="testimonial-text">"Excellent service! Yunus and his team went above and beyond to help us sell our property at the best price. Highly recommended!"</p>
-                    <div class="testimonial-author">
-                        <img src="https://placehold.co/60?text=PS" alt="Client">
-                        <div>
-                            <h4>Priya Sharma</h4>
-                            <p>Dharwad</p>
-                        </div>
-                    </div>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
+                <div class="testimonial-card">
+                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                    <p class="testimonial-text">"Excellent service! Yunus and his team went above and beyond to help us sell our property at the best price. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://placehold.co/60?text=PS" alt="Client">
+                        <div>
+                            <h4>Priya Sharma</h4>
+                            <p>Dharwad</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
 
-                <div class="testimonial-card">
-                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                    <p class="testimonial-text">"Very professional and trustworthy. They helped us invest in a great commercial property with excellent returns. Thank you Y M Real Estate!"</p>
-                    <div class="testimonial-author">
-                        <img src="https://placehold.co/60?text=AM" alt="Client">
-                        <div>
-                            <h4>Arjun Mehta</h4>
-                            <p>Hubballi</p>
-                        </div>
-                    </div>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <div class="testimonial-card">
+                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                    <p class="testimonial-text">"Very professional and trustworthy. They helped us invest in a great commercial property with excellent returns. Thank you Y M Real Estate!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://placehold.co/60?text=AM" alt="Client">
+                        <div>
+                            <h4>Arjun Mehta</h4>
+                            <p>Hubballi</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="instagram-section scroll-reveal">
-            <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram Reels</h2>
-            <p style="text-align: center; color: #666; margin-bottom: 30px;">Latest property tours and updates</p>
-            <div class="instagram-grid scroll-reveal-container" id="instagramGrid">
-            </div>
-            <div style="text-align:center; margin-top:20px;">
-                <a href="https://www.instagram.com/y.m_real.estate/" target="_blank" class="follow-btn" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
-                    Follow on Instagram
-                </a>
-            </div>
-        </div>
+        <div class="instagram-section scroll-reveal">
+            <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram Reels</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Latest property tours and updates</p>
+            <div class="instagram-grid scroll-reveal-container" id="instagramGrid">
+            </div>
+            <div style="text-align:center; margin-top:20px;">
+                <a href="https://www.instagram.com/y.m_real.estate/" target="_blank" class="follow-btn" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
+                    Follow on Instagram
+                </a>
+            </div>
+        </div>
 
-        <div class="instagram-section scroll-reveal" style="background: #fff0f0;">
-            <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-youtube" style="color:#FF0000"></i> YouTube Channel</h2>
-            <p style="text-align: center; color: #666; margin-bottom: 30px;">Full walkthroughs and market analysis</p>
-            <div class="instagram-grid scroll-reveal-container" id="youtubeGrid">
-            </div>
-            <div style="text-align:center; margin-top:20px;">
-                <a href="https://youtube.com" target="_blank" class="follow-btn" style="background: #FF0000;">
-                    Subscribe on YouTube
-                </a>
-            </div>
-        </div>
+        <div class="instagram-section scroll-reveal" style="background: #fff0f0;">
+            <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-youtube" style="color:#FF0000"></i> YouTube Channel</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Full walkthroughs and market analysis</p>
+            <div class="instagram-grid scroll-reveal-container" id="youtubeGrid">
+            </div>
+            <div style="text-align:center; margin-top:20px;">
+                <a href="https://youtube.com" target="_blank" class="follow-btn" style="background: #FF0000;">
+                    Subscribe on YouTube
+                </a>
+            </div>
+        </div>
 
-        <div class="instagram-section scroll-reveal" style="background: #f0f6ff;">
-            <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook Posts</h2>
-            <p style="text-align: center; color: #666; margin-bottom: 30px;">Community updates and news</p>
-            <div class="instagram-grid scroll-reveal-container" id="facebookGrid">
-            </div>
-            <div style="text-align:center; margin-top:20px;">
-                <a href="https://facebook.com" target="_blank" class="follow-btn" style="background: #1877F2;">
-                    Like us on Facebook
-                </a>
-            </div>
-        </div>
+        <div class="instagram-section scroll-reveal" style="background: #f0f6ff;">
+            <h2 class="section-title" style="margin-bottom: 20px;"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook Posts</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Community updates and news</p>
+            <div class="instagram-grid scroll-reveal-container" id="facebookGrid">
+            </div>
+            <div style="text-align:center; margin-top:20px;">
+                <a href="https://facebook.com" target="_blank" class="follow-btn" style="background: #1877F2;">
+                    Like us on Facebook
+                </a>
+            </div>
+        </div>
 
-        <div class="owner-section scroll-reveal reveal-scale">
-            <img class="owner-img" src="https://placehold.co/110?text=Owner" alt="Owner">
-            <div class="owner-bio">
-                <b>Yunus Mulla</b>
-                <div class="owner-title">Founder & CEO</div>
-                <span>"Passionate about helping you unlock your dream property and creating lasting value for our clients."</span>
-            </div>
-        </div>
+        <div class="owner-section scroll-reveal reveal-scale">
+            <img class="owner-img" src="https://placehold.co/110?text=Owner" alt="Owner">
+            <div class="owner-bio">
+                <b>Yunus Mulla</b>
+                <div class="owner-title">Founder & CEO</div>
+                <span>"Passionate about helping you unlock your dream property and creating lasting value for our clients."</span>
+            </div>
+        </div>
 
-        <div class="developer-section-compact scroll-reveal">
-            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
-                <h3 style="color: #263f6e; font-size: 1.5em; margin-bottom: 15px;">
-                    <i class="fas fa-code"></i> Website Developer
-                </h3>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(38,63,110,0.1);">
-                    <img src="meeee.png" alt="Developer" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ffd700;">
-                    <div style="text-align: left;">
-                        <h4 style="color: #263f6e; margin: 0 0 5px 0; font-size: 1.2em;">Raheel Hosmani</h4>
-                        <p style="color: #666; margin: 0 0 10px 0; font-size: 0.9em;">Full Stack Developer</p>
-                        <div style="display: flex; gap: 10px;">
-                            <a href="https://github.com/Raheel-Techz-Life" target="_blank" style="color: #263f6e; font-size: 1.2em;"><i class="fab fa-github"></i></a>
-                            <a href="https://linkedin.com/in/raheel-hosmani-78ab92315" target="_blank" style="color: #263f6e; font-size: 1.2em;"><i class="fab fa-linkedin"></i></a>
-                            <a href="raheelhosmani05@gmail.com" style="color: #263f6e; font-size: 1.2em;"><i class="fas fa-envelope"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="developer-section-compact scroll-reveal">
+            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <h3 style="color: #263f6e; font-size: 1.5em; margin-bottom: 15px;">
+                    <i class="fas fa-code"></i> Website Developer
+                </h3>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(38,63,110,0.1);">
+                    <img src="meeee.png" alt="Developer" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ffd700;">
+                    <div style="text-align: left;">
+                        <h4 style="color: #263f6e; margin: 0 0 5px 0; font-size: 1.2em;">Raheel Hosmani</h4>
+                        <p style="color: #666; margin: 0 0 10px 0; font-size: 0.9em;">Full Stack Developer</p>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="https://github.com/Raheel-Techz-Life" target="_blank" style="color: #263f6e; font-size: 1.2em;"><i class="fab fa-github"></i></a>
+                            <a href="https://linkedin.com/in/raheel-hosmani-78ab92315" target="_blank" style="color: #263f6e; font-size: 1.2em;"><i class="fab fa-linkedin"></i></a>
+                            <a href="raheelhosmani05@gmail.com" style="color: #263f6e; font-size: 1.2em;"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="team-section scroll-reveal">
-            <div class="team-title">Meet Our Team</div>
-            <p style="text-align: center; color: #666; margin-bottom: 40px;">
-                Dedicated professionals committed to your real estate success
-            </p>
+        <div class="team-section scroll-reveal">
+            <div class="team-title">Meet Our Team</div>
+            <p style="text-align: center; color: #666; margin-bottom: 40px;">
+                Dedicated professionals committed to your real estate success
+            </p>
 
-            <div class="team-members scroll-reveal-container">
-                <div class="team-card">
-                    <img src="https://placehold.co/60?text=Team+1" alt="Team Member 1">
-                    <div class="team-name">Saif Ali Abbunavar</div>
-                    <div class="team-role">Heavy Driver</div>
-                </div>
-                <div class="team-card">
-                    <img src="https://placehold.co/60?text=Team+2" alt="Team Member 2">
-                    <div class="team-name">Nijagowda Patil</div>
-                    <div class="team-role">Lead Editor</div>
-                </div>
-                <div class="team-card">
-                    <img src="https://placehold.co/60?text=Team+3" alt="Team Member 3">
-                    <div class="team-name">Ahsan Ali</div>
-                    <div class="team-role">NEET Aspirant</div>
-                </div>
-            </div>
-        </div>
+            <div class="team-members scroll-reveal-container">
+                <div class="team-card">
+                    <img src="https://placehold.co/60?text=Team+1" alt="Team Member 1">
+                    <div class="team-name">Saif Ali Abbunavar</div>
+                    <div class="team-role">Heavy Driver</div>
+                </div>
+                <div class="team-card">
+                    <img src="https://placehold.co/60?text=Team+2" alt="Team Member 2">
+                    <div class="team-name">Nijagowda Patil</div>
+                    <div class="team-role">Lead Editor</div>
+                </div>
+                <div class="team-card">
+                    <img src="https://placehold.co/60?text=Team+3" alt="Team Member 3">
+                    <div class="team-name">Ahsan Ali</div>
+                    <div class="team-role">NEET Aspirant</div>
+                </div>
+            </div>
+        </div>
 
-       <footer class="footer scroll-reveal">
-  <div class="footer-content">
-   
-    <div class="footer-col">
-      <h3>Y M Real Estate</h3>
-      <p>Redefining real estate with trust and transparency. We help you find not just a house, but a place to call home.</p>
-      <div class="footer-social">
-        <a href="https://instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
-        <a href="https://facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://youtube.com" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
-        <a href="https://linkedin.com" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-      </div>
-      
-    </div>
+       <footer class="footer scroll-reveal">
+  <div class="footer-content">
+   
+    <div class="footer-col">
+      <h3>Y M Real Estate</h3>
+      <p>Redefining real estate with trust and transparency. We help you find not just a house, but a place to call home.</p>
+      <div class="footer-social">
+        <a href="https://instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="https://facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://youtube.com" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+        <a href="https://linkedin.com" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
 
-    <div class="footer-col">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="properties.html">Featured Properties</a></li>
-        <li><a href="team.html">Meet the Team</a></li>
-        <li><a href="contact.html">Contact Support</a></li>
-      </ul>
-    </div>
+    <div class="footer-col">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="properties.html">Featured Properties</a></li>
+        <li><a href="team.html">Meet the Team</a></li>
+        <li><a href="contact.html">Contact Support</a></li>
+      </ul>
+    </div>
 
-    <div class="footer-col">
-      <h3>Information</h3>
-      <ul>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms of Service</a></li>
-        <li><a href="login.html">Admin Login</a></li>
-        <li><a href="#">Sitemap</a></li>
-      </ul>
-    </div>
+    <div class="footer-col">
+      <h3>Information</h3>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="login.html">Admin Login</a></li>
+        <li><a href="#">Sitemap</a></li>
+      </ul>
+    </div>
 
-    <div class="footer-col">
-      <h3>Get in Touch</h3>
-      <div class="contact-item">
-        <i class="fas fa-map-marker-alt"></i>
-        <span>Hubballi, Karnataka, India<br>580020</span>
-      </div>
-      <div class="contact-item">
-        <i class="fas fa-phone-alt"></i>
-        <span>+91 77958 11097</span>
-      </div>
-      <div class="contact-item">
-        <i class="fas fa-envelope"></i>
-        <span>info@ymrealestate.com</span>
-      </div>
-    </div>
+    <div class="footer-col">
+      <h3>Get in Touch</h3>
+      <div class="contact-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Hubballi, Karnataka, India<br>580020</span>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-phone-alt"></i>
+        <span>+91 77958 11097</span>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <span>info@ymrealestate.com</span>
+      </div>
+    </div>
 
-  </div>
+  </div>
 
-  <div class="footer-bottom">
-    <p>&copy; 2025 Y M Real Estate. All rights reserved. | Built by Raheel Hosmani</p>
-  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Y M Real Estate. All rights reserved. | Built by Raheel Hosmani</p>
+  </div>
 </footer>
-    </div>
+    </div>
 
-   <div id="reelsEditorModal" class="editor-modal">
+   <div id="reelsEditorModal" class="editor-modal">
     <div class="editor-content">
         <span onclick="closeReelsEditor()" class="close-btn">&times;</span>
-        <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:15px; color:#263f6e;">Edit Social Links</h2>
+        <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:15px;">Edit Social Links</h2>
+        
         <div id="reelsEditorContent"></div>
+
         <div class="modal-actions">
             <button onclick="saveReels()" class="save-btn">Save Changes</button>
         </div>
     </div>
 </div>
+        <div style="display:none; max-width: 900px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
+            <button onclick="closeReelsEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">
+                <i class="fas fa-times"></i>
+            </button>
 
-<div style="display:none; max-width: 900px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
-    <button onclick="closeReelsEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">
-        <i class="fas fa-times"></i>
-    </button>
-    <h2 style="color: #263f6e; margin-bottom: 30px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
-        <i class="fab fa-instagram" style="color: #e1306c; font-size: 1.3em;"></i>
-        Manage Instagram Reels
-    </h2>
-    <div id="reelsEditorContent_Backup" style="display: grid; gap: 20px;"></div>
-    <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-        <button onclick="addNewReelSlot()" style="padding: 12px 25px; background: #10b981; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-            <i class="fas fa-plus"></i> Add Reel Slot
-        </button>
-        <button onclick="saveReels()" style="padding: 12px 25px; background: #263f6e; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-            <i class="fas fa-save"></i> Save Changes
-        </button>
-        <button onclick="closeReelsEditor()" style="padding: 12px 25px; background: #666; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-            <i class="fas fa-times"></i> Cancel
-        </button>
-    </div>
-</div>
-    
-   <button id="editReelsFab" onclick="openReelsEditor()" class="admin-fab">
-    <i class="fas fa-edit"></i> Edit Reels
+            <h2 style="color: #263f6e; margin-bottom: 30px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <i class="fab fa-instagram" style="color: #e1306c; font-size: 1.3em;"></i>
+                Manage Instagram Reels
+            </h2>
+
+            <div id="reelsEditorContent_Backup" style="display: grid; gap: 20px;"></div>
+
+            <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="addNewReelSlot()" style="padding: 12px 25px; background: #10b981; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-plus"></i> Add Reel Slot
+                </button>
+                <button onclick="saveReels()" style="padding: 12px 25px; background: #263f6e; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button onclick="closeReelsEditor()" style="padding: 12px 25px; background: #666; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    
+   <button id="editReelsFab" onclick="openReelsEditor()" class="admin-fab">
+    <i class="fas fa-edit"></i> Edit Reels
 </button>
 
-    <script src="js/api.js"></script>
-    <script>
+    <script src="js/api.js"></script>
+    <script>
     // ==========================================
     // 0. GLOBAL CONFIGURATION (Add this at the top!)
     // ==========================================
@@ -2185,127 +2219,127 @@
     const FEATURED_API = API_BASE; // They are the same base URL
     
     // ... rest of your code ...
-        // ==========================================
-        // 1. AUTHENTICATION & OAUTH HANDLER
-        // ==========================================
-        (function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const authSuccess = urlParams.get('auth');
-            const userData = urlParams.get('user');
+        // ==========================================
+        // 1. AUTHENTICATION & OAUTH HANDLER
+        // ==========================================
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const authSuccess = urlParams.get('auth');
+            const userData = urlParams.get('user');
 
-            if (authSuccess === 'success' && userData) {
-                try {
-                    const user = JSON.parse(decodeURIComponent(userData));
-                    // Save using the standardized keys
-                    localStorage.setItem('token', user.token || 'google-oauth-token');
-                    // Remove token from user object before saving
-                    if (user.token) delete user.token;
-                    localStorage.setItem('user', JSON.stringify(user)); // Standard key: 'user'
+            if (authSuccess === 'success' && userData) {
+                try {
+                    const user = JSON.parse(decodeURIComponent(userData));
+                    // Save using the standardized keys
+                    localStorage.setItem('token', user.token || 'google-oauth-token');
+                    // Remove token from user object before saving
+                    if (user.token) delete user.token;
+                    localStorage.setItem('user', JSON.stringify(user)); // Standard key: 'user'
 
-                    // Clean URL
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    window.location.reload();
-                } catch (e) {
-                    console.error('OAuth error:', e);
-                }
-            }
-        })();
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    window.location.reload();
+                } catch (e) {
+                    console.error('OAuth error:', e);
+                }
+            }
+        })();
 
-        // ==========================================
-        // 2. SCROLL ANIMATIONS
-        // ==========================================
-        const observerOptions = {
-            threshold: 0.15,
-            rootMargin: '0px 0px -100px 0px'
-        };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
-            });
-        }, observerOptions);
+        // ==========================================
+        // 2. SCROLL ANIMATIONS
+        // ==========================================
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, observerOptions);
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.scroll-reveal, .scroll-reveal-container').forEach(el => observer.observe(el));
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.scroll-reveal, .scroll-reveal-container').forEach(el => observer.observe(el));
+        });
 
-        // ==========================================
-        // 3. FEATURED PROPERTIES LOADER
-        // ==========================================
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // We use the global FEATURED_API variable defined at top
-                
-                const response = await fetch(`${FEATURED_API}/properties`);
-                const json = await response.json();
+        // ==========================================
+        // 3. FEATURED PROPERTIES LOADER
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // We use the global FEATURED_API variable defined at top
+                
+                const response = await fetch(`${FEATURED_API}/properties`);
+                const json = await response.json();
 
-                // Handle data whether it comes as {data: []} or just []
-                const properties = json.data || json;
+                // Handle data whether it comes as {data: []} or just []
+                const properties = json.data || json;
 
-                if (properties && properties.length > 0) {
-                    const container = document.getElementById('featuredProperties');
-                    container.innerHTML = properties.slice(0, 3).map(property => `
-             <div class="property-card" onclick="window.location.href='property-details.html?id=${property._id}'">
-               <img src="${property.images[0] || 'https://placehold.co/600x400?text=No+Image'}" alt="${property.title}">
-               <div class="property-details">
-                   <div class="property-title">${property.title}</div>
-                   <div class="property-price">₹${Number(property.price).toLocaleString('en-IN')}</div>
-                   <div class="property-location"><i class="fas fa-map-marker-alt"></i> ${property.address?.city || 'India'}</div>
-               </div>
-             </div>
-           `).join('');
-                }
-            } catch (error) {
-                console.error('Error loading featured properties:', error);
-            }
-        });
+                if (properties && properties.length > 0) {
+                    const container = document.getElementById('featuredProperties');
+                    container.innerHTML = properties.slice(0, 3).map(property => `
+             <div class="property-card" onclick="window.location.href='property-details.html?id=${property._id}'">
+               <img src="${property.images[0] || 'https://placehold.co/600x400?text=No+Image'}" alt="${property.title}">
+               <div class="property-details">
+                   <div class="property-title">${property.title}</div>
+                   <div class="property-price">₹${Number(property.price).toLocaleString('en-IN')}</div>
+                   <div class="property-location"><i class="fas fa-map-marker-alt"></i> ${property.address?.city || 'India'}</div>
+               </div>
+             </div>
+           `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading featured properties:', error);
+            }
+        });
 
-        // ==========================================
-        // 4. SOCIAL MEDIA MANAGER (Insta + YT + FB)
-        // ==========================================
+        // ==========================================
+        // 4. SOCIAL MEDIA MANAGER (Insta + YT + FB)
+        // ==========================================
 
-        const defaultSocials = {
-            instagram: [{
-                    label: 'Latest Reel',
-                    url: 'https://instagram.com',
-                    video: ''
-                },
-                {
-                    label: 'Property Tour',
-                    url: 'https://instagram.com',
-                    video: ''
-                },
-                {
-                    label: 'Highlights',
-                    url: 'https://instagram.com',
-                    video: ''
-                }
-            ],
-            youtube: [{
-                    label: 'Market Update',
-                    url: 'https://youtube.com',
-                    video: ''
-                },
-                {
-                    label: 'Virtual Tour',
-                    url: 'https://youtube.com',
-                    video: ''
-                }
-            ],
-            facebook: [{
-                    label: 'Community',
-                    url: 'https://facebook.com',
-                    video: ''
-                },
-                {
-                    label: 'New Listing',
-                    url: 'https://facebook.com',
-                    video: ''
-                }
-            ]
-        };
+        const defaultSocials = {
+            instagram: [{
+                    label: 'Latest Reel',
+                    url: 'https://instagram.com',
+                    video: ''
+                },
+                {
+                    label: 'Property Tour',
+                    url: 'https://instagram.com',
+                    video: ''
+                },
+                {
+                    label: 'Highlights',
+                    url: 'https://instagram.com',
+                    video: ''
+                }
+            ],
+            youtube: [{
+                    label: 'Market Update',
+                    url: 'https://youtube.com',
+                    video: ''
+                },
+                {
+                    label: 'Virtual Tour',
+                    url: 'https://youtube.com',
+                    video: ''
+                }
+            ],
+            facebook: [{
+                    label: 'Community',
+                    url: 'https://facebook.com',
+                    video: ''
+                },
+                {
+                    label: 'New Listing',
+                    url: 'https://facebook.com',
+                    video: ''
+                }
+            ]
+        };
 
-        // Global variable to store data after fetching
-let currentSocialData = defaultSocials; 
+        // Global variable to store data after fetching
+let currentSocialData = defaultSocials; 
 
 async function fetchSocials() {
     try {
@@ -2336,202 +2370,202 @@ async function fetchSocials() {
 
 // Helper to get data synchronously from memory after initial fetch
 function getLocalSocials() {
-    return currentSocialData;
+    return currentSocialData;
 }
 function getSocials() { return getLocalSocials(); } // Wrapper for backward compatibility
 
-        async function saveSocials(data) {
-  try {
-    const token = localStorage.getItem('token'); // Get Auth Token
-    
-    const res = await fetch(`${API_BASE}/socials`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // Assuming you have middleware
-      },
-      body: JSON.stringify(data)
-    });
+        async function saveSocials(data) {
+  try {
+    const token = localStorage.getItem('token'); // Get Auth Token
+    
+    const res = await fetch(`${API_BASE}/socials`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // Assuming you have middleware
+      },
+      body: JSON.stringify(data)
+    });
 
-    if (res.ok) {
-      currentSocialData = data; // Update local memory
-      alert("Saved to Database!");
-    } else {
-      alert("Failed to save to server.");
-    }
-  } catch (error) {
-    console.error("Save error:", error);
-  }
+    if (res.ok) {
+      currentSocialData = data; // Update local memory
+      alert("Saved to Database!");
+    } else {
+      alert("Failed to save to server.");
+    }
+  } catch (error) {
+    console.error("Save error:", error);
+  }
 }
 
-        function renderAllSocials() {
-    const data = getSocials();
+        function renderAllSocials() {
+    const data = getSocials();
 
-    // SAFETY CHECK: If data is null or undefined, stop here.
-    if (!data) {
-        console.error("Data is undefined. Check your API or LocalStorage.");
-        return;
-    }
+    // SAFETY CHECK: If data is null or undefined, stop here.
+    if (!data) {
+        console.error("Data is undefined. Check your API or LocalStorage.");
+        return;
+    }
 
-    // SAFETY CHECK: Ensure the arrays exist before rendering
-    renderGrid('instagramGrid', data.instagram || [], 'instagram', 'fa-instagram');
-    renderGrid('youtubeGrid', data.youtube || [], 'youtube', 'fa-youtube');
-    renderGrid('facebookGrid', data.facebook || [], 'facebook', 'fa-facebook-f');
+    // SAFETY CHECK: Ensure the arrays exist before rendering
+    renderGrid('instagramGrid', data.instagram || [], 'instagram', 'fa-instagram');
+    renderGrid('youtubeGrid', data.youtube || [], 'youtube', 'fa-youtube');
+    renderGrid('facebookGrid', data.facebook || [], 'facebook', 'fa-facebook-f');
 }
 
-        function renderGrid(elementId, items, platform, iconClass) {
-            const container = document.getElementById(elementId);
-            if (!container) return;
+        function renderGrid(elementId, items, platform, iconClass) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
 
-            container.innerHTML = items.map((item) => `
-         <a href="${item.url}" target="_blank" class="insta-card">
-           ${item.video ? `
-             <video class="insta-card-video" autoplay loop muted playsinline>
-               <source src="${item.video}" type="video/mp4">
-             </video>
-             <div class="insta-card-overlay">
-               <span class="insta-overlay-text"><i class="fab ${iconClass}"></i> ${item.label}</span>
-             </div>
-           ` : `
-             <div class="insta-card-overlay" style="opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
-             <div class="insta-placeholder">
-               <i class="fab ${iconClass}" style="margin-bottom:10px;"></i>
-               <p>${item.label}</p>
-             </div>
-           `}
-         </a>
-       `).join('');
-        }
+            container.innerHTML = items.map((item) => `
+         <a href="${item.url}" target="_blank" class="insta-card">
+           ${item.video ? `
+             <video class="insta-card-video" autoplay loop muted playsinline>
+               <source src="${item.video}" type="video/mp4">
+             </video>
+             <div class="insta-card-overlay">
+               <span class="insta-overlay-text"><i class="fab ${iconClass}"></i> ${item.label}</span>
+             </div>
+           ` : `
+             <div class="insta-card-overlay" style="opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
+             <div class="insta-placeholder">
+               <i class="fab ${iconClass}" style="margin-bottom:10px;"></i>
+               <p>${item.label}</p>
+             </div>
+           `}
+         </a>
+       `).join('');
+        }
 
-        // --- CHECK TESTER ACCESS ---
-       function checkTeamAccessForReels() {
-    // ...
-    const userStr = localStorage.getItem('user');
-    if(!userStr) return;
-    
-    const user = JSON.parse(userStr);
-    const editBtn = document.getElementById('editReelsFab'); // <--- This is returning null
+        // --- CHECK TESTER ACCESS ---
+       function checkTeamAccessForReels() {
+    // ...
+    const userStr = localStorage.getItem('user');
+    if(!userStr) return;
+    
+    const user = JSON.parse(userStr);
+    const editBtn = document.getElementById('editReelsFab'); // <--- This is returning null
 
-    // SAFETY CHECK: Add this line!
-    if (!editBtn) return; 
+    // SAFETY CHECK: Add this line!
+    if (!editBtn) return; 
 
-    if (user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com') {
-         editBtn.classList.add('show');
-    }
+    if (user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com') {
+         editBtn.classList.add('show');
+    }
 }
 
-        // --- EDITOR LOGIC ---
-        function openReelsEditor() {
-            const data = getSocials();
-            const modal = document.getElementById('reelsEditorModal');
-            const content = document.getElementById('reelsEditorContent');
+        // --- EDITOR LOGIC ---
+        function openReelsEditor() {
+            const data = getSocials();
+            const modal = document.getElementById('reelsEditorModal');
+            const content = document.getElementById('reelsEditorContent');
 
-            content.innerHTML = `
-         ${generateEditorSection('Instagram', data.instagram, 'instagram', 'fab fa-instagram', '#e1306c')}
-         <hr style="margin: 30px 0; border: 1px solid #eee;">
-         ${generateEditorSection('YouTube', data.youtube, 'youtube', 'fab fa-youtube', '#FF0000')}
-         <hr style="margin: 30px 0; border: 1px solid #eee;">
-         ${generateEditorSection('Facebook', data.facebook, 'facebook', 'fab fa-facebook', '#1877F2')}
-       `;
+            content.innerHTML = `
+         ${generateEditorSection('Instagram', data.instagram, 'instagram', 'fab fa-instagram', '#e1306c')}
+         <hr style="margin: 30px 0; border: 1px solid #eee;">
+         ${generateEditorSection('YouTube', data.youtube, 'youtube', 'fab fa-youtube', '#FF0000')}
+         <hr style="margin: 30px 0; border: 1px solid #eee;">
+         ${generateEditorSection('Facebook', data.facebook, 'facebook', 'fab fa-facebook', '#1877F2')}
+       `;
 
-            modal.style.display = 'flex'; // Changed to flex for centering
-            document.body.style.overflow = 'hidden';
-        }
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
 
-        function generateEditorSection(title, items, key, icon, color) {
-            let html = `<h3 style="color:${color}; margin-bottom:15px;"><i class="${icon}"></i> ${title}</h3>`;
-            items.forEach((item, idx) => {
-                html += `
-            <div style="background:#f9f9f9; padding:15px; margin-bottom:10px; border-radius:8px; border-left:4px solid ${color};">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                  <strong>Slot ${idx + 1}</strong>
-                  <button onclick="removeItem('${key}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
-                </div>
-                <input type="text" id="${key}_label_${idx}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px; padding:8px;">
-                <input type="text" id="${key}_url_${idx}" value="${item.url}" placeholder="Link URL" style="width:100%; margin-bottom:5px; padding:8px;">
-                <input type="file" onchange="uploadVideo('${key}', ${idx}, event)" accept="video/*" style="font-size:12px;">
-                ${item.video ? '<span style="color:green; font-size:12px;">✓ Video set</span>' : ''}
-            </div>
-          `;
-            });
-            html += `<button onclick="addItem('${key}')" style="background:${color}; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; margin-top:10px;">+ Add ${title} Slot</button>`;
-            return html;
-        }
+        function generateEditorSection(title, items, key, icon, color) {
+            let html = `<h3 style="color:${color}; margin-bottom:15px;"><i class="${icon}"></i> ${title}</h3>`;
+            items.forEach((item, idx) => {
+                html += `
+            <div style="background:#f9f9f9; padding:15px; margin-bottom:10px; border-radius:8px; border-left:4px solid ${color};">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                  <strong>Slot ${idx + 1}</strong>
+                  <button onclick="removeItem('${key}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
+                </div>
+                <input type="text" id="${key}_label_${idx}" value="${item.label}" placeholder="Label" style="width:100%; margin-bottom:5px; padding:8px;">
+                <input type="text" id="${key}_url_${idx}" value="${item.url}" placeholder="Link URL" style="width:100%; margin-bottom:5px; padding:8px;">
+                <input type="file" onchange="uploadVideo('${key}', ${idx}, event)" accept="video/*" style="font-size:12px;">
+                ${item.video ? '<span style="color:green; font-size:12px;">✓ Video set</span>' : ''}
+            </div>
+          `;
+            });
+            html += `<button onclick="addItem('${key}')" style="background:${color}; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; margin-top:10px;">+ Add ${title} Slot</button>`;
+            return html;
+        }
 
-        function addItem(platform) {
-            const data = getSocials();
-            data[platform].push({
-                label: 'New Item',
-                url: '',
-                video: ''
-            });
-            saveSocials(data);
-            openReelsEditor();
-        }
+        function addItem(platform) {
+            const data = getSocials();
+            data[platform].push({
+                label: 'New Item',
+                url: '',
+                video: ''
+            });
+            saveSocials(data);
+            openReelsEditor();
+        }
 
-        function removeItem(platform, index) {
-            if (!confirm("Remove this slot?")) return;
-            const data = getSocials();
-            data[platform].splice(index, 1);
-            saveSocials(data);
-            openReelsEditor();
-        }
+        function removeItem(platform, index) {
+            if (!confirm("Remove this slot?")) return;
+            const data = getSocials();
+            data[platform].splice(index, 1);
+            saveSocials(data);
+            openReelsEditor();
+        }
 
-        function uploadVideo(platform, index, event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            if (file.size > 5 * 1024 * 1024) {
-                alert("Video too big! Keep under 5MB.");
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = getSocials();
-                data[platform][index].video = e.target.result;
-                saveSocials(data);
-                openReelsEditor();
-            };
-            reader.readAsDataURL(file);
-        }
+        function uploadVideo(platform, index, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Video too big! Keep under 5MB.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = getSocials();
+                data[platform][index].video = e.target.result;
+                saveSocials(data);
+                openReelsEditor();
+            };
+            reader.readAsDataURL(file);
+        }
 
-        function saveReels() {
-            const data = getSocials();
-            ['instagram', 'youtube', 'facebook'].forEach(platform => {
-                data[platform].forEach((item, idx) => {
-                    const labelInput = document.getElementById(`${platform}_label_${idx}`);
-                    const urlInput = document.getElementById(`${platform}_url_${idx}`);
-                    if (labelInput) item.label = labelInput.value;
-                    if (urlInput) item.url = urlInput.value;
-                });
-            });
-            saveSocials(data);
-            renderAllSocials();
-            closeReelsEditor();
-            alert("All Social Grids Updated!");
-        }
+        function saveReels() {
+            const data = getSocials();
+            ['instagram', 'youtube', 'facebook'].forEach(platform => {
+                data[platform].forEach((item, idx) => {
+                    const labelInput = document.getElementById(`${platform}_label_${idx}`);
+                    const urlInput = document.getElementById(`${platform}_url_${idx}`);
+                    if (labelInput) item.label = labelInput.value;
+                    if (urlInput) item.url = urlInput.value;
+                });
+            });
+            saveSocials(data);
+            renderAllSocials();
+            closeReelsEditor();
+            alert("All Social Grids Updated!");
+        }
 
-        function closeReelsEditor() {
-            document.getElementById('reelsEditorModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+        function closeReelsEditor() {
+            document.getElementById('reelsEditorModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
 
-        // --- INITIALIZE EVERYTHING ---
-       document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Setup Variables
-    window.currentSocialData = defaultSocials; // Start with defaults
+        // --- INITIALIZE EVERYTHING ---
+       document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Setup Variables
+    window.currentSocialData = defaultSocials; // Start with defaults
 
-    // 2. Try to fetch real data
-    await fetchSocials(); 
-    renderAllSocials();
-    
-    // 3. FORCE SHOW THE BUTTON (Delete this line later!)
-    const btn = document.getElementById('editReelsFab');
-    if(btn) btn.classList.add('show'); 
-    
-    // 4. Also check permissions normally in case we remove line 3
-    checkTeamAccessForReels();
+    // 2. Try to fetch real data
+    await fetchSocials(); 
+    renderAllSocials();
+    
+    // 3. FORCE SHOW THE BUTTON (Delete this line later!)
+    const btn = document.getElementById('editReelsFab');
+    if(btn) btn.classList.add('show'); 
+    
+    // 4. Also check permissions normally in case we remove line 3
+    checkTeamAccessForReels();
 });
-    </script>
+    </script>
 </body>
 
 </html>
