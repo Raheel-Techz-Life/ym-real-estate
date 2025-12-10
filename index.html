@@ -2166,9 +2166,10 @@ html, body {
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 // RENAMED variable to avoid conflict with api.js
-                const FEATURED_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ?
-                    'http://localhost:5011/api' :
-                    'https://ym-real-estate.onrender.com/api'; // ✅ Correct Render URL
+                // Detect if local or production
+const API_BASE = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5011/api/socials' 
+  : 'https://ym-real-estate.onrender.com/api/socials'; // ✅ Correct Render URL
 
                 const response = await fetch(`${FEATURED_API}/properties`);
                 const json = await response.json();
@@ -2239,14 +2240,50 @@ html, body {
             ]
         };
 
-        function getSocials() {
-            const stored = localStorage.getItem('ym_social_content');
-            return stored ? JSON.parse(stored) : defaultSocials;
-        }
+        // Global variable to store data after fetching
+let currentSocialData = defaultSocials; 
 
-        function saveSocials(data) {
-            localStorage.setItem('ym_social_content', JSON.stringify(data));
-        }
+async function fetchSocials() {
+  try {
+    const res = await fetch(API_BASE);
+    const data = await res.json();
+    // Update global variable
+    currentSocialData = data;
+    return data;
+  } catch (error) {
+    console.error("Could not fetch socials, using defaults", error);
+    return defaultSocials;
+  }
+}
+
+// Helper to get data synchronously from memory after initial fetch
+function getLocalSocials() {
+    return currentSocialData;
+}
+
+        async function saveSocials(data) {
+  try {
+    const token = localStorage.getItem('token'); // Get Auth Token
+    
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // Assuming you have middleware
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      currentSocialData = data; // Update local memory
+      alert("Saved to Database!");
+    } else {
+      alert("Failed to save to server.");
+    }
+  } catch (error) {
+    console.error("Save error:", error);
+  }
+}
 
         function renderAllSocials() {
             const data = getSocials();
@@ -2394,10 +2431,16 @@ html, body {
         }
 
         // --- INITIALIZE EVERYTHING ---
-        document.addEventListener('DOMContentLoaded', () => {
-            renderAllSocials();
-            checkTeamAccessForReels();
-        });
+        document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Fetch data from Backend
+    await fetchSocials(); 
+    
+    // 2. Render UI with the data we just got
+    renderAllSocials();
+    
+    // 3. Check permissions
+    checkTeamAccessForReels();
+});
     </script>
 </body>
 
