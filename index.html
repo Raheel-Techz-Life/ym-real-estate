@@ -1302,6 +1302,70 @@ html, body {
             }
         }
 
+ /* Floating Edit Reels Button - Only for Team Members */
+        .edit-reels-fab {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: linear-gradient(135deg, #e1306c, #c13584); color: white;
+            border-radius: 50%; display: none; /* JS toggles this */
+            align-items: center; justify-content: center;
+            font-size: 22px; box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+            cursor: pointer; z-index: 9999; border: 3px solid #fff;
+        }
+
+        .edit-reels-fab:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 30px rgba(225, 48, 108, 0.6);
+        }
+
+        .edit-reels-fab.show { display: flex !important; }
+
+        @keyframes pulseInstagram {
+            0%,
+            100% {
+                box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 4px 30px rgba(193, 53, 132, 0.6);
+            }
+        }
+
+        /* Tooltip for the button */
+        .edit-reels-fab::before {
+            content: 'Edit Instagram Reels';
+            position: absolute;
+            right: 70px;
+            background: #263f6e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-reels-fab:hover::before {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .edit-reels-fab {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+                bottom: 80px;
+                right: 20px;
+            }
+
+            .edit-reels-fab::before {
+                display: none;
+            }
+        }
+
         
         /* --- PREMIUM FOOTER DESIGN --- */
 .footer {
@@ -1587,69 +1651,7 @@ html, body {
 
     
         
-        /* Floating Edit Reels Button - Only for Team Members */
-        .edit-reels-fab {
-            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-            background: linear-gradient(135deg, #e1306c, #c13584); color: white;
-            border-radius: 50%; display: none; /* JS toggles this */
-            align-items: center; justify-content: center;
-            font-size: 22px; box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
-            cursor: pointer; z-index: 9999; border: 3px solid #fff;
-        }
-
-        .edit-reels-fab:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 6px 30px rgba(225, 48, 108, 0.6);
-        }
-
-        .edit-reels-fab.show { display: flex !important; }
-
-        @keyframes pulseInstagram {
-            0%,
-            100% {
-                box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 4px 30px rgba(193, 53, 132, 0.6);
-            }
-        }
-
-        /* Tooltip for the button */
-        .edit-reels-fab::before {
-            content: 'Edit Instagram Reels';
-            position: absolute;
-            right: 70px;
-            background: #263f6e;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .edit-reels-fab:hover::before {
-            opacity: 1;
-        }
-
-        @media (max-width: 768px) {
-            .edit-reels-fab {
-                width: 50px;
-                height: 50px;
-                font-size: 18px;
-                bottom: 80px;
-                right: 20px;
-            }
-
-            .edit-reels-fab::before {
-                display: none;
-            }
-        }
+       
 
         /* Add Follow Button Style */
        
