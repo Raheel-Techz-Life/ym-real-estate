@@ -2286,7 +2286,7 @@ function getLocalSocials() {
 }
 
         function renderAllSocials() {
-            const data = getSocials();
+            const data = getLocalSocials();
             renderGrid('instagramGrid', data.instagram, 'instagram', 'fa-instagram');
             renderGrid('youtubeGrid', data.youtube, 'youtube', 'fa-youtube');
             renderGrid('facebookGrid', data.facebook, 'facebook', 'fa-facebook-f');
