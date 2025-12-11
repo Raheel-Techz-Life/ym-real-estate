@@ -231,7 +231,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 // ============ MOUNT NEW ROUTES (The Fix) ============
-app.use('/api/team', teamRoutes);
+app.use('/api/team', require('./routes/team'));
 app.use('/api/socials', socialsRoutes);
 app.use('/api/contact', contactRoutes);
 
