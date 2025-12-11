@@ -1,646 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Our Team - Y M REAL ESTATE</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="js/api.js" defer></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f8f9fa;
-      color: #333;
-    }
-    .header {
-      background: #263f6e;
-      color: #fff;
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-    }
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-    .logo-img {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      object-fit: cover;
-      background: #fff;
-    }
-    .nav {
-      display: flex;
-      gap: 24px;
-    }
-    .nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      padding: 10px 16px;
-      border-radius: 4px;
-      transition: background 0.2s;
-    }
-    .nav a:hover { background: #18284b; }
-    .user-profile { display: none; align-items: center; gap: 10px; margin-left: auto; }
-    
-    .hero {
-      background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
-      color: white;
-      padding: 80px 20px 60px;
-      text-align: center;
-    }
-    .hero h1 {
-      font-size: 3em;
-      margin-bottom: 15px;
-    }
-    .hero p {
-      font-size: 1.2em;
-      opacity: 0.9;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: -40px auto 60px;
-      padding: 0 20px;
-    }
-    
-    .team-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 25px;
-      margin-top: 40px;
-    }
-    
-    .team-member-card {
-      background: white;
-      border-radius: 15px;
-      padding: 35px;
-      box-shadow: 0 5px 20px rgba(38,63,110,0.1);
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 35px;
-      align-items: start;
-    }
-    .team-member-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #263f6e, #ffd700);
-    }
-    .team-member-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(38,63,110,0.15);
-    }
-    
-    .member-photo {
-      width: 180px;
-      height: 180px;
-      border-radius: 15px;
-      border: 5px solid #263f6e;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
-    .team-member-card:hover .member-photo {
-      transform: scale(1.05);
-    }
-    
-    .member-info {
-      flex: 1;
-    }
-    
-    .member-name {
-      font-size: 1.8em;
-      color: #263f6e;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    
-    .member-role {
-      color: #666;
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      font-weight: 500;
-    }
-    
-    .member-bio {
-      color: #555;
-      line-height: 1.8;
-      margin-bottom: 25px;
-      font-size: 1.05em;
-    }
-    
-    .member-contact {
-      display: flex;
-      gap: 15px;
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid #f0f0f0;
-      flex-wrap: wrap;
-    }
-    .member-contact a {
-      width: 45px;
-      height: 45px;
-      background: #f6faff;
-      border: 2px solid #263f6e;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #263f6e;
-      text-decoration: none;
-      transition: all 0.3s;
-      font-size: 1.2em;
-    }
-    .member-contact a:hover {
-      background: #263f6e;
-      color: white;
-      transform: translateY(-3px);
-    }
-    
-    .edit-member-btn {
-      display: none;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #10b981;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-    .edit-member-btn:hover {
-      background: #059669;
-      transform: translateY(-2px);
-    }
-    .edit-member-btn.show {
-      display: inline-block;
-    }
-    
-    .delete-member-btn {
-      display: none;
-      margin-top: 10px;
-      margin-left: 10px;
-      padding: 10px 20px;
-      background: #dc2626;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-    .delete-member-btn:hover {
-      background: #b91c1c;
-      transform: translateY(-2px);
-    }
-    .delete-member-btn.show {
-      display: inline-block;
-    }
+const express = require('express');
+const router = express.Router();
+const TeamMember = require('../models/TeamMember');
+const auth = require('../middleware/auth'); // Middleware to check JWT Token
 
-    /* --- FLOATING ADD BUTTON --- */
-    .add-member-fab {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      background: #263f6e;
-      color: white;
-      border-radius: 50%;
-      display: none; /* Hidden by default */
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 4px 15px rgba(38,63,110,0.3);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 100;
-    }
-    .add-member-fab:hover {
-      transform: scale(1.1) rotate(90deg);
-      background: #10b981;
-    }
-    .add-member-fab.show {
-      display: flex;
-    }
-    
-    @media (max-width: 768px) {
-      .header {
-        flex-direction: column;
-        padding: 15px;
-        gap: 15px;
-      }
-      .nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
-        gap: 10px;
-      }
-      .nav a {
-        font-size: 13px;
-        padding: 8px 12px;
-      }
-      .hero h1 { font-size: 2em; }
-      .team-member-card {
-        grid-template-columns: 1fr;
-        padding: 25px;
-        text-align: center;
-        gap: 20px;
-      }
-      .member-photo {
-        margin: 0 auto;
-        width: 150px;
-        height: 150px;
-      }
-      .member-contact {
-        justify-content: center;
-      }
-      /* Developer Section Fix */
-      .developer-card-mobile {
-          grid-template-columns: 1fr !important;
-          text-align: center;
-          gap: 20px !important;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <a href="index.html" class="logo-area">
-      <img src="ym.jpg" alt="Y" class="logo-img">
-      <span style="font-size: 1.4em; font-weight: bold; color: #fff;">Y M REAL ESTATE</span>
-    </a>
-    <div class="nav">
-      <a href="index.html">Home</a>
-      <a href="properties.html">Properties</a>
-      <a href="team.html">Our Team</a>
-      <a href="login.html" id="navLoginLink">Login / Signup</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <div class="user-profile" id="userProfile" style="display: none;">
-      <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff;">
-      <span id="userName" style="color: #fff; font-weight: 500;"></span>
-      <button onclick="api.logout()" style="padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer;">Logout</button>
-    </div>
-  </div>
+// @route   GET /api/team
+// @desc    Get all team members
+// @access  Public
+router.get('/', async (req, res) => {
+  try {
+    const members = await TeamMember.find().sort({ createdAt: 1 });
+    res.json({ success: true, data: members });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
-  <div class="hero">
-    <h1>Meet Our Team</h1>
-    <p>Dedicated professionals committed to your real estate success</p>
-  </div>
-
-  <div class="container">
-    <div style="background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); color: white; border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 40px rgba(38,63,110,0.2);">
-      <h2 style="color: #ffd700; margin-bottom: 30px; font-size: 2em;">
-        <i class="fas fa-star"></i> Founder & CEO
-      </h2>
-      <img src="https://placehold.co/150?text=Owner" alt="Founder" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #ffd700; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-      <h3 style="font-size: 2em; margin-bottom: 10px;">Yunus Mulla</h3>
-      <p style="font-size: 1.2em; opacity: 0.95; font-style: italic; margin-bottom: 20px;">Founder & CEO</p>
-      <p style="font-size: 1.1em; max-width: 800px; margin: 0 auto; line-height: 1.8; opacity: 0.9;">
-        "Passionate about helping you unlock your dream property and creating lasting value for our clients. With years of experience in real estate, I founded Y M Real Estate to transform the property buying experience through trust, transparency, and personalized service."
-      </p>
-    </div>
-
-    <div style="background: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%); border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(38,63,110,0.1);">
-      <h2 style="color: #263f6e; margin-bottom: 30px; font-size: 2em; text-align: center;">
-        <i class="fas fa-code"></i> Website Developer
-      </h2>
-      <div class="developer-card-mobile" style="display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(38,63,110,0.1);">
-        <img src="meeee.png" alt="Developer" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #ffd700;">
-        <div>
-          <h3 style="color: #263f6e; font-size: 1.8em; margin-bottom: 8px;">Raheel Hosmani</h3>
-          <p style="color: #666; font-size: 1.1em; margin-bottom: 15px;">Full Stack Web Developer</p>
-          <p style="color: #555; line-height: 1.8; margin-bottom: 20px;">
-            Passionate about creating modern, responsive, and user-friendly websites. Specializing in full-stack development with expertise in React, Node.js, MongoDB, and modern web technologies.
-          </p>
-          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; justify-content: inherit;">
-            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fab fa-react"></i> React</span>
-            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fab fa-node"></i> Node.js</span>
-            <span style="background: #263f6e; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.9em;"><i class="fas fa-database"></i> MongoDB</span>
-          </div>
-          <div style="display: flex; gap: 12px; margin-top: 15px; justify-content: inherit;">
-            <a href="https://github.com/Raheel-Techz-Life" target="_blank" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fab fa-github"></i></a>
-            <a href="https://www.linkedin.com/in/raheel-hosmani-78ab92315/" target="_blank" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fab fa-linkedin"></i></a>
-            <a href="mailto:raheelhosmani05@gmail.com" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s;"><i class="fas fa-envelope"></i></a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h2 style="text-align: center; color: #263f6e; font-size: 2em; margin-bottom: 40px;">
-      <i class="fas fa-users"></i> Our Team Members
-    </h2>
-    <div class="team-grid" id="teamGrid">
-        <p style="text-align:center; color:#666;">Loading team...</p>
-    </div>
-  </div>
-
-  <div class="add-member-fab" id="addMemberFab" onclick="openMemberEditor()">
-    <i class="fas fa-plus"></i>
-  </div>
-
-  <div id="memberEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; overflow-y: auto;">
-    <div style="max-width: 600px; margin: 50px auto; background: white; border-radius: 20px; padding: 40px; position: relative;">
-      <button onclick="closeMemberEditor()" style="position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px;">
-        <i class="fas fa-times"></i>
-      </button>
-      
-      <h2 style="color: #263f6e; margin-bottom: 30px; text-align: center;">
-        <i class="fas fa-user-edit"></i> <span id="editorTitle">Add Team Member</span>
-      </h2>
-      
-      <div style="display: grid; gap: 20px;">
-        <input type="hidden" id="memberId"> 
-        
-        <div>
-          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Photo URL</label>
-          <input type="text" id="memberPhoto" placeholder="https://..." style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
-        </div>
-        <div>
-          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Name</label>
-          <input type="text" id="memberName" required style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
-        </div>
-        <div>
-          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Role / Position</label>
-          <input type="text" id="memberRole" required style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
-        </div>
-        <div>
-          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Bio / Description</label>
-          <textarea id="memberBio" rows="4" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px; resize: vertical;"></textarea>
-        </div>
-        <div>
-          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Email</label>
-          <input type="email" id="memberEmail" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
-        </div>
-        <div>
-          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Phone</label>
-          <input type="tel" id="memberPhone" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
-        </div>
-        <div>
-          <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">LinkedIn URL</label>
-          <input type="url" id="memberLinkedIn" style="width: 100%; padding: 12px; border: 2px solid #e0e7ff; border-radius: 8px;">
-        </div>
-      </div>
-      
-      <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
-        <button onclick="saveMember()" style="padding: 12px 30px; background: #263f6e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-          <i class="fas fa-save"></i> Save
-        </button>
-        <button onclick="closeMemberEditor()" style="padding: 12px 30px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-          <i class="fas fa-times"></i> Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script src="js/api.js"></script>
-  <script>
-    // --- 1. CONFIGURATION ---
-    if (typeof API_URL === 'undefined') {
-        var API_URL = window.location.hostname.includes('localhost') 
-            ? 'http://localhost:5011/api' 
-            : 'https://ym-real-estate.onrender.com/api';
-    }
-
-    // Global state for team
-    let currentTeamData = [];
-
-    // --- 2. INITIALIZATION ---
-    document.addEventListener('DOMContentLoaded', () => {
-      // 1. Auth check
-      if(typeof ui !== 'undefined' && ui.updateAuthStatus) {
-        ui.updateAuthStatus();
-      }
-      
-      // 2. Fetch Data (Backend Connection)
-      fetchTeamMembers();
-
-      // 3. Show Admin Buttons?
-      checkTeamAccess();
+// @route   POST /api/team
+// @desc    Add a new team member
+// @access  Private (Admin/Team only)
+router.post('/', auth, async (req, res) => {
+  try {
+    const newMember = new TeamMember({
+      name: req.body.name,
+      role: req.body.role,
+      photo: req.body.photo,
+      bio: req.body.bio,
+      email: req.body.email,
+      phone: req.body.phone,
+      linkedin: req.body.linkedin
     });
 
-    // --- 3. FETCH TEAM FROM BACKEND ---
-    async function fetchTeamMembers() {
-        try {
-            const res = await fetch(`${API_URL}/team`);
-            const json = await res.json();
-            
-            // Handle {data: [...]} or just [...]
-            currentTeamData = json.data || json || [];
-            
-            // Render
-            renderTeam();
-        } catch(e) {
-            console.error("Failed to fetch team:", e);
-            // Fallback for demo if backend empty/fails
-            currentTeamData = [
-                { name: 'Saif Ali Abbunavar', role: 'Heavy Driver', photo: 'https://via.placeholder.com/150?text=Saif', bio: 'Expert driver.', _id: 'demo1' },
-                { name: 'Nijagowda Patil', role: 'Lead Editor', photo: 'https://via.placeholder.com/150?text=Nija', bio: 'Video editor.', _id: 'demo2' },
-                { name: 'Ahsan Ali', role: 'NEET Aspirant', photo: 'https://via.placeholder.com/150?text=Ahsan', bio: 'Dedicated student.', _id: 'demo3' }
-            ];
-            renderTeam(); 
-        }
-    }
+    const member = await newMember.save();
+    res.json(member);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
-    // --- 4. RENDER TEAM UI ---
-    function renderTeam() {
-      const grid = document.getElementById('teamGrid');
-      const canEdit = isAuthorized();
+// @route   PUT /api/team/:id
+// @desc    Update a team member
+// @access  Private
+router.put('/:id', auth, async (req, res) => {
+  try {
+    let member = await TeamMember.findById(req.params.id);
+    if (!member) return res.status(404).json({ msg: 'Member not found' });
 
-      if(currentTeamData.length === 0) {
-          grid.innerHTML = '<p style="text-align:center;">No team members found.</p>';
-          return;
-      }
+    // Update fields
+    const { name, role, photo, bio, email, phone, linkedin } = req.body;
+    
+    if(name) member.name = name;
+    if(role) member.role = role;
+    if(photo) member.photo = photo;
+    if(bio) member.bio = bio;
+    if(email) member.email = email;
+    if(phone) member.phone = phone;
+    if(linkedin) member.linkedin = linkedin;
 
-      grid.innerHTML = currentTeamData.map((member, index) => `
-        <div class="team-member-card">
-          <img src="${member.photo || 'https://via.placeholder.com/150?text=Member'}" alt="${member.name}" class="member-photo">
-          <div class="member-info">
-            <h3 class="member-name">${member.name}</h3>
-            <p class="member-role">${member.role}</p>
-            <p class="member-bio">${member.bio || 'No bio available yet.'}</p>
-            <div class="member-contact">
-              ${member.email ? `<a href="mailto:${member.email}" title="Email"><i class="fas fa-envelope"></i></a>` : ''}
-              ${member.phone ? `<a href="tel:${member.phone}" title="Call"><i class="fas fa-phone"></i></a>` : ''}
-              ${member.linkedin ? `<a href="${member.linkedin}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>` : ''}
-            </div>
-            ${canEdit ? `
-              <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="edit-member-btn show" onclick="editMember(${index})">
-                  <i class="fas fa-edit"></i> Edit
-                </button>
-                <button class="delete-member-btn show" onclick="deleteMember('${member._id}')">
-                  <i class="fas fa-trash"></i> Delete
-                </button>
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      `).join('');
-    }
+    await member.save();
+    res.json(member);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
-    // --- 5. PERMISSIONS ---
-    function isAuthorized() {
-      const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
-      if (!userStr) return false;
-      try {
-        const user = JSON.parse(userStr);
-        return user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com';
-      } catch (e) { return false; }
-    }
+// @route   DELETE /api/team/:id
+// @desc    Delete a team member
+// @access  Private
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const member = await TeamMember.findById(req.params.id);
+    if (!member) return res.status(404).json({ msg: 'Member not found' });
 
-    function checkTeamAccess() {
-      const addBtn = document.getElementById('addMemberFab');
-      if (isAuthorized()) {
-        addBtn.classList.add('show');
-      }
-    }
+    await TeamMember.findByIdAndDelete(req.params.id);
+    res.json({ msg: 'Member removed' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
-    // --- 6. ADD / EDIT LOGIC (CONNECTED TO BACKEND) ---
-    function openMemberEditor(index = -1) {
-      const modal = document.getElementById('memberEditorModal');
-      const title = document.getElementById('editorTitle');
-      const idField = document.getElementById('memberId');
-
-      if (index >= 0) {
-        const member = currentTeamData[index];
-        title.textContent = 'Edit Team Member';
-        idField.value = member._id || ''; // Store backend ID
-        
-        document.getElementById('memberPhoto').value = member.photo || '';
-        document.getElementById('memberName').value = member.name || '';
-        document.getElementById('memberRole').value = member.role || '';
-        document.getElementById('memberBio').value = member.bio || '';
-        document.getElementById('memberEmail').value = member.email || '';
-        document.getElementById('memberPhone').value = member.phone || '';
-        document.getElementById('memberLinkedIn').value = member.linkedin || '';
-      } else {
-        title.textContent = 'Add Team Member';
-        idField.value = ''; // Empty ID = New
-        
-        document.getElementById('memberPhoto').value = '';
-        document.getElementById('memberName').value = '';
-        document.getElementById('memberRole').value = '';
-        document.getElementById('memberBio').value = '';
-        document.getElementById('memberEmail').value = '';
-        document.getElementById('memberPhone').value = '';
-        document.getElementById('memberLinkedIn').value = '';
-      }
-
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeMemberEditor() {
-      document.getElementById('memberEditorModal').style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }
-
-    function editMember(index) { openMemberEditor(index); }
-
-    async function saveMember() {
-      const id = document.getElementById('memberId').value;
-      const token = localStorage.getItem('token');
-
-      if(!token) { alert("You must be logged in to save."); return; }
-
-      const memberData = {
-        name: document.getElementById('memberName').value.trim(),
-        role: document.getElementById('memberRole').value.trim(),
-        photo: document.getElementById('memberPhoto').value.trim(),
-        bio: document.getElementById('memberBio').value.trim(),
-        email: document.getElementById('memberEmail').value.trim(),
-        phone: document.getElementById('memberPhone').value.trim(),
-        linkedin: document.getElementById('memberLinkedIn').value.trim()
-      };
-
-      if (!memberData.name || !memberData.role) {
-        alert('Name and Role are required!');
-        return;
-      }
-
-      try {
-          let res;
-          if (id) {
-              // UPDATE EXISTING
-              res = await fetch(`${API_URL}/team/${id}`, {
-                  method: 'PUT',
-                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                  body: JSON.stringify(memberData)
-              });
-          } else {
-              // CREATE NEW
-              res = await fetch(`${API_URL}/team`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                  body: JSON.stringify(memberData)
-              });
-          }
-
-          if(res.ok) {
-              alert('Saved Successfully!');
-              closeMemberEditor();
-              fetchTeamMembers(); // Reload from server
-          } else {
-              alert('Failed to save to server.');
-          }
-      } catch(e) {
-          console.error(e);
-          alert('Error saving data.');
-      }
-    }
-
-    // --- 7. DELETE LOGIC (CONNECTED TO BACKEND) ---
-    async function deleteMember(id) {
-      if (!confirm("Are you sure you want to delete this member?")) return;
-      const token = localStorage.getItem('token');
-
-      // If it's a demo item (starts with 'demo'), just remove locally
-      if(id.startsWith('demo')) {
-          alert("Demo items cannot be deleted from server, but will hide for now.");
-          currentTeamData = currentTeamData.filter(m => m._id !== id);
-          renderTeam();
-          return;
-      }
-
-      try {
-          const res = await fetch(`${API_URL}/team/${id}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` }
-          });
-
-          if(res.ok) {
-              alert('Deleted Successfully');
-              fetchTeamMembers();
-          } else {
-              alert('Delete failed.');
-          }
-      } catch(e) {
-          console.error(e);
-      }
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMemberEditor();
-    });
-  </script>
-</body>
-</html>
+module.exports = router;
