@@ -274,77 +274,51 @@
     </div>
 
   </div>
-
-  <script src="js/api.js"></script>
+<script src="js/api.js"></script>
   <script>
-    /* =========================================
-       1. CONFIGURATION (FORCED LIVE)
-       ========================================= */
-    // We removed the 'localhost' check. Now it ALWAYS connects to your live server.
-    const API_URL = 'https://ym-real-estate.onrender.com/api';
+    // 1. CONFIGURATION
+    // Detects if you are on localhost or the live site
+    const API_URL = window.location.hostname.includes('localhost') 
+        ? 'http://localhost:5011/api' 
+        : 'https://ym-real-estate.onrender.com/api';
 
-    /* =========================================
-       2. INITIALIZATION
-       ========================================= */
+    // 2. INITIALIZATION (Runs immediately when page loads)
     document.addEventListener('DOMContentLoaded', () => {
-        // Handle Google Login Redirects
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('auth') === 'success') {
-            const userData = urlParams.get('user');
-            try {
-                const userObj = JSON.parse(decodeURIComponent(userData));
-                localStorage.setItem('token', userObj.token);
-                delete userObj.token;
-                localStorage.setItem('user', JSON.stringify(userObj));
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } catch (e) { console.error("Login Parse Error", e); }
-        }
-
-        if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
-
-        // RUN THE ADMIN CHECK IMMEDIATELY
-        attemptToRevealAdmin();
+        // Force the Admin Section to appear immediately
+        forceRevealSection();
     });
 
-    /* =========================================
-       3. PERMISSION CHECKER
-       ========================================= */
-    function attemptToRevealAdmin() {
-        const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
+    // 3. FORCE REVEAL FUNCTION
+    function forceRevealSection() {
+        const section = document.getElementById('messagesSection');
         
-        if (!userStr) {
-            console.log("No user logged in. Messages hidden.");
-            return;
-        }
-
-        try {
-            const user = JSON.parse(userStr);
-            const email = (user.email || "").toLowerCase();
-            const role = (user.role || "").toLowerCase();
-
-            // CHECK: Is this team@test.com?
-            if (email === 'team@test.com' || role === 'admin' || role === 'team') {
-                
-                const section = document.getElementById('messagesSection');
-                if (section) {
-                    section.style.display = 'block'; // Force visible
-                    section.classList.add('show');
-                    fetchMessages(); // Get the data
-                }
-            }
-        } catch (e) {
-            console.error("Auth Check Failed:", e);
+        if (section) {
+            // Forcefully override any hiding CSS
+            section.style.display = 'block'; 
+            section.classList.add('show');
+            
+            // Now try to fetch the data
+            fetchMessages();
+        } else {
+            console.error("CRITICAL: The HTML element #messagesSection is missing from the page body!");
         }
     }
 
-    /* =========================================
-       4. FETCH MESSAGES (FROM RENDER)
-       ========================================= */
+    // 4. FETCH MESSAGES
     async function fetchMessages() {
+        // Try to get the token
         const token = localStorage.getItem('token');
-        
+        const list = document.getElementById('messagesList');
+
+        // If no token, show a specific error so we know the UI is working
         if (!token) {
-            console.error("Admin detected, but no token found.");
+            list.innerHTML = `
+                <div style="text-align:center; padding: 20px; border: 2px dashed red; color: red; background: #fff0f0; border-radius: 10px;">
+                    <h3><i class="fas fa-lock"></i> Section Visible, But Locked</h3>
+                    <p>The Message Section is now visible (UI is fixed!).</p>
+                    <p>However, you are not logged in, so we cannot fetch real data.</p>
+                    <a href="login.html" style="background:red; color:white; padding:5px 10px; text-decoration:none; border-radius:5px;">Click here to Login</a>
+                </div>`;
             return;
         }
 
@@ -357,10 +331,9 @@
             const msgs = json.data || json || [];
 
             document.getElementById('messageCount').innerText = msgs.length || 0;
-            const list = document.getElementById('messagesList');
 
             if (msgs.length === 0) {
-                list.innerHTML = '<p style="text-align:center; padding:30px; color:#94a3b8;">Inbox is empty.</p>';
+                list.innerHTML = '<p style="text-align:center; padding:40px; color:#aaa;">Inbox is empty.</p>';
                 return;
             }
 
@@ -372,7 +345,7 @@
                     </div>
                     <div class="message-body">${msg.message}</div>
                     <div style="margin-top:15px; display:flex; gap:10px;">
-                        <a href="tel:${msg.phone}" class="action-btn btn-call"><i class="fas fa-phone"></i> Call ${msg.phone}</a>
+                        <a href="tel:${msg.phone}" class="action-btn btn-call">Call ${msg.phone}</a>
                         <button onclick="deleteMessage('${msg._id}')" class="action-btn btn-delete">Delete</button>
                     </div>
                 </div>
@@ -380,17 +353,14 @@
 
         } catch (e) {
             console.error("Fetch Error:", e);
-            document.getElementById('messagesList').innerHTML = '<p style="text-align:center; color:red;">Could not load messages from Server.</p>';
+            list.innerHTML = '<p style="text-align:center; color:red;">Server Error: Could not fetch messages.</p>';
         }
     }
 
-    /* =========================================
-       5. SEND MESSAGE
-       ========================================= */
+    // 5. SEND MESSAGE FORM
     async function handleSubmit(event) {
         event.preventDefault();
         const btn = document.querySelector('.submit-btn');
-        const originalText = btn.innerText;
         btn.innerText = 'Sending...';
         btn.disabled = true;
 
@@ -411,30 +381,28 @@
             if (res.ok) {
                 alert('Message Sent Successfully!');
                 document.getElementById('contactForm').reset();
-                attemptToRevealAdmin(); // Refresh if admin is sending a test msg
+                fetchMessages(); // Refresh the list below immediately
             } else {
                 throw new Error("Failed");
             }
         } catch (error) {
-            alert('Could not send message. Server might be sleeping.');
+            alert('Could not send message.');
         } finally {
-            btn.innerText = originalText;
+            btn.innerText = 'Send Message';
             btn.disabled = false;
         }
     }
 
-    /* =========================================
-       6. DELETE MESSAGE
-       ========================================= */
+    // 6. DELETE MESSAGE
     async function deleteMessage(id) {
-        if (!confirm("Delete this message permanently?")) return;
+        if (!confirm("Delete this message?")) return;
         const token = localStorage.getItem('token');
         try {
             await fetch(`${API_URL}/contact/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            fetchMessages(); // Reload list
+            fetchMessages(); 
         } catch (e) {
             alert("Delete failed.");
         }
