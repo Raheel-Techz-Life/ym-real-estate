@@ -276,20 +276,18 @@
   </div>
 
   <script src="js/api.js"></script>
-  
   <script>
     /* =========================================
-       1. ROBUST CONFIGURATION
+       1. CONFIGURATION (FORCED LIVE)
        ========================================= */
-    const API_URL = window.location.hostname.includes('localhost') 
-        ? 'http://localhost:5011/api' 
-        : 'https://ym-real-estate.onrender.com/api';
+    // We removed the 'localhost' check. Now it ALWAYS connects to your live server.
+    const API_URL = 'https://ym-real-estate.onrender.com/api';
 
     /* =========================================
-       2. INITIALIZATION & PERMISSION CHECK
+       2. INITIALIZATION
        ========================================= */
     document.addEventListener('DOMContentLoaded', () => {
-        // A. Handle OAuth Redirects (Login from Google)
+        // Handle Google Login Redirects
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('auth') === 'success') {
             const userData = urlParams.get('user');
@@ -299,41 +297,39 @@
                 delete userObj.token;
                 localStorage.setItem('user', JSON.stringify(userObj));
                 window.history.replaceState({}, document.title, window.location.pathname);
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Login Parse Error", e); }
         }
 
-        // B. Update Header UI
         if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
 
-        // C. RUN THE ADMIN CHECK
+        // RUN THE ADMIN CHECK IMMEDIATELY
         attemptToRevealAdmin();
     });
 
+    /* =========================================
+       3. PERMISSION CHECKER
+       ========================================= */
     function attemptToRevealAdmin() {
-        // Try getting user from ALL possible keys
-        const rawUser = localStorage.getItem('user') || localStorage.getItem('currentUser') || localStorage.getItem('profile');
+        const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
         
-        if (!rawUser) {
-            console.log("No user found in storage.");
+        if (!userStr) {
+            console.log("No user logged in. Messages hidden.");
             return;
         }
 
         try {
-            const user = JSON.parse(rawUser);
+            const user = JSON.parse(userStr);
             const email = (user.email || "").toLowerCase();
             const role = (user.role || "").toLowerCase();
 
-            // CHECK: Is this the Tester?
+            // CHECK: Is this team@test.com?
             if (email === 'team@test.com' || role === 'admin' || role === 'team') {
                 
-                // 1. Force the section to show
                 const section = document.getElementById('messagesSection');
                 if (section) {
-                    section.style.display = 'block'; // Direct CSS override
-                    section.classList.add('show');   // Class override
-                    
-                    // 2. Fetch the messages
-                    fetchMessages();
+                    section.style.display = 'block'; // Force visible
+                    section.classList.add('show');
+                    fetchMessages(); // Get the data
                 }
             }
         } catch (e) {
@@ -342,14 +338,13 @@
     }
 
     /* =========================================
-       3. FETCH MESSAGES FROM DATABASE
+       4. FETCH MESSAGES (FROM RENDER)
        ========================================= */
     async function fetchMessages() {
-        // Try getting token from ALL possible keys
-        const token = localStorage.getItem('token') || localStorage.getItem('authToken') || localStorage.getItem('google-oauth-token');
+        const token = localStorage.getItem('token');
         
         if (!token) {
-            document.getElementById('messagesList').innerHTML = '<p style="color:red; text-align:center;">You are Admin, but no Security Token found. Please re-login.</p>';
+            console.error("Admin detected, but no token found.");
             return;
         }
 
@@ -358,16 +353,12 @@
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            if (!res.ok) throw new Error("Server rejected request");
-
             const json = await res.json();
             const msgs = json.data || json || [];
 
-            // Update Counter
             document.getElementById('messageCount').innerText = msgs.length || 0;
-            
-            // Render List
             const list = document.getElementById('messagesList');
+
             if (msgs.length === 0) {
                 list.innerHTML = '<p style="text-align:center; padding:30px; color:#94a3b8;">Inbox is empty.</p>';
                 return;
@@ -389,12 +380,12 @@
 
         } catch (e) {
             console.error("Fetch Error:", e);
-            document.getElementById('messagesList').innerHTML = '<p style="text-align:center; color:red;">Error loading messages from server.</p>';
+            document.getElementById('messagesList').innerHTML = '<p style="text-align:center; color:red;">Could not load messages from Server.</p>';
         }
     }
 
     /* =========================================
-       4. FORM SUBMISSION
+       5. SEND MESSAGE
        ========================================= */
     async function handleSubmit(event) {
         event.preventDefault();
@@ -420,12 +411,12 @@
             if (res.ok) {
                 alert('Message Sent Successfully!');
                 document.getElementById('contactForm').reset();
-                attemptToRevealAdmin(); // Refresh inbox if sender is admin
+                attemptToRevealAdmin(); // Refresh if admin is sending a test msg
             } else {
                 throw new Error("Failed");
             }
         } catch (error) {
-            alert('Could not send message. Please try again.');
+            alert('Could not send message. Server might be sleeping.');
         } finally {
             btn.innerText = originalText;
             btn.disabled = false;
@@ -433,7 +424,7 @@
     }
 
     /* =========================================
-       5. DELETE MESSAGE
+       6. DELETE MESSAGE
        ========================================= */
     async function deleteMessage(id) {
         if (!confirm("Delete this message permanently?")) return;
@@ -449,7 +440,5 @@
         }
     }
   </script>
-</body>
-</html>
 </body>
 </html>
