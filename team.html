@@ -507,12 +507,15 @@
       } catch (e) { return false; }
     }
 
-    function checkTeamAccess() {
-      const addBtn = document.getElementById('addMemberFab');
-      if (isAuthorized()) {
-        addBtn.classList.add('show');
-      }
-    }
+    // This function runs automatically when the page loads
+function checkTeamAccess() {
+  const addBtn = document.getElementById('addMemberFab');
+  
+  // isAuthorized() checks if your email is 'team@test.com'
+  if (isAuthorized()) { 
+    addBtn.classList.add('show'); // ONLY adds the class if true
+  }
+}
 
     // --- 6. ADD / EDIT LOGIC (CONNECTED TO BACKEND) ---
     function openMemberEditor(index = -1) {
