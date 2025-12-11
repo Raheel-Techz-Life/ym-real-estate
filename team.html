@@ -10,92 +10,33 @@
   <script src="js/api.js"></script>
 
   <style>
+    /* --- CSS STYLES --- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f8f9fa;
-      color: #333;
-    }
-    .header {
-      background: #263f6e;
-      color: #fff;
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-    }
+    body { font-family: 'Poppins', sans-serif; background: #f8f9fa; color: #333; }
+    
+    .header { background: #263f6e; color: #fff; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
     .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
     .logo-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; background: #fff; }
     .nav { display: flex; gap: 24px; }
-    .nav a {
-      color: #fff; text-decoration: none; font-weight: 500;
-      padding: 10px 16px; border-radius: 4px; transition: background 0.2s;
-    }
+    .nav a { color: #fff; text-decoration: none; font-weight: 500; padding: 10px 16px; border-radius: 4px; transition: background 0.2s; }
     .nav a:hover { background: #18284b; }
     .user-profile { display: none; align-items: center; gap: 10px; margin-left: auto; }
     
-    .hero {
-      background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
-      color: white;
-      padding: 80px 20px 60px;
-      text-align: center;
-    }
+    .hero { background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); color: white; padding: 80px 20px 60px; text-align: center; }
     .hero h1 { font-size: 3em; margin-bottom: 15px; }
     .hero p { font-size: 1.2em; opacity: 0.9; }
     
-    .container {
-      max-width: 1200px;
-      margin: -40px auto 60px;
-      padding: 0 20px;
-    }
+    .container { max-width: 1200px; margin: -40px auto 60px; padding: 0 20px; }
     
     /* TEAM GRID */
-    .team-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 25px;
-      margin-top: 40px;
-    }
+    .team-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
     
-    .team-member-card {
-      background: white;
-      border-radius: 15px;
-      padding: 35px;
-      box-shadow: 0 5px 20px rgba(38,63,110,0.1);
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 35px;
-      align-items: start;
-    }
-    .team-member-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #263f6e, #ffd700);
-    }
-    .team-member-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(38,63,110,0.15);
-    }
+    .team-member-card { background: white; border-radius: 15px; padding: 35px; box-shadow: 0 5px 20px rgba(38,63,110,0.1); transition: all 0.3s; position: relative; overflow: hidden; display: grid; grid-template-columns: 180px 1fr; gap: 35px; align-items: start; }
+    .team-member-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #263f6e, #ffd700); }
+    .team-member-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(38,63,110,0.15); }
     
-    .member-photo {
-      width: 180px;
-      height: 180px;
-      border-radius: 15px;
-      border: 5px solid #263f6e;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
-    .team-member-card:hover .member-photo {
-      transform: scale(1.05);
-    }
+    .member-photo { width: 180px; height: 180px; border-radius: 15px; border: 5px solid #263f6e; object-fit: cover; transition: transform 0.3s; }
+    .team-member-card:hover .member-photo { transform: scale(1.05); }
     
     .member-info { flex: 1; }
     .member-name { font-size: 1.8em; color: #263f6e; font-weight: 600; margin-bottom: 8px; }
@@ -103,37 +44,42 @@
     .member-bio { color: #555; line-height: 1.8; margin-bottom: 25px; font-size: 1.05em; }
     
     .member-contact { display: flex; gap: 15px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; flex-wrap: wrap; }
-    .member-contact a {
-      width: 45px; height: 45px; background: #f6faff;
-      border: 2px solid #263f6e; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #263f6e; text-decoration: none; transition: all 0.3s; font-size: 1.2em;
-    }
+    .member-contact a { width: 45px; height: 45px; background: #f6faff; border: 2px solid #263f6e; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #263f6e; text-decoration: none; transition: all 0.3s; font-size: 1.2em; }
     .member-contact a:hover { background: #263f6e; color: white; transform: translateY(-3px); }
     
-    /* Edit/Delete Buttons */
-    .edit-member-btn, .delete-member-btn {
-      display: none; margin-top: 15px; padding: 10px 20px; border: none;
-      border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s;
-    }
+    /* Edit/Delete Buttons (Default Hidden) */
+    .edit-member-btn, .delete-member-btn { display: none; margin-top: 15px; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s; }
     .edit-member-btn { background: #10b981; color: white; margin-right: 10px; }
-    .edit-member-btn:hover { background: #059669; transform: translateY(-2px); }
     .delete-member-btn { background: #dc2626; color: white; }
-    .delete-member-btn:hover { background: #b91c1c; transform: translateY(-2px); }
     
+    /* Force show class */
     .show-admin { display: inline-block !important; }
 
-    /* FLOATING ADD BUTTON */
+    /* FLOATING ADD BUTTON (SUPER VISIBLE) */
     .add-member-fab {
-      position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-      background: #263f6e; color: white; border-radius: 50%;
-      display: none; align-items: center; justify-content: center;
-      font-size: 24px; box-shadow: 0 4px 15px rgba(38,63,110,0.3);
-      cursor: pointer; transition: all 0.3s ease; z-index: 100; border: 2px solid white;
+      position: fixed; 
+      bottom: 30px; 
+      right: 30px; 
+      width: 70px; 
+      height: 70px; 
+      background: #263f6e; 
+      color: white; 
+      border-radius: 50%; 
+      display: none; /* Hidden by default */
+      align-items: center; 
+      justify-content: center; 
+      font-size: 30px; 
+      box-shadow: 0 10px 25px rgba(38,63,110,0.5); 
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+      z-index: 999999 !important; /* ON TOP OF EVERYTHING */
+      border: 3px solid white;
     }
     .add-member-fab:hover { transform: scale(1.1) rotate(90deg); background: #10b981; }
-    .add-member-fab.show { display: flex !important; }
     
+    /* The class that makes it visible */
+    .add-member-fab.show { display: flex !important; }
+
     @media (max-width: 768px) {
       .header { flex-direction: column; padding: 15px; gap: 15px; }
       .nav { flex-wrap: wrap; justify-content: center; width: 100%; gap: 10px; }
@@ -208,7 +154,7 @@
     </h2>
     
     <div class="team-grid" id="teamGrid">
-        <p style="text-align:center; color:#666; padding: 20px;">Loading team data...</p>
+        <p style="text-align:center; color:#666; font-style:italic;">Loading team data...</p>
     </div>
   </div>
 
@@ -228,20 +174,19 @@
         <input type="hidden" id="memberId"> 
         
         <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 2px dashed #cbd5e1;">
-            <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Member Photo (JPG/PNG)</label>
+            <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Member Photo</label>
             <div style="display:flex; align-items:center; gap:15px;">
                 <img id="photoPreview" src="https://placehold.co/150" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #263f6e;">
-                <input type="file" id="memberPhotoFile" accept="image/png, image/jpeg" onchange="handleFileSelect(this)" style="font-size: 14px;">
+                <input type="file" id="memberPhotoFile" accept="image/*" onchange="handleFileSelect(this)">
             </div>
-            <p style="font-size: 12px; color: #666; margin-top: 5px;">File size limit: 5MB</p>
         </div>
 
         <input type="text" id="memberName" placeholder="Name" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
         <input type="text" id="memberRole" placeholder="Role / Position" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
         <textarea id="memberBio" rows="3" placeholder="Short Bio" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
-        <input type="email" id="memberEmail" placeholder="Email (Optional)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-        <input type="tel" id="memberPhone" placeholder="Phone (Optional)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-        <input type="url" id="memberLinkedIn" placeholder="LinkedIn URL (Optional)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+        <input type="email" id="memberEmail" placeholder="Email" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+        <input type="tel" id="memberPhone" placeholder="Phone" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+        <input type="url" id="memberLinkedIn" placeholder="LinkedIn" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
       </div>
       
       <div style="display: flex; gap: 15px; margin-top: 30px;">
@@ -251,22 +196,27 @@
   </div>
 
   <script>
-    // 1. CONFIGURATION
-    var API_URL = window.location.hostname.includes('localhost') 
-        ? 'http://localhost:5011/api' 
-        : 'https://ym-real-estate.onrender.com/api';
+    // --- 1. SAFE CONFIGURATION ---
+    if (typeof API_URL === 'undefined') {
+        var API_URL = window.location.hostname.includes('localhost') 
+            ? 'http://localhost:5011/api' 
+            : 'https://ym-real-estate.onrender.com/api';
+    }
 
     let currentTeamData = [];
-    let currentPhotoData = ""; // Stores Base64 string of the image
+    let currentPhotoData = ""; // Stores Base64
 
-    // 2. INITIALIZATION
+    // --- 2. INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
       if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
+      
       fetchTeamMembers();
+      
+      // CRITICAL: Check permissions and log the result
       checkTeamAccess();
     });
 
-    // 3. FETCH DATA
+    // --- 3. FETCH TEAM ---
     async function fetchTeamMembers() {
         try {
             const res = await fetch(`${API_URL}/team`);
@@ -284,7 +234,7 @@
         }
     }
 
-    // 4. RENDER DATA
+    // --- 4. RENDER UI ---
     function renderTeam() {
       const grid = document.getElementById('teamGrid');
       const isAdmin = isAuthorized();
@@ -301,6 +251,7 @@
               ${member.phone ? `<a href="tel:${member.phone}"><i class="fas fa-phone"></i></a>` : ''}
               ${member.linkedin ? `<a href="${member.linkedin}" target="_blank"><i class="fab fa-linkedin"></i></a>` : ''}
             </div>
+            
             <div class="${isAdmin ? 'show-admin' : ''}" style="display:none; margin-top:20px;">
                 <button class="edit-member-btn show-admin" onclick="openMemberEditor(${index})">Edit</button>
                 <button class="delete-member-btn show-admin" onclick="deleteMember('${member._id}')">Delete</button>
@@ -310,59 +261,58 @@
       `).join('');
     }
 
-    // 5. PERMISSIONS
+    // --- 5. PERMISSION CHECKER (WITH LOGGING) ---
     function isAuthorized() {
       const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
-      if (!userStr) return false;
+      if (!userStr) {
+          console.log("TeamAuth: No user found in storage.");
+          return false;
+      }
       try {
         const user = JSON.parse(userStr);
-        return user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com';
+        const email = (user.email || "").toLowerCase();
+        const role = (user.role || "").toLowerCase();
+        
+        console.log("TeamAuth Check:", email, role); // DEBUG LOG
+        
+        return email === 'team@test.com' || role === 'admin' || role === 'team';
       } catch (e) { return false; }
     }
 
     function checkTeamAccess() {
       if (isAuthorized()) {
-        const fab = document.getElementById('addMemberFab');
-        if(fab) fab.classList.add('show');
+        console.log("TeamAuth: Access Granted. Showing Button.");
+        document.getElementById('addMemberFab').classList.add('show');
+      } else {
+        console.log("TeamAuth: Access Denied. Button Hidden.");
       }
     }
 
-    // 6. PHOTO HANDLING (Base64)
+    // --- 6. IMAGE HANDLER ---
     function handleFileSelect(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            
-            // Limit size to 5MB to avoid MongoDB issues
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File too large! Please choose an image under 5MB.");
-                input.value = ""; // Reset
-                return;
-            }
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                currentPhotoData = e.target.result; // Store the Base64 string
-                document.getElementById('photoPreview').src = e.target.result; // Update preview
+                currentPhotoData = e.target.result; 
+                document.getElementById('photoPreview').src = e.target.result; 
             };
             reader.readAsDataURL(file);
         }
     }
 
-    // 7. EDITING LOGIC
+    // --- 7. ADD / EDIT LOGIC ---
     function openMemberEditor(index = -1) {
       const modal = document.getElementById('memberEditorModal');
       const title = document.getElementById('editorTitle');
       const idField = document.getElementById('memberId');
-
-      // Reset File Input
-      document.getElementById('memberPhotoFile').value = "";
+      
+      document.getElementById('memberPhotoFile').value = ""; // Clear file input
 
       if (index >= 0) {
         const member = currentTeamData[index];
         title.textContent = 'Edit Member';
         idField.value = member._id;
-        
-        // Load existing data
         document.getElementById('memberName').value = member.name;
         document.getElementById('memberRole').value = member.role;
         document.getElementById('memberBio').value = member.bio || '';
@@ -370,15 +320,11 @@
         document.getElementById('memberPhone').value = member.phone || '';
         document.getElementById('memberLinkedIn').value = member.linkedin || '';
         
-        // Handle Photo
-        currentPhotoData = member.photo || ""; // Keep old photo unless changed
+        currentPhotoData = member.photo || "";
         document.getElementById('photoPreview').src = member.photo || "https://placehold.co/150";
-
       } else {
         title.textContent = 'Add Member';
         idField.value = '';
-        
-        // Clear fields
         document.getElementById('memberName').value = '';
         document.getElementById('memberRole').value = '';
         document.getElementById('memberBio').value = '';
@@ -386,7 +332,6 @@
         document.getElementById('memberPhone').value = '';
         document.getElementById('memberLinkedIn').value = '';
         
-        // Reset Photo
         currentPhotoData = "";
         document.getElementById('photoPreview').src = "https://placehold.co/150";
       }
@@ -404,7 +349,7 @@
       const data = {
         name: document.getElementById('memberName').value,
         role: document.getElementById('memberRole').value,
-        photo: currentPhotoData, // Send the Base64 string
+        photo: currentPhotoData,
         bio: document.getElementById('memberBio').value,
         email: document.getElementById('memberEmail').value,
         phone: document.getElementById('memberPhone').value,
