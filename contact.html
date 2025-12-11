@@ -276,19 +276,28 @@
   </div>
 <script src="js/api.js"></script>
   <script>
-    // 1. CONFIGURATION
-    // Detects if you are on localhost or the live site
-    const API_URL = window.location.hostname.includes('localhost') 
-        ? 'http://localhost:5011/api' 
-        : 'https://ym-real-estate.onrender.com/api';
+    /* =========================================
+       1. SAFE CONFIGURATION (Fixes Double Declaration)
+       ========================================= */
+    // We check if API_URL is already defined by api.js. 
+    // If NOT, we define it here as a fallback.
+    if (typeof API_URL === 'undefined') {
+        var API_URL = window.location.hostname.includes('localhost') 
+            ? 'http://localhost:5011/api' 
+            : 'https://ym-real-estate.onrender.com/api';
+    }
 
-    // 2. INITIALIZATION (Runs immediately when page loads)
+    /* =========================================
+       2. INITIALIZATION
+       ========================================= */
     document.addEventListener('DOMContentLoaded', () => {
         // Force the Admin Section to appear immediately
         forceRevealSection();
     });
 
-    // 3. FORCE REVEAL FUNCTION
+    /* =========================================
+       3. FORCE REVEAL FUNCTION
+       ========================================= */
     function forceRevealSection() {
         const section = document.getElementById('messagesSection');
         
@@ -304,7 +313,9 @@
         }
     }
 
-    // 4. FETCH MESSAGES
+    /* =========================================
+       4. FETCH MESSAGES
+       ========================================= */
     async function fetchMessages() {
         // Try to get the token
         const token = localStorage.getItem('token');
@@ -314,10 +325,10 @@
         if (!token) {
             list.innerHTML = `
                 <div style="text-align:center; padding: 20px; border: 2px dashed red; color: red; background: #fff0f0; border-radius: 10px;">
-                    <h3><i class="fas fa-lock"></i> Section Visible, But Locked</h3>
-                    <p>The Message Section is now visible (UI is fixed!).</p>
-                    <p>However, you are not logged in, so we cannot fetch real data.</p>
-                    <a href="login.html" style="background:red; color:white; padding:5px 10px; text-decoration:none; border-radius:5px;">Click here to Login</a>
+                    <h3><i class="fas fa-lock"></i> Visible but Locked</h3>
+                    <p>The Message Section is visibly open.</p>
+                    <p>However, you are not logged in (No Token), so we cannot fetch real data.</p>
+                    <a href="login.html" style="background:red; color:white; padding:5px 10px; text-decoration:none; border-radius:5px;">Login as Admin</a>
                 </div>`;
             return;
         }
@@ -330,7 +341,8 @@
             const json = await res.json();
             const msgs = json.data || json || [];
 
-            document.getElementById('messageCount').innerText = msgs.length || 0;
+            const countEl = document.getElementById('messageCount');
+            if(countEl) countEl.innerText = msgs.length || 0;
 
             if (msgs.length === 0) {
                 list.innerHTML = '<p style="text-align:center; padding:40px; color:#aaa;">Inbox is empty.</p>';
@@ -357,7 +369,12 @@
         }
     }
 
-    // 5. SEND MESSAGE FORM
+    // Explicitly define loadMessages so the Refresh button works
+    window.loadMessages = fetchMessages; 
+
+    /* =========================================
+       5. SEND MESSAGE FORM
+       ========================================= */
     async function handleSubmit(event) {
         event.preventDefault();
         const btn = document.querySelector('.submit-btn');
@@ -393,7 +410,9 @@
         }
     }
 
-    // 6. DELETE MESSAGE
+    /* =========================================
+       6. DELETE MESSAGE
+       ========================================= */
     async function deleteMessage(id) {
         if (!confirm("Delete this message?")) return;
         const token = localStorage.getItem('token');
