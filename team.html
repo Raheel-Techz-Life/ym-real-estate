@@ -171,12 +171,11 @@
       transform: translateY(-3px);
     }
     
-    .edit-member-btn {
-      display: none;
+    /* Edit/Delete Buttons (Hidden by default) */
+    .edit-member-btn, .delete-member-btn {
+      display: none; /* Only visible via JS */
       margin-top: 15px;
       padding: 10px 20px;
-      background: #10b981;
-      color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -184,33 +183,13 @@
       font-weight: 500;
       transition: all 0.3s;
     }
-    .edit-member-btn:hover {
-      background: #059669;
-      transform: translateY(-2px);
-    }
-    .edit-member-btn.show {
-      display: inline-block;
-    }
+    .edit-member-btn { background: #10b981; color: white; }
+    .edit-member-btn:hover { background: #059669; transform: translateY(-2px); }
     
-    .delete-member-btn {
-      display: none;
-      margin-top: 10px;
-      margin-left: 10px;
-      padding: 10px 20px;
-      background: #dc2626;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-    .delete-member-btn:hover {
-      background: #b91c1c;
-      transform: translateY(-2px);
-    }
-    .delete-member-btn.show {
+    .delete-member-btn { background: #dc2626; color: white; margin-left: 10px; }
+    .delete-member-btn:hover { background: #b91c1c; transform: translateY(-2px); }
+    
+    .edit-member-btn.show, .delete-member-btn.show {
       display: inline-block;
     }
 
@@ -224,7 +203,7 @@
       background: #263f6e;
       color: white;
       border-radius: 50%;
-      display: black; /* Hidden by default */
+      display: none; /* Hidden by default */
       align-items: center;
       justify-content: center;
       font-size: 24px;
@@ -242,42 +221,14 @@
     }
     
     @media (max-width: 768px) {
-      .header {
-        flex-direction: column;
-        padding: 15px;
-        gap: 15px;
-      }
-      .nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
-        gap: 10px;
-      }
-      .nav a {
-        font-size: 13px;
-        padding: 8px 12px;
-      }
+      .header { flex-direction: column; padding: 15px; gap: 15px; }
+      .nav { flex-wrap: wrap; justify-content: center; width: 100%; gap: 10px; }
+      .nav a { font-size: 13px; padding: 8px 12px; }
       .hero h1 { font-size: 2em; }
-      .team-member-card {
-        grid-template-columns: 1fr;
-        padding: 25px;
-        text-align: center;
-        gap: 20px;
-      }
-      .member-photo {
-        margin: 0 auto;
-        width: 150px;
-        height: 150px;
-      }
-      .member-contact {
-        justify-content: center;
-      }
-      /* Developer Section Fix */
-      .developer-card-mobile {
-          grid-template-columns: 1fr !important;
-          text-align: center;
-          gap: 20px !important;
-      }
+      .team-member-card { grid-template-columns: 1fr; padding: 25px; text-align: center; gap: 20px; }
+      .member-photo { margin: 0 auto; width: 150px; height: 150px; }
+      .member-contact { justify-content: center; }
+      .developer-card-mobile { grid-template-columns: 1fr !important; text-align: center; gap: 20px !important; }
     }
   </style>
 </head>
@@ -294,7 +245,7 @@
       <a href="login.html" id="navLoginLink">Login / Signup</a>
       <a href="contact.html">Contact</a>
     </div>
-    <div class="user-profile" id="userProfile" style="display: none;">
+    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 12px; margin-left: auto;">
       <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff;">
       <span id="userName" style="color: #fff; font-weight: 500;"></span>
       <button onclick="api.logout()" style="padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer;">Logout</button>
@@ -414,53 +365,36 @@
   <script src="js/api.js"></script>
   <script>
     // --- 1. CONFIGURATION ---
+    // Safe check to avoid duplication errors
     if (typeof API_URL === 'undefined') {
         var API_URL = window.location.hostname.includes('localhost') 
             ? 'http://localhost:5011/api' 
             : 'https://ym-real-estate.onrender.com/api';
     }
 
-    // Global state for team
     let currentTeamData = [];
 
     // --- 2. INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Auth check
-      if(typeof ui !== 'undefined' && ui.updateAuthStatus) {
-        ui.updateAuthStatus();
-      }
-      
-      // 2. Fetch Data (Backend Connection)
+      if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
       fetchTeamMembers();
-
-      // 3. Show Admin Buttons?
-      checkTeamAccess();
+      checkTeamAccess(); // This unhides the button if you are 'team' role
     });
 
-    // --- 3. FETCH TEAM FROM BACKEND ---
+    // --- 3. FETCH TEAM ---
     async function fetchTeamMembers() {
         try {
             const res = await fetch(`${API_URL}/team`);
             const json = await res.json();
-            
-            // Handle {data: [...]} or just [...]
             currentTeamData = json.data || json || [];
-            
-            // Render
             renderTeam();
         } catch(e) {
-            console.error("Failed to fetch team:", e);
-            // Fallback for demo if backend empty/fails
-            currentTeamData = [
-                { name: 'Saif Ali Abbunavar', role: 'Heavy Driver', photo: 'https://via.placeholder.com/150?text=Saif', bio: 'Expert driver.', _id: 'demo1' },
-                { name: 'Nijagowda Patil', role: 'Lead Editor', photo: 'https://via.placeholder.com/150?text=Nija', bio: 'Video editor.', _id: 'demo2' },
-                { name: 'Ahsan Ali', role: 'NEET Aspirant', photo: 'https://via.placeholder.com/150?text=Ahsan', bio: 'Dedicated student.', _id: 'demo3' }
-            ];
-            renderTeam(); 
+            console.error("Fetch failed, using local dummy data:", e);
+            document.getElementById('teamGrid').innerHTML = '<p style="text-align:center;">Could not load team data from server.</p>';
         }
     }
 
-    // --- 4. RENDER TEAM UI ---
+    // --- 4. RENDER UI ---
     function renderTeam() {
       const grid = document.getElementById('teamGrid');
       const canEdit = isAuthorized();
@@ -503,21 +437,19 @@
       if (!userStr) return false;
       try {
         const user = JSON.parse(userStr);
+        // AUTHORIZE: Team, Admin, or Tester
         return user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com';
       } catch (e) { return false; }
     }
 
-    // This function runs automatically when the page loads
-function checkTeamAccess() {
-  const addBtn = document.getElementById('addMemberFab');
-  
-  // isAuthorized() checks if your email is 'team@test.com'
-  if (isAuthorized()) { 
-    addBtn.classList.add('show'); // ONLY adds the class if true
-  }
-}
+    function checkTeamAccess() {
+      const addBtn = document.getElementById('addMemberFab');
+      if (isAuthorized()) {
+        addBtn.classList.add('show');
+      }
+    }
 
-    // --- 6. ADD / EDIT LOGIC (CONNECTED TO BACKEND) ---
+    // --- 6. ADD / EDIT LOGIC ---
     function openMemberEditor(index = -1) {
       const modal = document.getElementById('memberEditorModal');
       const title = document.getElementById('editorTitle');
@@ -526,8 +458,7 @@ function checkTeamAccess() {
       if (index >= 0) {
         const member = currentTeamData[index];
         title.textContent = 'Edit Team Member';
-        idField.value = member._id || ''; // Store backend ID
-        
+        idField.value = member._id || ''; 
         document.getElementById('memberPhoto').value = member.photo || '';
         document.getElementById('memberName').value = member.name || '';
         document.getElementById('memberRole').value = member.role || '';
@@ -537,8 +468,7 @@ function checkTeamAccess() {
         document.getElementById('memberLinkedIn').value = member.linkedin || '';
       } else {
         title.textContent = 'Add Team Member';
-        idField.value = ''; // Empty ID = New
-        
+        idField.value = ''; 
         document.getElementById('memberPhoto').value = '';
         document.getElementById('memberName').value = '';
         document.getElementById('memberRole').value = '';
@@ -547,7 +477,6 @@ function checkTeamAccess() {
         document.getElementById('memberPhone').value = '';
         document.getElementById('memberLinkedIn').value = '';
       }
-
       modal.style.display = 'block';
       document.body.style.overflow = 'hidden';
     }
@@ -583,14 +512,12 @@ function checkTeamAccess() {
       try {
           let res;
           if (id) {
-              // UPDATE EXISTING
               res = await fetch(`${API_URL}/team/${id}`, {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                   body: JSON.stringify(memberData)
               });
           } else {
-              // CREATE NEW
               res = await fetch(`${API_URL}/team`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -601,9 +528,9 @@ function checkTeamAccess() {
           if(res.ok) {
               alert('Saved Successfully!');
               closeMemberEditor();
-              fetchTeamMembers(); // Reload from server
+              fetchTeamMembers(); 
           } else {
-              alert('Failed to save to server.');
+              alert('Failed to save.');
           }
       } catch(e) {
           console.error(e);
@@ -611,18 +538,9 @@ function checkTeamAccess() {
       }
     }
 
-    // --- 7. DELETE LOGIC (CONNECTED TO BACKEND) ---
     async function deleteMember(id) {
-      if (!confirm("Are you sure you want to delete this member?")) return;
+      if (!confirm("Are you sure?")) return;
       const token = localStorage.getItem('token');
-
-      // If it's a demo item (starts with 'demo'), just remove locally
-      if(id.startsWith('demo')) {
-          alert("Demo items cannot be deleted from server, but will hide for now.");
-          currentTeamData = currentTeamData.filter(m => m._id !== id);
-          renderTeam();
-          return;
-      }
 
       try {
           const res = await fetch(`${API_URL}/team/${id}`, {
