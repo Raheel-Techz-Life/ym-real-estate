@@ -426,6 +426,26 @@
       }
     }
 
+    function handleFileSelect(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Limit size to 5MB to avoid MongoDB issues
+            if (file.size > 5 * 1024 * 1024) {
+                alert("File too large! Please choose an image under 5MB.");
+                input.value = ""; // Reset
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentPhotoData = e.target.result; // Store the Base64 string
+                document.getElementById('photoPreview').src = e.target.result; // Update preview
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     // ===========================================
     // 6. ADD / EDIT LOGIC
     // ===========================================
