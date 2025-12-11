@@ -114,13 +114,19 @@
     }
 
     /* MESSAGES (ADMIN/TESTER ONLY) */
+    /* MESSAGES (ADMIN/TESTER ONLY) */
     .messages-section {
       display: none; /* Hidden by default */
       margin-top: 60px; background: white;
       border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0;
       box-shadow: 0 20px 40px rgba(0,0,0,0.05);
     }
-    .messages-section.show { display: block; animation: fadeIn 0.5s; }
+    
+    /* ADD !important HERE TO FORCE IT OPEN */
+    .messages-section.show { 
+      display: block !important; 
+      animation: fadeIn 0.5s; 
+    }
     
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -271,27 +277,104 @@
   </div>
 
   <script src="js/api.js"></script>
+<script src="js/api.js"></script>
   <script>
-    // Define API URL based on environment
     const API_URL = window.location.hostname.includes('localhost') 
         ? 'http://localhost:5011/api' 
         : 'https://ym-real-estate.onrender.com/api';
 
+    // --- 1. INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Initialize Auth UI
+      // DEBUG: Uncomment this line to FORCE yourself to be logged in as tester for a moment
+      // localStorage.setItem('user', JSON.stringify({ email: 'team@test.com', role: 'admin' })); localStorage.setItem('token', 'debug');
+
       if(typeof ui !== 'undefined' && ui.updateAuthStatus) {
           ui.updateAuthStatus();
       }
       
-      // 2. CRITICAL: Check permissions immediately
+      // Run the check immediately
       checkTeamAccessAndLoadMessages();
     });
 
-    // --- FORM SUBMISSION ---
+    // --- 2. PERMISSION CHECKER ---
+    function checkTeamAccessAndLoadMessages() {
+      const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
+      
+      if (!userStr) {
+          console.log("No user logged in. Messages hidden.");
+          return;
+      }
+
+      try {
+        const user = JSON.parse(userStr);
+        const email = (user.email || "").toLowerCase();
+        const role = (user.role || "").toLowerCase();
+
+        console.log("Checking access for:", email, role);
+
+        // Strict Check for Tester ID or Admin
+        if (email === 'team@test.com' || role === 'admin' || role === 'team') {
+            console.log("Access GRANTED.");
+            const section = document.getElementById('messagesSection');
+            
+            if(section) {
+                section.classList.add('show');
+                section.style.display = 'block'; // Double force via inline style
+                loadMessages();
+            } else {
+                console.error("Error: Could not find element with ID 'messagesSection'");
+            }
+        } else {
+            console.log("Access DENIED. You are not the tester.");
+        }
+      } catch(e){
+          console.error("Auth Error:", e);
+      }
+    }
+
+    // --- 3. FETCH MESSAGES ---
+    async function loadMessages() {
+      const token = localStorage.getItem('token');
+      if(!token) return;
+
+      try {
+        const res = await fetch(`${API_URL}/contact`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const json = await res.json();
+        const msgs = json.data || json || []; // Handle various API formats
+
+        document.getElementById('messageCount').innerText = msgs.length || 0;
+        const list = document.getElementById('messagesList');
+
+        if (!Array.isArray(msgs) || msgs.length === 0) {
+            list.innerHTML = '<p style="text-align:center; padding:40px; color:#aaa;">No messages received yet.</p>';
+            return;
+        }
+
+        list.innerHTML = msgs.map(msg => `
+          <div class="message-card">
+            <div class="message-meta">
+                <div><strong>${msg.name || 'Unknown'}</strong> (${msg.email || 'No Email'})</div>
+                <div>${msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'Just now'}</div>
+            </div>
+            <div class="message-body">${msg.message}</div>
+            <div style="margin-top:10px;">
+                <a href="tel:${msg.phone}" class="action-btn btn-call">Call</a>
+                <button onclick="deleteMessage('${msg._id}')" class="action-btn btn-delete">Delete</button>
+            </div>
+          </div>
+        `).join('');
+      } catch(e) { 
+          console.log("API not ready yet or empty", e); 
+      }
+    }
+
+    // --- 4. SEND MESSAGE FORM ---
     async function handleSubmit(event) {
       event.preventDefault();
       const btn = document.querySelector('.submit-btn');
-      const originalText = btn.innerText;
       btn.innerText = 'Sending...';
       btn.disabled = true;
 
@@ -303,127 +386,32 @@
       };
 
       try {
-        const res = await fetch(`${API_URL}/contact`, {
+        await fetch(`${API_URL}/contact`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(contactData)
         });
-        
-        if(!res.ok) throw new Error("Failed");
-
-        alert('Message Sent! We will contact you shortly.');
+        alert('Message Sent!');
         document.getElementById('contactForm').reset();
-        
-        // If sender is tester, reload list to show the new message
-        checkTeamAccessAndLoadMessages(); 
+        checkTeamAccessAndLoadMessages(); // Reload list if you are the tester
       } catch (error) {
-        alert('Error sending message. Please check your connection.');
-        console.error(error);
+        alert('Error sending message.');
       } finally {
-        btn.innerText = originalText;
+        btn.innerText = 'Send Message';
         btn.disabled = false;
       }
     }
 
-    // --- CHECK ACCESS & SHOW MESSAGES ---
-    function checkTeamAccessAndLoadMessages() {
-      console.log("Checking Admin Access for Messages..."); // Debug Log
-
-      const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
-      if (!userStr) {
-          console.log("No user found in localStorage.");
-          return;
-      }
-
-      try {
-        const user = JSON.parse(userStr);
-        console.log("Logged in as:", user.email);
-
-        // CHECK: Is this 'team@test.com' OR an admin role?
-        const isTester = user.email === 'team@test.com';
-        const isAdmin = user.role === 'admin' || user.role === 'team';
-
-        if (isTester || isAdmin) {
-          console.log("Access GRANTED. Showing message inbox.");
-          
-          // 1. Show the hidden section
-          const section = document.getElementById('messagesSection');
-          if(section) {
-              section.classList.add('show');
-              // 2. Load the data
-              loadMessages();
-          }
-        } else {
-            console.log("Access DENIED. Not authorized.");
-        }
-      } catch(e){
-          console.error("Error parsing user data:", e);
-      }
-    }
-
-    // --- FETCH MESSAGES FROM API ---
-    async function loadMessages() {
-      const token = localStorage.getItem('token') || localStorage.getItem('authToken');
-      if(!token) return;
-
-      try {
-        const res = await fetch(`${API_URL}/contact`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if(!res.ok) throw new Error("Auth failed");
-
-        const json = await res.json();
-        // Handle both possible API response formats: {data: [...]} or just [...]
-        const msgs = json.data || json; 
-
-        document.getElementById('messageCount').innerText = msgs.length || 0;
-        
-        const list = document.getElementById('messagesList');
-        if (!msgs || msgs.length === 0) {
-            list.innerHTML = '<p style="text-align:center; padding:40px; color:#aaa; font-style:italic;">No messages received yet.</p>';
-            return;
-        }
-
-        // Render Cards
-        list.innerHTML = msgs.map(msg => `
-          <div class="message-card">
-            <div class="message-meta">
-                <div>
-                    <strong style="color:#263f6e; font-size:1.1em;">${msg.name}</strong> 
-                    <span style="opacity:0.7; margin-left:5px;">&lt;${msg.email}&gt;</span>
-                </div>
-                <div style="font-size:0.8em;">${new Date(msg.createdAt || Date.now()).toLocaleDateString()}</div>
-            </div>
-            <div class="message-body">${msg.message}</div>
-            <div style="margin-top:15px; display:flex; gap:10px;">
-                <a href="tel:${msg.phone}" class="action-btn btn-call"><i class="fas fa-phone-alt"></i> Call ${msg.phone}</a>
-                <button onclick="deleteMessage('${msg._id}')" class="action-btn btn-delete"><i class="fas fa-trash-alt"></i> Delete</button>
-            </div>
-          </div>
-        `).join('');
-      } catch(e) { 
-          console.error("Msg Load Error", e); 
-          document.getElementById('messagesList').innerHTML = '<p style="color:red; text-align:center;">Failed to load messages. <br>Ensure you are logged in as team@test.com</p>';
-      }
-    }
-
-    // --- DELETE MESSAGE ---
+    // --- 5. DELETE ---
     async function deleteMessage(id) {
-      if(!confirm("Are you sure you want to delete this message?")) return;
-      const token = localStorage.getItem('token');
-      
+      if(!confirm("Delete?")) return;
       try {
-        const res = await fetch(`${API_URL}/contact/${id}`, {
+        await fetch(`${API_URL}/contact/${id}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
-        if(res.ok) {
-            loadMessages(); // Refresh list immediately
-        } else {
-            alert("Failed to delete.");
-        }
-      } catch(e) { alert("Error deleting message"); }
+        loadMessages();
+      } catch(e) { alert("Error deleting"); }
     }
   </script>
 </body>
