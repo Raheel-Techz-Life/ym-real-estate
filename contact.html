@@ -114,7 +114,6 @@
     }
 
     /* MESSAGES (ADMIN/TESTER ONLY) */
-    /* MESSAGES (ADMIN/TESTER ONLY) */
     .messages-section {
       display: none; /* Hidden by default */
       margin-top: 60px; background: white;
@@ -122,10 +121,10 @@
       box-shadow: 0 20px 40px rgba(0,0,0,0.05);
     }
     
-    /* ADD !important HERE TO FORCE IT OPEN */
+    /* VITAL: Use !important to override the display:none when JS adds this class */
     .messages-section.show { 
-      display: block !important; 
-      animation: fadeIn 0.5s; 
+        display: block !important; 
+        animation: fadeIn 0.5s; 
     }
     
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -285,14 +284,28 @@
 
     // 2. INITIALIZATION
     document.addEventListener('DOMContentLoaded', () => {
-      console.log("Contact Page Loaded.");
-      
-      // Update UI Header if logged in
+      // 1. Handle OAuth Redirects (If coming from login page)
+      const urlParams = new URLSearchParams(window.location.search);
+      const authSuccess = urlParams.get('auth');
+      const userData = urlParams.get('user');
+
+      if (authSuccess === 'success' && userData) {
+          try {
+              const userObj = JSON.parse(decodeURIComponent(userData));
+              localStorage.setItem('token', userObj.token || 'google-oauth-token');
+              if (userObj.token) delete userObj.token;
+              localStorage.setItem('user', JSON.stringify(userObj));
+              // Clean URL
+              window.history.replaceState({}, document.title, window.location.pathname);
+          } catch (e) { console.error('OAuth error:', e); }
+      }
+
+      // 2. Update UI (Header)
       if(typeof ui !== 'undefined' && ui.updateAuthStatus) {
           ui.updateAuthStatus();
       }
       
-      // Run the Admin Check
+      // 3. CRITICAL: Run permission check
       checkAdminAccess();
     });
 
@@ -300,63 +313,48 @@
     function checkAdminAccess() {
       const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
       
-      // DEBUG: Print what is currently saved
-      console.log("Current LocalStorage User:", userStr); 
-
-      if (!userStr) return; // No user logged in, stop here.
+      if (!userStr) return; // No user logged in
 
       try {
         const user = JSON.parse(userStr);
         const email = (user.email || "").trim().toLowerCase();
         const role = (user.role || "").trim().toLowerCase();
 
-        // THE CONDITION: strict check
+        // STRICT CHECK: Is this 'team@test.com' OR an admin role?
         const isTester = email === 'team@test.com';
         const isAdmin = role === 'admin' || role === 'team';
 
         if (isTester || isAdmin) {
-            console.log("✅ ACCESS GRANTED: User is Admin/Tester");
-            revealAdminSection();
-        } else {
-            console.warn("❌ ACCESS DENIED: User is logged in but not Admin/Tester");
+            // Reveal the section by adding the .show class
+            const section = document.getElementById('messagesSection');
+            if(section) {
+                section.classList.add('show');
+                loadMessages(); // Fetch the actual data
+            }
         }
       } catch(e) {
-          console.error("JSON Parse Error:", e);
+          console.error("User Parse Error:", e);
       }
     }
 
-    // 4. REVEAL SECTION (Refactored for reliability)
-    function revealAdminSection() {
-        const section = document.getElementById('messagesSection');
-        if (section) {
-            section.style.display = 'block'; // Force CSS override
-            section.classList.add('show');
-            loadMessages(); // Fetch data
-        } else {
-            console.error("CRITICAL ERROR: HTML Element with ID 'messagesSection' not found!");
-        }
-    }
-
-    // 5. FETCH MESSAGES
+    // 4. FETCH MESSAGES
     async function loadMessages() {
       const token = localStorage.getItem('token');
-      if(!token) { console.error("No token found"); return; }
+      if(!token) return;
 
       try {
-        console.log("Fetching messages from:", `${API_URL}/contact`);
         const res = await fetch(`${API_URL}/contact`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         const json = await res.json();
+        // Handle different API responses ( {data: []} vs [] )
         const msgs = json.data || json || []; 
 
-        console.log("Messages Received:", msgs.length);
-        
-        document.getElementById('messageCount').innerText = msgs.length;
+        document.getElementById('messageCount').innerText = Array.isArray(msgs) ? msgs.length : 0;
         const list = document.getElementById('messagesList');
 
-        if (msgs.length === 0) {
+        if (!Array.isArray(msgs) || msgs.length === 0) {
             list.innerHTML = '<p style="text-align:center; padding:20px; color:#aaa;">Inbox is empty.</p>';
             return;
         }
@@ -364,8 +362,8 @@
         list.innerHTML = msgs.map(msg => `
           <div class="message-card">
             <div class="message-meta">
-                <div><strong>${msg.name}</strong> (${msg.email})</div>
-                <div>${new Date(msg.createdAt).toLocaleDateString()}</div>
+                <div><strong>${msg.name || 'Unknown'}</strong> (${msg.email})</div>
+                <div>${msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'Just now'}</div>
             </div>
             <div class="message-body">${msg.message}</div>
             <div style="margin-top:10px;">
@@ -375,14 +373,15 @@
           </div>
         `).join('');
       } catch(e) { 
-          console.error("API Fetch Error:", e); 
+          console.error("Fetch Error:", e); 
       }
     }
 
-    // 6. SEND MESSAGE
+    // 5. SEND MESSAGE FORM
     async function handleSubmit(event) {
       event.preventDefault();
       const btn = document.querySelector('.submit-btn');
+      const originalText = btn.innerText;
       btn.innerText = 'Sending...';
       btn.disabled = true;
 
@@ -402,19 +401,19 @@
         alert('Message Sent Successfully!');
         document.getElementById('contactForm').reset();
         
-        // If we are currently viewing as admin, refresh the list immediately
+        // If we are currently viewing as admin, refresh list immediately
         checkAdminAccess(); 
       } catch (error) {
         alert('Error sending message.');
       } finally {
-        btn.innerText = 'Send Message';
+        btn.innerText = originalText;
         btn.disabled = false;
       }
     }
 
-    // 7. DELETE MESSAGE
+    // 6. DELETE MESSAGE
     async function deleteMessage(id) {
-      if(!confirm("Delete this message?")) return;
+      if(!confirm("Are you sure?")) return;
       try {
         await fetch(`${API_URL}/contact/${id}`, {
             method: 'DELETE',
@@ -424,6 +423,5 @@
       } catch(e) { alert("Delete failed"); }
     }
   </script>
-  
 </body>
 </html>
