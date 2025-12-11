@@ -278,99 +278,108 @@
 
   <script src="js/api.js"></script>
   <script>
+    // 1. CONFIGURATION
     const API_URL = window.location.hostname.includes('localhost') 
         ? 'http://localhost:5011/api' 
         : 'https://ym-real-estate.onrender.com/api';
 
-    // --- 1. INITIALIZATION ---
+    // 2. INITIALIZATION
     document.addEventListener('DOMContentLoaded', () => {
-      // DEBUG: Uncomment this line to FORCE yourself to be logged in as tester for a moment
-      // localStorage.setItem('user', JSON.stringify({ email: 'team@test.com', role: 'admin' })); localStorage.setItem('token', 'debug');
-
+      console.log("Contact Page Loaded.");
+      
+      // Update UI Header if logged in
       if(typeof ui !== 'undefined' && ui.updateAuthStatus) {
           ui.updateAuthStatus();
       }
       
-      // Run the check immediately
-      checkTeamAccessAndLoadMessages();
+      // Run the Admin Check
+      checkAdminAccess();
     });
 
-    // --- 2. PERMISSION CHECKER ---
-    function checkTeamAccessAndLoadMessages() {
+    // 3. ADMIN PERMISSION CHECKER
+    function checkAdminAccess() {
       const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
       
-      if (!userStr) {
-          console.log("No user logged in. Messages hidden.");
-          return;
-      }
+      // DEBUG: Print what is currently saved
+      console.log("Current LocalStorage User:", userStr); 
+
+      if (!userStr) return; // No user logged in, stop here.
 
       try {
         const user = JSON.parse(userStr);
-        const email = (user.email || "").toLowerCase();
-        const role = (user.role || "").toLowerCase();
+        const email = (user.email || "").trim().toLowerCase();
+        const role = (user.role || "").trim().toLowerCase();
 
-        console.log("Checking access for:", email, role);
+        // THE CONDITION: strict check
+        const isTester = email === 'team@test.com';
+        const isAdmin = role === 'admin' || role === 'team';
 
-        // Strict Check for Tester ID or Admin
-        if (email === 'team@test.com' || role === 'admin' || role === 'team') {
-            console.log("Access GRANTED.");
-            const section = document.getElementById('messagesSection');
-            
-            if(section) {
-                section.classList.add('show');
-                section.style.display = 'block'; // Double force via inline style
-                loadMessages();
-            } else {
-                console.error("Error: Could not find element with ID 'messagesSection'");
-            }
+        if (isTester || isAdmin) {
+            console.log("✅ ACCESS GRANTED: User is Admin/Tester");
+            revealAdminSection();
         } else {
-            console.log("Access DENIED. You are not the tester.");
+            console.warn("❌ ACCESS DENIED: User is logged in but not Admin/Tester");
         }
-      } catch(e){
-          console.error("Auth Error:", e);
+      } catch(e) {
+          console.error("JSON Parse Error:", e);
       }
     }
 
-    // --- 3. FETCH MESSAGES ---
+    // 4. REVEAL SECTION (Refactored for reliability)
+    function revealAdminSection() {
+        const section = document.getElementById('messagesSection');
+        if (section) {
+            section.style.display = 'block'; // Force CSS override
+            section.classList.add('show');
+            loadMessages(); // Fetch data
+        } else {
+            console.error("CRITICAL ERROR: HTML Element with ID 'messagesSection' not found!");
+        }
+    }
+
+    // 5. FETCH MESSAGES
     async function loadMessages() {
       const token = localStorage.getItem('token');
-      if(!token) return;
+      if(!token) { console.error("No token found"); return; }
 
       try {
+        console.log("Fetching messages from:", `${API_URL}/contact`);
         const res = await fetch(`${API_URL}/contact`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         const json = await res.json();
-        const msgs = json.data || json || []; // Handle various API formats
+        const msgs = json.data || json || []; 
 
-        document.getElementById('messageCount').innerText = msgs.length || 0;
+        console.log("Messages Received:", msgs.length);
+        
+        document.getElementById('messageCount').innerText = msgs.length;
         const list = document.getElementById('messagesList');
 
-        if (!Array.isArray(msgs) || msgs.length === 0) {
-            list.innerHTML = '<p style="text-align:center; padding:40px; color:#aaa;">No messages received yet.</p>';
+        if (msgs.length === 0) {
+            list.innerHTML = '<p style="text-align:center; padding:20px; color:#aaa;">Inbox is empty.</p>';
             return;
         }
 
         list.innerHTML = msgs.map(msg => `
           <div class="message-card">
             <div class="message-meta">
-                <div><strong>${msg.name || 'Unknown'}</strong> (${msg.email || 'No Email'})</div>
-                <div>${msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'Just now'}</div>
+                <div><strong>${msg.name}</strong> (${msg.email})</div>
+                <div>${new Date(msg.createdAt).toLocaleDateString()}</div>
             </div>
             <div class="message-body">${msg.message}</div>
             <div style="margin-top:10px;">
-                <a href="tel:${msg.phone}" class="action-btn btn-call">Call</a>
+                <a href="tel:${msg.phone}" class="action-btn btn-call">Call ${msg.phone}</a>
                 <button onclick="deleteMessage('${msg._id}')" class="action-btn btn-delete">Delete</button>
             </div>
           </div>
         `).join('');
       } catch(e) { 
-          console.log("API not ready yet or empty", e); 
+          console.error("API Fetch Error:", e); 
       }
     }
 
-    // --- 4. SEND MESSAGE FORM ---
+    // 6. SEND MESSAGE
     async function handleSubmit(event) {
       event.preventDefault();
       const btn = document.querySelector('.submit-btn');
@@ -390,9 +399,11 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(contactData)
         });
-        alert('Message Sent!');
+        alert('Message Sent Successfully!');
         document.getElementById('contactForm').reset();
-        checkTeamAccessAndLoadMessages(); // Reload list if you are the tester
+        
+        // If we are currently viewing as admin, refresh the list immediately
+        checkAdminAccess(); 
       } catch (error) {
         alert('Error sending message.');
       } finally {
@@ -401,16 +412,16 @@
       }
     }
 
-    // --- 5. DELETE ---
+    // 7. DELETE MESSAGE
     async function deleteMessage(id) {
-      if(!confirm("Delete?")) return;
+      if(!confirm("Delete this message?")) return;
       try {
         await fetch(`${API_URL}/contact/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         loadMessages();
-      } catch(e) { alert("Error deleting"); }
+      } catch(e) { alert("Delete failed"); }
     }
   </script>
 </body>
