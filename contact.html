@@ -280,7 +280,7 @@
        1. SAFE CONFIGURATION (Fixes Double Declaration)
        ========================================= */
     // We check if API_URL is already defined by api.js. 
-    // If NOT, we define it here as a fallback.
+    // If NOT, we define it here as a fallback using VAR (safer than const here)
     if (typeof API_URL === 'undefined') {
         var API_URL = window.location.hostname.includes('localhost') 
             ? 'http://localhost:5011/api' 
