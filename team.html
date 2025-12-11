@@ -25,30 +25,12 @@
       justify-content: space-between;
       gap: 40px;
     }
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-    .logo-img {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      object-fit: cover;
-      background: #fff;
-    }
-    .nav {
-      display: flex;
-      gap: 24px;
-    }
+    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; background: #fff; }
+    .nav { display: flex; gap: 24px; }
     .nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      padding: 10px 16px;
-      border-radius: 4px;
-      transition: background 0.2s;
+      color: #fff; text-decoration: none; font-weight: 500;
+      padding: 10px 16px; border-radius: 4px; transition: background 0.2s;
     }
     .nav a:hover { background: #18284b; }
     .user-profile { display: none; align-items: center; gap: 10px; margin-left: auto; }
@@ -59,14 +41,8 @@
       padding: 80px 20px 60px;
       text-align: center;
     }
-    .hero h1 {
-      font-size: 3em;
-      margin-bottom: 15px;
-    }
-    .hero p {
-      font-size: 1.2em;
-      opacity: 0.9;
-    }
+    .hero h1 { font-size: 3em; margin-bottom: 15px; }
+    .hero p { font-size: 1.2em; opacity: 0.9; }
     
     .container {
       max-width: 1200px;
@@ -122,104 +98,41 @@
     }
     
     .member-info { flex: 1; }
+    .member-name { font-size: 1.8em; color: #263f6e; font-weight: 600; margin-bottom: 8px; }
+    .member-role { color: #666; font-size: 1.2em; margin-bottom: 20px; font-weight: 500; }
+    .member-bio { color: #555; line-height: 1.8; margin-bottom: 25px; font-size: 1.05em; }
     
-    .member-name {
-      font-size: 1.8em;
-      color: #263f6e;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    
-    .member-role {
-      color: #666;
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      font-weight: 500;
-    }
-    
-    .member-bio {
-      color: #555;
-      line-height: 1.8;
-      margin-bottom: 25px;
-      font-size: 1.05em;
-    }
-    
-    .member-contact {
-      display: flex;
-      gap: 15px;
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid #f0f0f0;
-      flex-wrap: wrap;
-    }
+    .member-contact { display: flex; gap: 15px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; flex-wrap: wrap; }
     .member-contact a {
-      width: 45px;
-      height: 45px;
-      background: #f6faff;
-      border: 2px solid #263f6e;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #263f6e;
-      text-decoration: none;
-      transition: all 0.3s;
-      font-size: 1.2em;
+      width: 45px; height: 45px; background: #f6faff;
+      border: 2px solid #263f6e; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #263f6e; text-decoration: none; transition: all 0.3s; font-size: 1.2em;
     }
-    .member-contact a:hover {
-      background: #263f6e;
-      color: white;
-      transform: translateY(-3px);
-    }
+    .member-contact a:hover { background: #263f6e; color: white; transform: translateY(-3px); }
     
-    /* Edit/Delete Buttons (Hidden by default) */
+    /* Edit/Delete Buttons */
     .edit-member-btn, .delete-member-btn {
-      display: none; /* Only visible via JS */
-      margin-top: 15px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s;
+      display: none; margin-top: 15px; padding: 10px 20px; border: none;
+      border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s;
     }
     .edit-member-btn { background: #10b981; color: white; margin-right: 10px; }
     .edit-member-btn:hover { background: #059669; transform: translateY(-2px); }
-    
     .delete-member-btn { background: #dc2626; color: white; }
     .delete-member-btn:hover { background: #b91c1c; transform: translateY(-2px); }
     
-    /* Utility class to show elements */
     .show-admin { display: inline-block !important; }
 
     /* FLOATING ADD BUTTON */
     .add-member-fab {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      background: #263f6e;
-      color: white;
-      border-radius: 50%;
-      display: none; /* Default hidden */
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 4px 15px rgba(38,63,110,0.3);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 100;
-      border: 2px solid white;
+      position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+      background: #263f6e; color: white; border-radius: 50%;
+      display: none; align-items: center; justify-content: center;
+      font-size: 24px; box-shadow: 0 4px 15px rgba(38,63,110,0.3);
+      cursor: pointer; transition: all 0.3s ease; z-index: 100; border: 2px solid white;
     }
-    .add-member-fab:hover {
-      transform: scale(1.1) rotate(90deg);
-      background: #10b981;
-    }
-    .add-member-fab.show {
-      display: flex !important;
-    }
+    .add-member-fab:hover { transform: scale(1.1) rotate(90deg); background: #10b981; }
+    .add-member-fab.show { display: flex !important; }
     
     @media (max-width: 768px) {
       .header { flex-direction: column; padding: 15px; gap: 15px; }
@@ -248,7 +161,7 @@
       <a href="login.html" id="navLoginLink">Login / Signup</a>
       <a href="contact.html">Contact</a>
     </div>
-    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 12px; margin-left: auto;">
+    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 10px; margin-left: auto;">
       <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff;">
       <span id="userName" style="color: #fff; font-weight: 500;"></span>
       <button onclick="api.logout()" style="padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer;">Logout</button>
@@ -313,9 +226,18 @@
       
       <div style="display: grid; gap: 15px;">
         <input type="hidden" id="memberId"> 
+        
+        <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 2px dashed #cbd5e1;">
+            <label style="display: block; margin-bottom: 8px; color: #263f6e; font-weight: 600;">Member Photo (JPG/PNG)</label>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <img id="photoPreview" src="https://placehold.co/150" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #263f6e;">
+                <input type="file" id="memberPhotoFile" accept="image/png, image/jpeg" onchange="handleFileSelect(this)" style="font-size: 14px;">
+            </div>
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">File size limit: 5MB</p>
+        </div>
+
         <input type="text" id="memberName" placeholder="Name" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
         <input type="text" id="memberRole" placeholder="Role / Position" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-        <input type="text" id="memberPhoto" placeholder="Photo URL" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
         <textarea id="memberBio" rows="3" placeholder="Short Bio" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
         <input type="email" id="memberEmail" placeholder="Email (Optional)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
         <input type="tel" id="memberPhone" placeholder="Phone (Optional)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
@@ -329,42 +251,30 @@
   </div>
 
   <script>
-    // ===========================================
-    // 1. SAFE CONFIGURATION (Conflict Free)
-    // ===========================================
-    // We use 'BACKEND_URL' locally to avoid conflicting with 'API_URL' if it exists globally
-    const BACKEND_URL = (typeof API_URL !== 'undefined') 
-        ? API_URL 
-        : (window.location.hostname.includes('localhost') ? 'http://localhost:5011/api' : 'https://ym-real-estate.onrender.com/api');
+    // 1. CONFIGURATION
+    var API_URL = window.location.hostname.includes('localhost') 
+        ? 'http://localhost:5011/api' 
+        : 'https://ym-real-estate.onrender.com/api';
 
     let currentTeamData = [];
+    let currentPhotoData = ""; // Stores Base64 string of the image
 
-    // ===========================================
     // 2. INITIALIZATION
-    // ===========================================
     document.addEventListener('DOMContentLoaded', () => {
-      // Update UI if user is logged in
       if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
-      
-      // Load Team Data
       fetchTeamMembers();
-      
-      // Check if user is tester to show button
       checkTeamAccess();
     });
 
-    // ===========================================
-    // 3. FETCH DATA (Backend)
-    // ===========================================
+    // 3. FETCH DATA
     async function fetchTeamMembers() {
         try {
-            const res = await fetch(`${BACKEND_URL}/team`);
+            const res = await fetch(`${API_URL}/team`);
             const json = await res.json();
-            
             currentTeamData = json.data || json || [];
             
             if (currentTeamData.length === 0) {
-                document.getElementById('teamGrid').innerHTML = '<p style="text-align:center; padding:20px; font-style:italic;">No team members added yet.</p>';
+                document.getElementById('teamGrid').innerHTML = '<p style="text-align:center; padding:20px;">No team members added yet.</p>';
             } else {
                 renderTeam();
             }
@@ -374,12 +284,10 @@
         }
     }
 
-    // ===========================================
-    // 4. RENDER UI
-    // ===========================================
+    // 4. RENDER DATA
     function renderTeam() {
       const grid = document.getElementById('teamGrid');
-      const isAdmin = isAuthorized(); 
+      const isAdmin = isAuthorized();
 
       grid.innerHTML = currentTeamData.map((member, index) => `
         <div class="team-member-card">
@@ -393,7 +301,6 @@
               ${member.phone ? `<a href="tel:${member.phone}"><i class="fas fa-phone"></i></a>` : ''}
               ${member.linkedin ? `<a href="${member.linkedin}" target="_blank"><i class="fab fa-linkedin"></i></a>` : ''}
             </div>
-            
             <div class="${isAdmin ? 'show-admin' : ''}" style="display:none; margin-top:20px;">
                 <button class="edit-member-btn show-admin" onclick="openMemberEditor(${index})">Edit</button>
                 <button class="delete-member-btn show-admin" onclick="deleteMember('${member._id}')">Delete</button>
@@ -403,19 +310,13 @@
       `).join('');
     }
 
-    // ===========================================
-    // 5. PERMISSION CHECKER
-    // ===========================================
+    // 5. PERMISSIONS
     function isAuthorized() {
       const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
       if (!userStr) return false;
       try {
         const user = JSON.parse(userStr);
-        // STRICT CHECK: Is this 'team@test.com' or admin?
-        const email = (user.email || "").toLowerCase();
-        const role = (user.role || "").toLowerCase();
-        
-        return email === 'team@test.com' || role === 'admin' || role === 'team';
+        return user.role === 'team' || user.role === 'admin' || user.email === 'team@test.com';
       } catch (e) { return false; }
     }
 
@@ -426,6 +327,7 @@
       }
     }
 
+    // 6. PHOTO HANDLING (Base64)
     function handleFileSelect(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
@@ -446,35 +348,47 @@
         }
     }
 
-    // ===========================================
-    // 6. ADD / EDIT LOGIC
-    // ===========================================
+    // 7. EDITING LOGIC
     function openMemberEditor(index = -1) {
       const modal = document.getElementById('memberEditorModal');
       const title = document.getElementById('editorTitle');
       const idField = document.getElementById('memberId');
 
+      // Reset File Input
+      document.getElementById('memberPhotoFile').value = "";
+
       if (index >= 0) {
         const member = currentTeamData[index];
         title.textContent = 'Edit Member';
         idField.value = member._id;
+        
+        // Load existing data
         document.getElementById('memberName').value = member.name;
         document.getElementById('memberRole').value = member.role;
-        document.getElementById('memberPhoto').value = member.photo || '';
         document.getElementById('memberBio').value = member.bio || '';
         document.getElementById('memberEmail').value = member.email || '';
         document.getElementById('memberPhone').value = member.phone || '';
         document.getElementById('memberLinkedIn').value = member.linkedin || '';
+        
+        // Handle Photo
+        currentPhotoData = member.photo || ""; // Keep old photo unless changed
+        document.getElementById('photoPreview').src = member.photo || "https://placehold.co/150";
+
       } else {
         title.textContent = 'Add Member';
         idField.value = '';
+        
+        // Clear fields
         document.getElementById('memberName').value = '';
         document.getElementById('memberRole').value = '';
-        document.getElementById('memberPhoto').value = '';
         document.getElementById('memberBio').value = '';
         document.getElementById('memberEmail').value = '';
         document.getElementById('memberPhone').value = '';
         document.getElementById('memberLinkedIn').value = '';
+        
+        // Reset Photo
+        currentPhotoData = "";
+        document.getElementById('photoPreview').src = "https://placehold.co/150";
       }
       modal.style.display = 'block';
     }
@@ -490,7 +404,7 @@
       const data = {
         name: document.getElementById('memberName').value,
         role: document.getElementById('memberRole').value,
-        photo: document.getElementById('memberPhoto').value,
+        photo: currentPhotoData, // Send the Base64 string
         bio: document.getElementById('memberBio').value,
         email: document.getElementById('memberEmail').value,
         phone: document.getElementById('memberPhone').value,
@@ -501,7 +415,7 @@
 
       try {
           const method = id ? 'PUT' : 'POST';
-          const url = id ? `${BACKEND_URL}/team/${id}` : `${BACKEND_URL}/team`;
+          const url = id ? `${API_URL}/team/${id}` : `${API_URL}/team`;
           
           const res = await fetch(url, {
               method: method,
@@ -522,7 +436,7 @@
         if(!confirm("Delete this member?")) return;
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`${BACKEND_URL}/team/${id}`, {
+            const res = await fetch(`${API_URL}/team/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
