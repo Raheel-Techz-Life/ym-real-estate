@@ -118,21 +118,27 @@
 </div>
 
 <script>
-    // --- CONFIGURATION ---
-    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011/api' : 'https://ym-real-estate.onrender.com/api';
-    const UPLOADS_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011/uploads/' : 'https://ym-real-estate.onrender.com/uploads/';
+    // --- 1. CONFIGURATION ---
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5011/api' 
+        : 'https://ym-real-estate.onrender.com/api'; 
+    
+    const UPLOADS_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5011/uploads/' 
+        : 'https://ym-real-estate.onrender.com/uploads/';
 
+    // --- 2. STATE ---
     let currentUser = null;
     let editingId = null;
     let existingImages = []; 
     let newFiles = [];       
     let imagesToDelete = []; 
 
-    // --- INITIALIZATION ---
+    // --- 3. INIT ---
     window.onload = async () => {
         checkAuth();
         
-        // CHECK URL FOR DIRECT EDIT (e.g. admin.html?edit=12345)
+        // CHECK URL FOR DIRECT EDIT
         const params = new URLSearchParams(window.location.search);
         const editId = params.get('edit');
         if(editId) {
@@ -145,25 +151,18 @@
         if (!userStr) return window.location.href = 'index.html'; 
         currentUser = JSON.parse(userStr);
         
-        // Allow Tester ID
-        if (currentUser.email === 'team@test.com') {
+        if (currentUser.email === 'team@test.com' || currentUser.role === 'admin' || currentUser.role === 'team') {
             grantAccess();
-            return;
-        }
-
-        if (currentUser.role !== 'admin' && currentUser.role !== 'team') {
+        } else {
             alert("Access Denied."); 
             window.location.href = 'index.html'; 
-            return;
         }
-        grantAccess();
     }
 
     function grantAccess() {
         document.getElementById('auth-warning').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         
-        // Auto-fill Agent defaults if not editing
         if (!editingId && currentUser) {
             document.getElementById('ownerName').value = currentUser.name || '';
             document.getElementById('ownerEmail').value = currentUser.email || '';
@@ -172,32 +171,93 @@
         loadProperties();
     }
 
-    // --- NEW: FETCH SINGLE PROPERTY BY ID ---
+    // --- 4. DATA FETCHING (SAFE) ---
+    async function safeFetch(url, options = {}) {
+        try {
+            const res = await fetch(url, options);
+            
+            // IF SERVER RETURNS HTML ERROR (404/500)
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") === -1) {
+                const text = await res.text();
+                throw new Error(`Server returned HTML instead of JSON. (Status: ${res.status}). Check Console.`);
+            }
+
+            const json = await res.json();
+            if (!res.ok) throw new Error(json.message || json.error || "Server Error");
+            
+            return json;
+        } catch (e) {
+            console.error("Fetch Error:", e);
+            alert("Error: " + e.message);
+            throw e;
+        }
+    }
+
+    async function loadProperties() {
+        const itemsEl = document.getElementById('items');
+        itemsEl.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Fetching data...</p>';
+
+        try {
+            const json = await safeFetch(`${API_URL}/properties`);
+            const properties = json.data || json;
+
+            if (!properties || properties.length === 0) {
+                itemsEl.innerHTML = '<div style="text-align:center; padding:40px; background:white; border-radius:16px;"><p style="color:#888;">No properties found.</p></div>';
+                return;
+            }
+
+            itemsEl.innerHTML = ''; 
+            properties.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                
+                let thumb = 'https://placehold.co/100?text=No+Img';
+                if(p.images && p.images.length > 0) {
+                    const imgPath = p.images[0];
+                    thumb = imgPath.startsWith('http') ? imgPath : `${UPLOADS_URL}${imgPath.split(/[/\\]/).pop()}`;
+                }
+                
+                // Safe stringify for onclick
+                const dataString = encodeURIComponent(JSON.stringify(p));
+
+                div.innerHTML = `
+                    <img src="${thumb}" onerror="this.src='https://placehold.co/100'" style="object-fit:cover;">
+                    <div class="meta">
+                        <h3>${p.title} <span class="status ${p.status}">${p.status}</span></h3>
+                        <div class="note">
+                          <span><i class="fas fa-tag"></i> ₹${Number(p.price).toLocaleString()}</span>
+                          <span><i class="fas fa-map-marker-alt"></i> ${p.address?.city || 'Unknown'}</span>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn-edit" onclick="startEdit('${dataString}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn-delete" onclick="deleteProperty('${p._id}')"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                itemsEl.appendChild(div);
+            });
+        } catch (err) {
+            itemsEl.innerHTML = `<p style="color:red; text-align:center;">Failed to load.</p>`;
+        }
+    }
+
     async function fetchAndLoadProperty(id) {
         try {
             document.getElementById('loading').style.display = 'flex';
-            const res = await fetch(`${API_URL}/properties/${id}`);
-            const json = await res.json();
+            const json = await safeFetch(`${API_URL}/properties/${id}`);
             const p = json.data || json;
-            
-            if (p) {
-                // Reuse the existing startEdit function logic
-                // We fake the data string since startEdit expects it
-                const dataString = encodeURIComponent(JSON.stringify(p));
-                startEdit(dataString);
-            }
+            if (p) startEdit(encodeURIComponent(JSON.stringify(p)));
         } catch(e) {
             console.error(e);
-            alert("Could not load property for editing.");
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
     }
 
-    // --- IMAGE LOGIC ---
+    // --- 5. IMAGE HANDLING ---
     function handleNewFiles(event) {
-        const files = Array.from(event.target.files);
-        newFiles = newFiles.concat(files);
+        newFiles = [...newFiles, ...Array.from(event.target.files)];
         renderGallery();
         event.target.value = ''; 
     }
@@ -206,26 +266,19 @@
         const container = document.getElementById('previewContainer');
         container.innerHTML = '';
 
-        // Old Images
         existingImages.forEach((url, index) => {
             const div = document.createElement('div');
             div.className = 'preview-item';
+            let src = url.startsWith('http') ? url : `${UPLOADS_URL}${url.split(/[/\\]/).pop()}`;
             
-            let src = url;
-            if(!url.startsWith('http')) {
-                const filename = url.split(/[/\\]/).pop();
-                src = `${UPLOADS_URL}${filename}`;
-            }
-
             div.innerHTML = `
-                <img src="${src}" onerror="this.src='https://placehold.co/100?text=Err'">
+                <img src="${src}" onerror="this.src='https://placehold.co/100'">
                 <div class="img-badge badge-old">SAVED</div>
                 <button type="button" class="btn-remove-img" onclick="removeExisting(${index})"><i class="fas fa-times"></i></button>
             `;
             container.appendChild(div);
         });
 
-        // New Images
         newFiles.forEach((file, index) => {
             const div = document.createElement('div');
             div.className = 'preview-item';
@@ -249,56 +302,7 @@
         renderGallery();
     }
 
-    // --- MAIN LOGIC ---
-    async function loadProperties() {
-        const itemsEl = document.getElementById('items');
-        itemsEl.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Fetching data...</p>';
-
-        try {
-            const res = await fetch(`${API_URL}/properties`);
-            const json = await res.json();
-            const properties = json.data || json;
-
-            if (!properties || properties.length === 0) {
-                itemsEl.innerHTML = '<div style="text-align:center; padding:40px; background:white; border-radius:16px;"><p style="color:#888;">No properties found.</p></div>';
-                return;
-            }
-
-            itemsEl.innerHTML = ''; 
-            properties.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                
-                let thumb = 'https://placehold.co/100?text=No+Img';
-                if(p.images && p.images.length > 0) {
-                    const filename = p.images[0].split(/[/\\]/).pop();
-                    thumb = `${UPLOADS_URL}${filename}`;
-                }
-                
-                const dataString = encodeURIComponent(JSON.stringify(p));
-
-                div.innerHTML = `
-                    <img src="${thumb}" alt="Property" style="object-fit:cover;">
-                    <div class="meta">
-                        <h3>${p.title} <span class="status ${p.status}">${p.status}</span></h3>
-                        <div class="note">
-                          <span><i class="fas fa-tag"></i> ₹${Number(p.price).toLocaleString()}</span>
-                          <span><i class="fas fa-map-marker-alt"></i> ${p.address?.city || 'Unknown'}</span>
-                        </div>
-                    </div>
-                    <div class="controls">
-                        <button class="btn-edit" onclick="startEdit('${dataString}')"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="btn-delete" onclick="deleteProperty('${p._id}')"><i class="fas fa-trash"></i> Delete</button>
-                    </div>
-                `;
-                itemsEl.appendChild(div);
-            });
-        } catch (err) {
-            console.error(err);
-            itemsEl.innerHTML = `<p style="color:red; text-align:center;">Error loading properties</p>`;
-        }
-    }
-
+    // --- 6. SAVE & EDIT ---
     function startEdit(dataStr) {
         const p = JSON.parse(decodeURIComponent(dataStr));
         editingId = p._id;
@@ -337,6 +341,10 @@
         document.getElementById('saveBtn').innerHTML = "Save Property";
         document.getElementById('cancelBtn').style.display = "none";
         document.getElementById('propertyFormCard').classList.remove('editing');
+        
+        if(window.location.search.includes('edit=')) {
+            window.history.replaceState({}, document.title, "admin.html");
+        }
     }
 
     async function saveProperty() {
@@ -348,21 +356,22 @@
             const token = localStorage.getItem('token');
             if(!token) throw new Error("Please login again.");
 
-            // 1. Upload New Images
+            // 1. Upload Images First
             let newUrls = [];
             if(newFiles.length > 0) {
                 const fd = new FormData();
                 newFiles.forEach(f => fd.append('images', f));
-                const upRes = await fetch(`${API_URL}/upload`, {
+                
+                // Note: Using safeFetch handles HTML error pages automatically
+                const upJson = await safeFetch(`${API_URL}/upload`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` },
                     body: fd
                 });
-                const upJson = await upRes.json();
-                if(upJson.success) newUrls = upJson.urls || upJson.data;
+                newUrls = upJson.urls || upJson.data || [];
             }
 
-            // 2. Prepare Data
+            // 2. Save Data
             const payload = {
                 title: document.getElementById('title').value,
                 price: document.getElementById('price').value,
@@ -376,13 +385,13 @@
                     phone: document.getElementById('ownerPhone').value,
                     email: document.getElementById('ownerEmail').value
                 },
-                images: [...existingImages, ...newUrls] // Merge old + new
+                images: [...existingImages, ...newUrls] // Merge
             };
 
             const url = editingId ? `${API_URL}/properties/${editingId}` : `${API_URL}/properties`;
             const method = editingId ? 'PUT' : 'POST';
 
-            const res = await fetch(url, {
+            await safeFetch(url, {
                 method: method,
                 headers: { 
                     'Content-Type': 'application/json',
@@ -391,23 +400,12 @@
                 body: JSON.stringify(payload)
             });
 
-            const json = await res.json();
-            
-            if(json.success || json._id) {
-                alert("Success!");
-                resetForm();
-                loadProperties();
-                // If we were editing from URL, clear the URL param
-                if(window.location.search.includes('edit=')) {
-                    window.history.replaceState({}, document.title, "admin.html");
-                }
-            } else {
-                throw new Error(json.message || "Failed to save");
-            }
+            alert("Success!");
+            resetForm();
+            loadProperties();
 
         } catch(e) {
-            console.error(e);
-            alert("Error: " + e.message);
+            // Error is handled in safeFetch or here
         } finally {
             btn.disabled = false; btn.innerHTML = "Save Property";
             document.getElementById('loading').style.display = 'none';
@@ -416,14 +414,14 @@
 
     async function deleteProperty(id) {
         if(!confirm("Are you sure?")) return;
-        const token = localStorage.getItem('token');
         try {
-            await fetch(`${API_URL}/properties/${id}`, { 
+            const token = localStorage.getItem('token');
+            await safeFetch(`${API_URL}/properties/${id}`, { 
                 method: 'DELETE',
                 headers: {'Authorization': `Bearer ${token}`}
             });
             loadProperties();
-        } catch(e) { alert("Delete failed"); }
+        } catch(e) {}
     }
 </script>
 </body>
