@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Properties - Y M REAL ESTATE</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* CSS VARIABLES */
+    /* VARIABLES */
     :root { --primary: #263f6e; --light: #f6faff; --accent: #ffd700; --text: #2d3748; --border: #e2e8f0; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); padding-top: 80px; }
@@ -16,25 +15,19 @@
     .header { background: var(--primary); padding: 15px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; }
     .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 1.4rem; }
     .logo-area img { height: 45px; border-radius: 5px; background: white; padding: 2px; }
-    
     .nav { display: flex; gap: 20px; align-items: center; }
     .nav a { text-decoration: none; color: rgba(255,255,255,0.9); font-weight: 500; transition: 0.2s; padding: 8px 16px; border-radius: 8px; }
     .nav a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
-    .nav a.active { background: var(--accent); color: var(--primary); font-weight: 700; }
-
-    /* USER PROFILE */
     .user-profile { display: none; align-items: center; gap: 12px; margin-left: 10px; }
     .user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
-    .logout-btn { padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
-    .logout-btn:hover { background: rgba(255,255,255,0.3); }
+    .logout-btn { padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer; }
 
     /* LAYOUT */
     .main-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    
     .filter-bar { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 15px; align-items: end; margin-bottom: 30px; border: 1px solid var(--border); }
     .filter-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 5px; }
-    .filter-input, .filter-select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; outline: none; background: #f8fafc; }
-    .btn-reset { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; height: 45px; }
+    .filter-input, .filter-select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc; outline: none; }
+    .btn-reset { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; height: 45px; }
 
     /* GRID */
     .properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
@@ -46,24 +39,17 @@
     .prop-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .prop-loc { color: #718096; font-size: 0.9rem; margin-bottom: 15px; }
     .prop-price { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
-    .loading { text-align: center; grid-column: 1/-1; padding: 50px; color: #718096; }
 
-    /* ADD PROPERTY FAB (THE FIX) */
+    /* ADD BUTTON (HIDDEN FOR USERS) */
     .admin-fab {
-        position: fixed; bottom: 30px; right: 30px;
-        width: 65px; height: 65px;
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Green */
-        color: white; border-radius: 50%;
-        display: none; /* Hidden by default */
-        align-items: center; justify-content: center;
-        font-size: 28px; box-shadow: 0 4px 20px rgba(16,185,129,0.4);
-        cursor: pointer; transition: all 0.3s; z-index: 10000;
-        border: 3px solid white;
+        position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 50%;
+        display: none; align-items: center; justify-content: center; font-size: 28px;
+        box-shadow: 0 4px 20px rgba(16,185,129,0.4); cursor: pointer; z-index: 10000; border: 3px solid white;
     }
-    .admin-fab:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(16,185,129,0.6); }
     .admin-fab.show { display: flex !important; }
 
-    @media (max-width: 900px) { .filter-bar { grid-template-columns: 1fr; } .header { flex-direction: column; height: auto; padding: 15px; gap: 15px; } body { padding-top: 160px; } .user-profile { margin: 0; } }
+    @media (max-width: 900px) { .filter-bar { grid-template-columns: 1fr; } .header { flex-direction: column; padding: 15px; gap: 15px; height:auto;} body{padding-top:160px;} }
   </style>
 </head>
 <body>
@@ -117,34 +103,30 @@
   <script src="js/api.js"></script>
   <script>
     (() => {
-        // --- AUTH CHECK ---
-        function checkAdminAccess() {
-            try {
-                const userStr = localStorage.getItem('user');
-                if (userStr) {
-                    const u = JSON.parse(userStr);
-                    const email = (u.email || "").toLowerCase();
-                    const role = (u.role || "").toLowerCase();
-                    if (email === 'team@test.com' || role === 'admin' || role === 'team') {
-                        document.getElementById('addFab').classList.add('show');
-                    }
-                }
-            } catch(e){}
-        }
-        checkAdminAccess();
-        if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
-
-        // --- PROPERTIES LOGIC ---
         const API = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
         const UPLOADS = `${API}/uploads/`;
         let allProps = [];
 
+        // 1. AUTH CHECK (Shows button ONLY if Admin)
+        function checkAdmin() {
+            try {
+                const u = JSON.parse(localStorage.getItem('user'));
+                if (u && (u.email === 'team@test.com' || u.role === 'admin' || u.role === 'team')) {
+                    document.getElementById('addFab').classList.add('show');
+                }
+            } catch(e) {}
+        }
+        checkAdmin();
+        if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
+
+        // 2. IMAGE HELPER
         const getImg = (path) => {
             if(!path) return 'https://placehold.co/600x400?text=No+Image';
             if(path.includes('http') && !path.includes('localhost')) return path;
             return `${UPLOADS}${path.split(/[/\\]/).pop()}`;
         };
 
+        // 3. LOAD DATA
         async function load() {
             try {
                 const res = await fetch(`${API}/api/properties`);
@@ -154,6 +136,27 @@
                 checkUrlParams();
                 applyFilters();
             } catch(e) { document.getElementById('grid').innerHTML = '<div class="loading">Failed to load data.</div>'; }
+        }
+
+        // 4. RENDER (Card Click -> Details Page)
+        function render(props) {
+            const grid = document.getElementById('grid');
+            document.getElementById('resultsCount').textContent = `Showing ${props.length} properties`;
+            if(props.length === 0) { grid.innerHTML = '<div class="loading">No properties found.</div>'; return; }
+            
+            grid.innerHTML = props.map(p => `
+                <div class="prop-card" onclick="window.location.href='property-details.html?id=${p._id}'">
+                    <img src="${getImg(p.images[0])}" class="prop-img" onerror="this.src='https://placehold.co/600x400'">
+                    <div class="prop-info">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span class="prop-badge">${p.propertyType}</span>
+                            <span class="prop-badge" style="background:${p.status==='sale'?'#dcfce7':'#fef9c3'}; color:${p.status==='sale'?'#166534':'#854d0e'}">${p.status === 'sale' ? 'For Sale' : 'For Rent'}</span>
+                        </div>
+                        <div class="prop-title">${p.title}</div>
+                        <div class="prop-loc"><i class="fas fa-map-marker-alt"></i> ${p.address?.city}, ${p.address?.state}</div>
+                        <div class="prop-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
+                    </div>
+                </div>`).join('');
         }
 
         function populateCities() {
@@ -189,25 +192,6 @@
             });
             render(filtered);
         };
-
-        function render(props) {
-            const grid = document.getElementById('grid');
-            document.getElementById('resultsCount').textContent = `Showing ${props.length} properties`;
-            if(props.length === 0) { grid.innerHTML = '<div class="loading">No properties found.</div>'; return; }
-            grid.innerHTML = props.map(p => `
-                <div class="prop-card" onclick="window.location.href='property-details.html?id=${p._id}'">
-                    <img src="${getImg(p.images[0])}" class="prop-img" onerror="this.src='https://placehold.co/600x400'">
-                    <div class="prop-info">
-                        <div style="display:flex; justify-content:space-between;">
-                            <span class="prop-badge">${p.propertyType}</span>
-                            <span class="prop-badge" style="background:${p.status==='sale'?'#dcfce7':'#fef9c3'}; color:${p.status==='sale'?'#166534':'#854d0e'}">${p.status === 'sale' ? 'For Sale' : 'For Rent'}</span>
-                        </div>
-                        <div class="prop-title">${p.title}</div>
-                        <div class="prop-loc"><i class="fas fa-map-marker-alt"></i> ${p.address?.city}, ${p.address?.state}</div>
-                        <div class="prop-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
-                    </div>
-                </div>`).join('');
-        }
 
         window.resetFilters = () => {
             document.getElementById('search').value = '';
