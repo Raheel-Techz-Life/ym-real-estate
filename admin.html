@@ -96,25 +96,16 @@
 
 <script>
     // --- 1. FORCE HTTPS API ---
-    // If we are on Vercel (https), force the Render URL.
-    // Only use localhost if we are literally typing 'localhost' in the browser.
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const API = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
 
     // --- 2. MIXED CONTENT FIXER ---
     function getImgUrl(path) {
         if (!path) return 'https://placehold.co/100?text=No+Img';
+        // If it's already a full web URL (like Cloudinary), use it directly
+        if (path.startsWith('http') || path.startsWith('https')) return path;
         
-        // BUG FIX: If path contains "localhost" but we are on the live site, KILL IT.
-        if (!isLocal && path.includes('localhost')) {
-            // Extract filename and force it to use the live API
-            const filename = path.split(/[/\\]/).pop();
-            return `${API}/uploads/${filename}`;
-        }
-
-        if (path.startsWith('http')) return path;
-        
-        // Normal cleanup
+        // If it's a local file path from old system, fix it
         const filename = path.split(/[/\\]/).pop();
         return `${API}/uploads/${filename}`;
     }
@@ -122,7 +113,16 @@
     let user = null;
     let editId = null;
     let oldImgs = [];
-    let newFiles = [];
+    let newFiles = []; // Keeps track of file objects (not used for cloud upload logic)
+    
+    // --- CLOUDINARY CONFIG ---
+    // ###############################################################
+    // REPLACE THESE VALUES WITH YOUR DASHBOARD DETAILS
+    const CLOUD_NAME = "dpyugbzij"; 
+    const UPLOAD_PRESET = "my_app_upload"; 
+    // ###############################################################
+
+    let cloudinaryUrls = []; // Stores the final links we get from Cloudinary
 
     window.onload = () => {
         const u = localStorage.getItem('user');
@@ -131,7 +131,6 @@
         user = JSON.parse(u);
         const email = (user.email || "").toLowerCase();
         
-        // Allow Team, Admin, or Keywords
         const isTester = ['team','test','tester','ym'].some(k => email.includes(k));
         if (user.role !== 'admin' && user.role !== 'team' && !isTester) {
             alert("Access Denied"); window.location.href = 'index.html'; return;
@@ -146,20 +145,68 @@
 
     function logout() { localStorage.clear(); window.location.href = 'index.html'; }
 
-    function handleFiles(e) { newFiles = [...newFiles, ...e.target.files]; renderGallery(); }
+    // --- NEW: DIRECT CLOUDINARY UPLOAD ---
+    async function handleFiles(e) {
+        const files = Array.from(e.target.files);
+        const gallery = document.getElementById('gallery');
+        
+        // Temporary loading message
+        const loadingMsg = document.createElement('p');
+        loadingMsg.id = 'upload-msg';
+        loadingMsg.style.color = 'blue';
+        loadingMsg.style.fontWeight = 'bold';
+        loadingMsg.innerText = `⏳ Uploading ${files.length} images... please wait.`;
+        gallery.prepend(loadingMsg);
+
+        for (const file of files) {
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('upload_preset', UPLOAD_PRESET);
+
+            try {
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+
+                if (data.secure_url) {
+                    cloudinaryUrls.push(data.secure_url);
+                    console.log("Uploaded:", data.secure_url);
+                } else {
+                    console.error("Cloudinary error:", data);
+                    alert("Upload failed. Check Cloud Name/Preset.");
+                }
+            } catch (err) {
+                console.error("Network error:", err);
+                alert("Network error uploading image.");
+            }
+        }
+        
+        // Remove loading message
+        const msg = document.getElementById('upload-msg');
+        if(msg) msg.remove();
+        
+        renderGallery();
+    }
     
     function renderGallery() {
-        const g = document.getElementById('gallery'); g.innerHTML = '';
+        const g = document.getElementById('gallery'); 
+        g.innerHTML = '';
+        
+        // 1. Show Old Images (Saved in DB)
         oldImgs.forEach((url, i) => {
             g.innerHTML += `<div class="thumb-wrap"><img src="${getImgUrl(url)}" class="thumb" onerror="this.src='https://placehold.co/100?text=Error'"><button class="del-img" onclick="delOld(${i})">x</button></div>`;
         });
-        newFiles.forEach((f, i) => {
-            g.innerHTML += `<div class="thumb-wrap"><img src="${URL.createObjectURL(f)}" class="thumb"><button class="del-img" onclick="delNew(${i})">x</button></div>`;
+
+        // 2. Show New Cloudinary Images (Live URLs)
+        cloudinaryUrls.forEach((url, i) => {
+            g.innerHTML += `<div class="thumb-wrap"><img src="${url}" class="thumb" style="border:2px solid #2ecc71"><button class="del-img" onclick="delCloud(${i})">x</button></div>`;
         });
     }
     
     function delOld(i) { oldImgs.splice(i,1); renderGallery(); }
-    function delNew(i) { newFiles.splice(i,1); renderGallery(); }
+    function delCloud(i) { cloudinaryUrls.splice(i,1); renderGallery(); }
 
     // --- 5. SAVE WITH VALIDATION & ERROR LOGGING ---
     async function saveProperty() {
@@ -168,7 +215,7 @@
         btn.disabled = true;
         
         try {
-            // 1. INPUT VALIDATION (Frontend Check)
+            // 1. INPUT VALIDATION
             const title = val('title');
             const price = val('price');
             
@@ -180,40 +227,22 @@
             }
 
             const token = localStorage.getItem('token');
-            let uploadedUrls = [];
 
-            // 2. Upload Files
-            if(newFiles.length > 0) {
-                const fd = new FormData();
-                newFiles.forEach(f => fd.append('images', f));
-                
-                const res = await fetch(`${API}/api/upload`, { 
-                    method:'POST', 
-                    headers:{'Authorization':`Bearer ${token}`}, 
-                    body:fd 
-                });
-                
-                if(!res.ok) throw new Error("Image upload failed");
-                const d = await res.json();
-                if(d.success) uploadedUrls = d.urls;
-            }
-
-            // 3. PREPARE DATA (Converting Types)
+            // 2. PREPARE DATA
+            // No backend upload needed anymore! We have the URLs.
+            
             const data = {
                 title: title, 
-                // Convert text to Number, default to 0 if empty
                 price: Number(price) || 0, 
                 propertyType: val('propertyType'),
-                // Ensure status is lowercase (sale/rent)
                 status: 'sale', 
                 description: val('description'),
                 amenities: val('propAmenities').split(',').map(s => s.trim()).filter(s => s !== ""),
                 address: { 
                     city: val('city'), 
-                    state: 'India' // Backend requires this field
+                    state: 'India' 
                 },
                 features: { 
-                    // Force these to be Numbers. If user types "abc", it becomes 0.
                     area: Number(val('area')) || 0, 
                     bedrooms: Number(val('bedrooms')) || 0, 
                     bathrooms: Number(val('bathrooms')) || 0, 
@@ -224,13 +253,14 @@
                     phone: val('ownerPhone'), 
                     email: val('ownerEmail') 
                 },
-                images: [...oldImgs, ...uploadedUrls]
+                // Merge old images with new cloud URLs
+                images: [...oldImgs, ...cloudinaryUrls]
             };
 
             const url = editId ? `${API}/api/properties/${editId}` : `${API}/api/properties`;
             const method = editId ? 'PUT' : 'POST';
 
-            console.log("Sending Data:", data); // Debugging: Check console to see what is being sent
+            console.log("Sending Data:", data);
 
             const res = await fetch(url, { 
                 method, 
@@ -248,7 +278,6 @@
                 resetForm(); 
                 loadProps(); 
             } else { 
-                // Show the exact error message from the server
                 alert("Server Error: " + (result.error || result.message || "Unknown Error")); 
             }
 
@@ -300,7 +329,11 @@
         document.getElementById('parking').value = p.features?.parking ? 'true' : 'false';
         document.getElementById('description').value = p.description;
         document.getElementById('propAmenities').value = p.amenities?.join(',') || '';
-        oldImgs = p.images || []; newFiles = []; renderGallery();
+        
+        oldImgs = p.images || []; 
+        cloudinaryUrls = []; // Reset new uploads on edit
+        renderGallery();
+        
         document.getElementById('formCard').classList.add('editing');
         document.getElementById('saveBtn').innerText = "Update";
         document.getElementById('cancelBtn').style.display = "inline-block";
@@ -313,7 +346,9 @@
         document.getElementById('saveBtn').innerText = "Save Property";
         document.getElementById('cancelBtn').style.display = "none";
         document.querySelectorAll('input:not([type=hidden]), textarea').forEach(i => i.value = '');
-        oldImgs=[]; newFiles=[]; renderGallery();
+        oldImgs=[]; 
+        cloudinaryUrls=[]; // Clear uploads
+        renderGallery();
     }
 
     async function del(id) {
