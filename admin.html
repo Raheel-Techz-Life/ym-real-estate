@@ -224,122 +224,269 @@
 </div>
 
 <script>
-    // --- API & IMAGE FIX ---
-    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
-    
-    // THE IMAGE FIX FUNCTION
+    // --- 1. SMART API CONNECTION ---
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_BASE = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
+
+    // --- 2. IMAGE HELPER ---
     function getImageUrl(path) {
         if (!path) return 'https://placehold.co/600x400?text=No+Image';
-        if (path.startsWith('http')) return path; 
+        if (path.startsWith('http') || path.startsWith('https')) return path; 
         const cleanPath = path.replace(/\\/g, '/').replace('uploads/', '');
         return `${API_BASE}/uploads/${cleanPath}`;
     }
 
     let currentUser = null;
     let editingId = null;
-    let existingImages = []; let newFiles = [];        
+    let existingImages = []; 
+    let newFiles = [];        
 
+    // --- 3. AUTHENTICATION CHECK ---
     window.onload = async () => {
         const userStr = localStorage.getItem('user');
-        if (!userStr) return window.location.href = 'login.html';
-        currentUser = JSON.parse(userStr);
-        if (currentUser.role !== 'admin' && currentUser.role !== 'team') {
-            alert("Access Denied"); window.location.href = 'index.html'; return;
+        
+        // If not logged in, go to login
+        if (!userStr) {
+            window.location.href = 'login.html';
+            return;
         }
+
+        currentUser = JSON.parse(userStr);
+
+        // --- SECURITY CHECK ---
+        const allowedRoles = ['admin', 'team'];
+        
+        // DEBUG MODE: If you are blocked, check Console (F12) to see your role
+        console.log("Logged in as:", currentUser.email, "Role:", currentUser.role);
+
+        // ALLOW ACCESS IF: Role is admin/team OR if it's your specific tester email
+        // Replace 'tester@test.com' with your actual email if needed
+        const isTester = currentUser.email === 'tester@test.com' || currentUser.email === 'team@test.com'; 
+
+        if (!allowedRoles.includes(currentUser.role) && !isTester) {
+            alert(`Access Denied.\nYour role is: "${currentUser.role}"\nRequired: "admin" or "team".`);
+            window.location.href = 'index.html'; 
+            return;
+        }
+
+        // Auto-fill form with user details
         if(!editingId) {
             document.getElementById('ownerName').value = currentUser.name || 'YM Real Estate';
             document.getElementById('ownerEmail').value = currentUser.email || 'info@ymrealestate.com';
             document.getElementById('ownerPhone').value = currentUser.phone || '+917795811097';
         }
+
         loadProperties();
     };
 
-    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+    function logout() { 
+        localStorage.clear(); 
+        window.location.href = 'index.html'; 
+    }
 
-    function handleNewFiles(e) { newFiles = [...newFiles, ...Array.from(e.target.files)]; renderGallery(); }
+    // --- 4. IMAGE HANDLING ---
+    function handleNewFiles(e) { 
+        newFiles = [...newFiles, ...Array.from(e.target.files)]; 
+        renderGallery(); 
+    }
 
     function renderGallery() {
-        const c = document.getElementById('previewContainer'); c.innerHTML = '';
+        const c = document.getElementById('previewContainer'); 
+        c.innerHTML = '';
+        
+        // Database Images
         existingImages.forEach((url, i) => {
-            c.innerHTML += `<div class="img-card"><img src="${getImageUrl(url)}"><button class="btn-del-img" onclick="removeOld(${i})">×</button></div>`;
+            c.innerHTML += `
+                <div class="img-card">
+                    <img src="${getImageUrl(url)}">
+                    <button class="btn-del-img" onclick="removeOld(${i})">×</button>
+                </div>`;
         });
+        
+        // New Uploads
         newFiles.forEach((file, i) => {
-            c.innerHTML += `<div class="img-card"><img src="${URL.createObjectURL(file)}"><button class="btn-del-img" onclick="removeNew(${i})">×</button></div>`;
+            c.innerHTML += `
+                <div class="img-card">
+                    <img src="${URL.createObjectURL(file)}">
+                    <button class="btn-del-img" onclick="removeNew(${i})">×</button>
+                </div>`;
         });
     }
 
     function removeOld(i) { existingImages.splice(i, 1); renderGallery(); }
     function removeNew(i) { newFiles.splice(i, 1); renderGallery(); }
 
+    // --- 5. SAVE PROPERTY ---
     async function saveProperty() {
-        const btn = document.getElementById('saveBtn'); btn.innerText = 'Saving...'; btn.disabled = true;
+        const btn = document.getElementById('saveBtn'); 
+        btn.innerText = 'Saving...'; 
+        btn.disabled = true;
+        
         try {
             const token = localStorage.getItem('token');
             let newUrls = [];
+            
+            // 1. Upload Images
             if(newFiles.length > 0) {
-                const fd = new FormData(); newFiles.forEach(f => fd.append('images', f));
-                const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', headers: {'Authorization': `Bearer ${token}`}, body: fd });
-                const d = await res.json(); if(d.success) newUrls = d.urls || [];
+                const fd = new FormData(); 
+                newFiles.forEach(f => fd.append('images', f));
+                
+                const res = await fetch(`${API_BASE}/api/upload`, { 
+                    method: 'POST', 
+                    headers: {'Authorization': `Bearer ${token}`}, 
+                    body: fd 
+                });
+                const d = await res.json(); 
+                if(d.success) newUrls = d.urls || [];
             }
             
+            // 2. Save Data
             const payload = {
-                title: val('title'), price: val('price'), propertyType: val('propertyType'), status: val('status'), description: val('description'),
-                amenities: val('propAmenities').split(','),
+                title: val('title'), 
+                price: val('price'), 
+                propertyType: val('propertyType'), 
+                status: val('status'), 
+                description: val('description'),
+                amenities: val('propAmenities').split(',').map(s=>s.trim()),
                 address: { city: val('city'), state: 'India' },
-                features: { area: val('area'), bedrooms: val('bedrooms'), bathrooms: val('bathrooms'), parking: val('parking') === 'true' },
-                owner: { name: val('ownerName'), phone: val('ownerPhone'), email: val('ownerEmail') },
+                features: { 
+                    area: val('area'), 
+                    bedrooms: val('bedrooms'), 
+                    bathrooms: val('bathrooms'), 
+                    parking: val('parking') === 'true' 
+                },
+                owner: { 
+                    name: val('ownerName'), 
+                    phone: val('ownerPhone'), 
+                    email: val('ownerEmail') 
+                },
                 images: [...existingImages, ...newUrls]
             };
             
             const url = editingId ? `${API_BASE}/api/properties/${editingId}` : `${API_BASE}/api/properties`;
             const method = editingId ? 'PUT' : 'POST';
             
-            const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
-            if(res.ok) { alert("Saved!"); resetForm(); loadProperties(); }
-            else alert("Error saving");
-        } catch(e) { alert("Connection Error"); }
-        finally { btn.innerText = 'Save Property'; btn.disabled = false; }
+            const res = await fetch(url, { 
+                method, 
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, 
+                body: JSON.stringify(payload) 
+            });
+            
+            if(res.ok) { 
+                alert("Property Saved Successfully!"); 
+                resetForm(); 
+                loadProperties(); 
+            } else {
+                const err = await res.json();
+                alert("Error saving: " + (err.message || "Unknown error"));
+            }
+        } catch(e) { 
+            console.error(e);
+            alert("Connection Error. Ensure Backend is running."); 
+        } finally { 
+            btn.innerText = 'Save Property'; 
+            btn.disabled = false; 
+        }
     }
 
+    // --- 6. HELPERS ---
     function val(id) { return document.getElementById(id).value; }
 
     async function loadProperties() {
-        const list = document.getElementById('itemsContainer'); list.innerHTML = 'Loading...';
-        const res = await fetch(`${API_BASE}/api/properties`);
-        const json = await res.json();
-        list.innerHTML = (json.data || json).map(p => `
-            <div class="list-item">
-                <img src="${getImageUrl(p.images?.[0])}" class="list-thumb">
-                <div class="list-content">
-                    <div class="list-title">${p.title}</div>
-                    <div>₹${Number(p.price).toLocaleString()} • ${p.propertyType}</div>
-                </div>
-                <div class="list-actions">
-                    <button class="btn-sm btn-edit" onclick="startEdit('${encodeURIComponent(JSON.stringify(p))}')">Edit</button>
-                    <button class="btn-sm btn-del" onclick="deleteProp('${p._id}')">Delete</button>
-                </div>
-            </div>`).join('');
+        const list = document.getElementById('itemsContainer'); 
+        list.innerHTML = '<p style="text-align:center; padding:20px;">Loading...</p>';
+        
+        try {
+            const res = await fetch(`${API_BASE}/api/properties`);
+            const json = await res.json();
+            const data = json.data || json;
+            
+            if(data.length === 0) {
+                list.innerHTML = '<p style="text-align:center; padding:20px;">No properties found.</p>';
+                return;
+            }
+
+            list.innerHTML = data.map(p => `
+                <div class="list-item">
+                    <img src="${getImageUrl(p.images?.[0])}" class="list-thumb">
+                    <div class="list-content">
+                        <div class="list-title">${p.title}</div>
+                        <div style="color:#666; font-size:0.9rem;">₹${Number(p.price).toLocaleString()} • ${p.propertyType}</div>
+                    </div>
+                    <div class="list-actions">
+                        <button class="btn-sm btn-edit" onclick="startEdit('${encodeURIComponent(JSON.stringify(p))}')">Edit</button>
+                        <button class="btn-sm btn-del" onclick="deleteProp('${p._id}')">Delete</button>
+                    </div>
+                </div>`).join('');
+        } catch(e) {
+            list.innerHTML = '<p style="text-align:center; color:red;">Failed to load properties.</p>';
+        }
     }
 
     function startEdit(str) {
-        const p = JSON.parse(decodeURIComponent(str)); editingId = p._id;
-        ['title','price','propertyType','status','description','city'].forEach(k => document.getElementById(k).value = p[k] || (p.address?.[k] || ''));
-        document.getElementById('propAmenities').value = p.amenities?.join(',') || '';
-        ['area','bedrooms','bathrooms'].forEach(k => document.getElementById(k).value = p.features?.[k] || '');
-        existingImages = p.images || []; newFiles = []; renderGallery();
-        document.getElementById('formCard').classList.add('editing'); document.getElementById('formTitle').innerText = 'Edit Property';
-        document.getElementById('cancelBtn').style.display = 'inline-block'; window.scrollTo(0,0);
+        const p = JSON.parse(decodeURIComponent(str)); 
+        editingId = p._id;
+        
+        // Fill basic fields
+        ['title','price','propertyType','status','description','city'].forEach(k => {
+            const el = document.getElementById(k);
+            if(el) el.value = p[k] || (p.address?.[k] || '');
+        });
+        
+        document.getElementById('propAmenities').value = Array.isArray(p.amenities) ? p.amenities.join(', ') : (p.amenities || '');
+        
+        // Fill features
+        ['area','bedrooms','bathrooms'].forEach(k => {
+            const el = document.getElementById(k);
+            if(el) el.value = p.features?.[k] || '';
+        });
+        document.getElementById('parking').value = p.features?.parking ? 'true' : 'false';
+        
+        // Fill Agent
+        if(p.owner) {
+            document.getElementById('ownerName').value = p.owner.name;
+            document.getElementById('ownerPhone').value = p.owner.phone;
+            document.getElementById('ownerEmail').value = p.owner.email;
+        }
+
+        existingImages = p.images || []; 
+        newFiles = []; 
+        renderGallery();
+        
+        // UI Updates
+        document.getElementById('formCard').classList.add('editing'); 
+        document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Property';
+        document.getElementById('cancelBtn').style.display = 'inline-block'; 
+        document.getElementById('saveBtn').innerText = 'Update Property';
+        window.scrollTo(0,0);
     }
 
     function resetForm() {
-        editingId = null; document.getElementById('formCard').classList.remove('editing');
-        document.getElementById('formTitle').innerText = 'Add New Property'; document.getElementById('cancelBtn').style.display = 'none';
-        document.querySelectorAll('input:not(#ownerName):not(#ownerPhone):not(#ownerEmail),textarea').forEach(i=>i.value='');
+        editingId = null; 
+        document.getElementById('formCard').classList.remove('editing');
+        document.getElementById('formTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Add New Property'; 
+        document.getElementById('cancelBtn').style.display = 'none';
+        document.getElementById('saveBtn').innerText = 'Save Property';
+        
+        document.querySelectorAll('input, textarea, select').forEach(i => {
+            if(!['ownerName','ownerPhone','ownerEmail'].includes(i.id)) i.value = '';
+        });
+        // Reset defaults
+        document.getElementById('propertyType').value = 'House';
+        document.getElementById('status').value = 'sale';
+        document.getElementById('parking').value = 'true';
+
         existingImages=[]; newFiles=[]; renderGallery();
     }
 
     async function deleteProp(id) {
-        if(confirm("Delete?")) { await fetch(`${API_BASE}/api/properties/${id}`, { method: 'DELETE', headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`} }); loadProperties(); }
+        if(confirm("Delete this property permanently?")) { 
+            await fetch(`${API_BASE}/api/properties/${id}`, { 
+                method: 'DELETE', 
+                headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`} 
+            }); 
+            loadProperties(); 
+        }
     }
 </script>
 </body>
