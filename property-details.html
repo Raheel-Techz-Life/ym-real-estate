@@ -4,77 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Property Details | Y M REAL ESTATE</title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
   <style>
-    /* VARIABLES */
-    :root {
-        --primary: #263f6e;
-        --light: #f6faff;
-        --accent: #ffd700;
-        --text: #2d3748;
-        --border: #e2e8f0;
-    }
-
+    :root { --primary: #263f6e; --light: #f6faff; --accent: #ffd700; --text: #2d3748; --border: #e2e8f0; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); overflow-x: hidden; padding-top: 100px; }
 
     /* HEADER */
-    .header {
-        background: var(--primary);
-        padding: 15px 30px; 
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        display: flex; align-items: center; justify-content: space-between;
-        position: fixed; width: 100%; top: 0; left: 0; z-index: 1000;
-        gap: 20px;
-    }
-
+    .header { background: var(--primary); padding: 15px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; gap: 20px; }
     .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 1.4rem; white-space: nowrap; }
     .logo-area img { height: 45px; border-radius: 5px; background: white; padding: 2px; }
 
     /* SEARCH BAR */
-    .search-container {
-        flex: 1; max-width: 600px; display: flex; align-items: center; background: white;
-        border-radius: 50px; padding: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .search-select {
-        border: none; background: transparent; padding: 8px 15px; font-weight: 600;
-        color: var(--primary); cursor: pointer; border-right: 1px solid #ddd; outline: none; font-size: 0.9rem;
-    }
+    .search-container { flex: 1; max-width: 600px; display: flex; align-items: center; background: white; border-radius: 50px; padding: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .search-select { border: none; background: transparent; padding: 8px 15px; font-weight: 600; color: var(--primary); cursor: pointer; border-right: 1px solid #ddd; outline: none; font-size: 0.9rem; }
     .search-input { flex: 1; border: none; background: transparent; padding: 10px 15px; outline: none; font-size: 0.95rem; }
-    .search-btn {
-        background: var(--accent); color: var(--primary); border: none; width: 40px; height: 40px;
-        border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
-    }
+    .search-btn { background: var(--accent); color: var(--primary); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
     .search-btn:hover { background: #ffc800; }
 
-    /* NAV LINKS */
+    /* NAV */
     .nav { display: flex; gap: 15px; align-items: center; }
-    .nav a {
-        text-decoration: none; color: rgba(255,255,255,0.9); font-weight: 500; font-size: 0.95rem;
-        padding: 8px 16px; border-radius: 8px; transition: 0.2s; white-space: nowrap;
-    }
+    .nav a { text-decoration: none; color: rgba(255,255,255,0.9); font-weight: 500; font-size: 0.95rem; padding: 8px 16px; border-radius: 8px; transition: 0.2s; white-space: nowrap; }
     .nav a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
     .nav a.active { background: var(--accent); color: var(--primary); font-weight: 700; }
 
-    /* USER PROFILE */
+    /* PROFILE */
     .user-profile { display: none; align-items: center; gap: 12px; margin-left: 10px; }
     .user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
-    .logout-btn { 
-        padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; 
-        border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
-    }
+    .logout-btn { padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
     .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
-    /* RESPONSIVE */
-    @media (max-width: 1024px) {
-        .header { flex-direction: column; padding: 15px; gap: 15px; height: auto; }
-        .search-container { width: 100%; order: 2; }
-        .nav { width: 100%; justify-content: center; order: 3; flex-wrap: wrap; }
-        body { padding-top: 180px; }
-    }
+    @media (max-width: 1024px) { .header { flex-direction: column; padding: 15px; gap: 15px; height: auto; } .search-container { width: 100%; order: 2; } .nav { width: 100%; justify-content: center; order: 3; flex-wrap: wrap; } body { padding-top: 180px; } }
 
     /* CONTENT */
     .container { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; position: relative; }
@@ -94,31 +55,13 @@
     .price { font-size: 2rem; color: #ffc800; font-weight: 700; margin-top: 10px; }
     .badge { display: inline-block; padding: 5px 12px; background: #e2e8f0; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 10px; color: #64748b; }
 
-    /* PROPERTY DETAILS GRID (THE FIX) */
-    .details-grid { 
-        display: grid; 
-        grid-template-columns: 1fr 1fr; /* Two Columns */
-        gap: 20px 40px; 
-        margin-top: 15px; 
-    }
-    .detail-item { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        border-bottom: 1px dashed #e2e8f0; 
-        padding-bottom: 12px; 
-    }
-    .detail-label { 
-        font-weight: 600; 
-        color: #718096; 
-        display: flex; 
-        align-items: center; 
-        gap: 10px; 
-    }
-    .detail-label i { color: var(--primary); width: 20px; text-align: center; }
-    .detail-value { font-weight: 600; color: var(--text); text-align: right; }
+    /* DETAILS GRID */
+    .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 40px; margin-top: 15px; }
+    .detail-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; }
+    .detail-label { font-weight: 600; color: #718096; display: flex; align-items: center; gap: 10px; }
+    .detail-label i { color: var(--primary); width: 20px; }
+    .detail-value { font-weight: 600; color: var(--text); }
 
-    /* AGENT */
     .agent-card { background: linear-gradient(135deg, #263f6e, #18284b); color: white; text-align: center; padding: 40px; border-radius: 20px; position: sticky; top: 180px; box-shadow: 0 10px 30px rgba(38,63,110,0.2); }
     .agent-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 15px; background: white; }
     .contact-btn { display: block; width: 100%; padding: 12px; margin-top: 12px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: 0.2s; }
@@ -127,11 +70,11 @@
     .btn-outline { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
     .btn-outline:hover { background: rgba(255,255,255,0.2); }
 
-    /* EDIT FAB */
+    /* EDIT BUTTON */
     .admin-fab {
         position: fixed; bottom: 30px; right: 30px;
         width: 65px; height: 65px;
-        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); /* Bright Blue */
         color: white; border-radius: 50%;
         display: none; /* Hidden by default */
         align-items: center; justify-content: center;
@@ -145,11 +88,7 @@
     .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% {background-position: 200% 0} 100% {background-position: -200% 0} }
 
-    @media(max-width:900px) { 
-        .grid-layout { grid-template-columns: 1fr; } 
-        .gallery { height: 300px; } 
-        .details-grid { grid-template-columns: 1fr; } /* Stack on mobile */
-    }
+    @media(max-width:900px) { .grid-layout { grid-template-columns: 1fr; } .gallery { height: 300px; } .details-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -209,30 +148,12 @@
             <div class="card">
                 <h3 style="color:var(--primary); margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">Property Information</h3>
                 <div class="details-grid">
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-ruler-combined"></i> Built-Up Area</span>
-                        <span class="detail-value" id="infoArea">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-vector-square"></i> Plot Area</span>
-                        <span class="detail-value" id="infoPlot">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-bed"></i> Bedrooms</span>
-                        <span class="detail-value" id="infoBeds">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-bath"></i> Bathrooms</span>
-                        <span class="detail-value" id="infoBaths">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-car"></i> Parking</span>
-                        <span class="detail-value" id="infoParking">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-couch"></i> Furnishing</span>
-                        <span class="detail-value" id="infoFurnish">-</span>
-                    </div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-ruler-combined"></i> Built-Up Area</span><span class="detail-value" id="infoArea">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-vector-square"></i> Plot Area</span><span class="detail-value" id="infoPlot">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-bed"></i> Bedrooms</span><span class="detail-value" id="infoBeds">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-bath"></i> Bathrooms</span><span class="detail-value" id="infoBaths">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-car"></i> Parking</span><span class="detail-value" id="infoParking">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-couch"></i> Furnishing</span><span class="detail-value" id="infoFurnish">-</span></div>
                 </div>
             </div>
 
@@ -275,13 +196,11 @@
                     const u = JSON.parse(userStr);
                     const email = (u.email || "").toLowerCase();
                     const role = (u.role || "").toLowerCase();
-                    
-                    // Show Edit Button if Admin
                     if (email === 'team@test.com' || role === 'admin' || role === 'team') {
                         document.getElementById('editFab').classList.add('show');
                     }
                 }
-            } catch (e) { console.error(e); }
+            } catch(e){}
         }
         checkAdminAccess(); // Run immediately
 
