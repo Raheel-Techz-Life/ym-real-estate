@@ -93,7 +93,7 @@
         <a href="index.html">Home</a>
         <a href="properties.html">Properties</a>
         <a href="contact.html">Contact</a>
-        <a href="login.html" style="background:rgba(255,255,255,0.2); padding:8px 15px; border-radius:5px;">Login</a>
+        <a href="login.html" id="authBtn" style="background:rgba(255,255,255,0.2); padding:8px 15px; border-radius:5px;">Login</a>
     </div>
 </div>
 
@@ -219,21 +219,28 @@
         if(te - ts > 50) move(-1);
     });
 
-  <script>
-    // 1. Check if user is logged in
-    const user = localStorage.getItem('user');
-    
-    // 2. Find the Login button
-    // (This looks for the link that goes to login.html)
-    const loginLink = document.querySelector('a[href="login.html"]');
+  
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Check if user is logged in
+        const user = localStorage.getItem('user');
+        const authBtn = document.getElementById('authBtn');
 
-    if (user && loginLink) {
-        // 3. If logged in, change button to "Admin Panel"
-        loginLink.innerText = "Admin Panel";
-        loginLink.href = "admin.html";
-        loginLink.style.background = "#2ecc71"; // Optional: Make it green
-    }
-</script>
+        // 2. If user exists and we found the button
+        if (user && authBtn) {
+            console.log("User is logged in. Switching button."); // Debug message
+            
+            // Change text to "Admin Panel"
+            authBtn.innerText = "Admin Panel";
+            
+            // Change link to Admin Dashboard
+            authBtn.href = "admin.html";
+            
+            // Make it Green so it stands out
+            authBtn.style.background = "#2ecc71";
+            authBtn.style.fontWeight = "bold";
+        }
+    });
+
 </script>
 </body>
 </html>
