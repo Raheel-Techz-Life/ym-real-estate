@@ -218,6 +218,22 @@
         if(ts - te > 50) move(1);
         if(te - ts > 50) move(-1);
     });
+
+  <script>
+    // 1. Check if user is logged in
+    const user = localStorage.getItem('user');
+    
+    // 2. Find the Login button
+    // (This looks for the link that goes to login.html)
+    const loginLink = document.querySelector('a[href="login.html"]');
+
+    if (user && loginLink) {
+        // 3. If logged in, change button to "Admin Panel"
+        loginLink.innerText = "Admin Panel";
+        loginLink.href = "admin.html";
+        loginLink.style.background = "#2ecc71"; // Optional: Make it green
+    }
+</script>
 </script>
 </body>
 </html>
