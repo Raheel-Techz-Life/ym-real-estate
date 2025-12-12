@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
-    /* --- THEME FROM LOGIN PAGE --- */
+    /* --- THEME MATCHING LOGIN --- */
     :root { 
         --primary: #263f6e;
         --primary-dark: #18284b;
@@ -33,11 +33,14 @@
       position: sticky; top: 0; z-index: 1000;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-    .header a { color: #fff; text-decoration: none; }
-    .logo-area { display: flex; align-items: center; gap: 12px; }
+    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
     .logo-img { width: 45px; height: 45px; border-radius: 10px; background: #fff; padding: 2px; }
+    
     .nav { display: flex; gap: 20px; }
-    .nav a { padding: 8px 16px; border-radius: 6px; transition: background 0.2s; font-size: 0.95rem; }
+    .nav a { 
+        padding: 8px 16px; border-radius: 6px; transition: 0.2s; font-size: 0.95rem; 
+        text-decoration: none; color: white; 
+    }
     .nav a:hover { background: var(--primary-dark); }
 
     /* --- LAYOUT --- */
@@ -70,10 +73,9 @@
         padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;
     }
 
-    /* --- GRID --- */
+    /* --- INFO GRID --- */
     .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
     
-    /* --- CARD STYLING --- */
     .prop-card {
         background: var(--card-bg); border-radius: 16px; padding: 30px;
         box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid #fff;
@@ -83,19 +85,16 @@
     .price { font-size: 1.8rem; color: var(--accent); font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
     .location { color: #666; font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 
-    /* Features Row */
     .features { display: flex; gap: 20px; flex-wrap: wrap; margin: 20px 0; padding: 20px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
     .feat-item { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--primary); }
     .feat-item i { color: var(--accent); font-size: 1.2rem; }
 
-    /* Amenities */
     .tag-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
     .tag {
         background: #f6faff; border: 1px solid #e0e7ff; color: var(--primary);
         padding: 8px 16px; border-radius: 50px; font-size: 0.9rem; font-weight: 500;
         display: flex; align-items: center; gap: 8px;
     }
-    .tag i { color: var(--success, #10b981); }
 
     /* AGENT CARD */
     .agent-box {
@@ -122,7 +121,6 @@
         .nav { width: 100%; justify-content: center; }
         .grid { grid-template-columns: 1fr; }
         .carousel-wrapper { height: 300px; }
-        .title { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -196,10 +194,11 @@
 </div>
 
 <script>
-    // --- API & IMAGE FIX ---
-    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
+    // --- 1. CONNECT TO BACKEND ---
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_BASE = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
 
-    // FIX IMAGE PATHS
+    // --- 2. IMAGE FIX FUNCTION ---
     function getImageUrl(path) {
         if (!path) return 'https://placehold.co/1200x600?text=No+Image';
         if (path.startsWith('http')) return path; 
@@ -211,7 +210,7 @@
 
     window.onload = async () => {
         const id = new URLSearchParams(window.location.search).get('id');
-        if(!id) return document.body.innerHTML = '<h1 style="text-align:center; margin-top:50px;">Property Not Found</h1>';
+        if(!id) return document.body.innerHTML = '<h1 style="text-align:center; margin-top:50px; color:#263f6e;">Property Not Found</h1>';
         
         try {
             const res = await fetch(`${API_BASE}/api/properties/${id}`);
@@ -228,17 +227,14 @@
         document.getElementById('dispDesc').innerText = p.description || 'N/A';
         document.getElementById('typeTag').innerText = p.propertyType;
         
-        // Features
         document.getElementById('fArea').innerText = p.features?.area || '0';
         document.getElementById('fBeds').innerText = p.features?.bedrooms || 'N/A';
         document.getElementById('fBaths').innerText = p.features?.bathrooms || 'N/A';
         document.getElementById('fPark').innerText = p.features?.parking ? 'Yes' : 'No';
 
-        // Amenities
         const amList = Array.isArray(p.amenities) ? p.amenities : (p.amenities?.split(',') || []);
         document.getElementById('amContainer').innerHTML = amList.length ? amList.map(a => `<div class="tag"><i class="fas fa-check-circle"></i> ${a}</div>`).join('') : 'No amenities listed.';
 
-        // Agent
         if(p.owner) {
             document.getElementById('agentName').innerText = p.owner.name || 'YM Agent';
             document.getElementById('agentImg').src = `https://placehold.co/150/263f6e/FFF?text=${(p.owner.name||'A').charAt(0)}`;
@@ -246,7 +242,6 @@
             document.getElementById('btnWa').href = `https://wa.me/${(p.owner.phone||'').replace(/[^0-9]/g,'')}?text=Hi, interested in ${p.title}`;
         }
 
-        // Carousel
         setupCarousel(p.images);
     }
 
@@ -271,7 +266,7 @@
 
     function updateUI() { document.getElementById('imgCount').innerText = `${currentSlide+1}/${totalSlides}`; }
     
-    // Swipe Support
+    // Swipe
     let tx = 0; const c = document.getElementById('carousel');
     c.addEventListener('touchstart', e => tx = e.changedTouches[0].screenX);
     c.addEventListener('touchend', e => {
