@@ -79,6 +79,109 @@
     .btn-wa { background:#25D366; color:white; }
 
     @media(max-width:800px) { .grid{grid-template-columns:1fr;} .slider{height:300px;} }
+
+    /* 1. The Grid Container */
+.dashboard-grid {
+    display: grid;
+    /* Auto-fit columns: Minimum width 250px, otherwise fill space */
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+/* 2. The Universal Info Box */
+.info-box {
+    background: #fff;             /* Clean white background */
+    border: 1px solid #e0e0e0;    /* Subtle border */
+    border-radius: 8px;           /* Rounded corners */
+    padding: 16px;
+    display: flex;
+    flex-direction: column;       /* Stack Label on top of Content */
+    gap: 8px;
+    
+    /* The "Lift" effect */
+    transition: all 0.2s ease;
+}
+
+.info-box:hover {
+    border-color: #b0b0b0;        /* Slightly darker border on hover */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+/* 3. The Label (Small top text) */
+.info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    font-weight: 600;
+}
+
+/* 4. The Content Row (Icon + Value) */
+.info-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 5. The Icon */
+.info-icon {
+    font-size: 1.2rem;
+    color: #555;
+    /* Optional: Add a light circle background to icons */
+    background: #f5f7fa;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* 6. The Value (Main Data) */
+.info-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    word-break: break-word; /* Prevents long emails from breaking layout */
+}
+
+/* --- Optional Utility Classes --- */
+
+/* For clickable links */
+.link-style {
+    color: #2563eb; /* Standard Link Blue - adjust if needed */
+    text-decoration: none;
+}
+.link-style:hover {
+    text-decoration: underline;
+}
+
+/* For Status Badges (Green box) */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+/* To make a box span full width or 2 columns */
+.wide-box {
+    grid-column: span 1; 
+}
+
+/* Tablet/Desktop Override for wide boxes */
+@media (min-width: 768px) {
+    .wide-box {
+        grid-column: span 2;
+    }
+}
   </style>
 </head>
 <body>
@@ -96,8 +199,16 @@
         <a href="login.html" id="authBtn" style="background:rgba(255,255,255,0.2); padding:8px 15px; border-radius:5px;">Login</a>
     </div>
 </div>
+  
+<div class="container">
+    <div class="slider" id="slider">
+        <div class="slide-track" id="track"></div>
+        <button class="arrow prev" onclick="move(-1)">&#10094;</button>
+        <button class="arrow next" onclick="move(1)">&#10095;</button>
+        <div class="badge" id="counter">1/1</div>
+    </div>
 
-  <div class="details-section-wrapper">
+    <div class="details-section-wrapper">
 
     <h3 class="section-title">Property / User Details</h3>
 
@@ -161,25 +272,6 @@
 
     </div>
 </div>
-
-<div class="container">
-    <div class="slider" id="slider">
-        <div class="slide-track" id="track"></div>
-        <button class="arrow prev" onclick="move(-1)">&#10094;</button>
-        <button class="arrow next" onclick="move(1)">&#10095;</button>
-        <div class="badge" id="counter">1/1</div>
-    </div>
-
-    <div class="grid">
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                    <span style="background:var(--primary); color:white; padding:4px 10px; border-radius:20px; font-size:0.8rem;" id="type">Type</span>
-                    <h1 class="title" id="title">Loading...</h1>
-                    <div class="loc" id="city">Location</div>
-                </div>
-                <div class="price" id="price">...</div>
-            </div>
 
             <div class="feats">
                 <div class="feat"><i class="fas fa-ruler"></i> <span id="area">0</span> sqft</div>
