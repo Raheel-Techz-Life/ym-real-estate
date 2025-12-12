@@ -20,22 +20,31 @@
 
     /* --- BLUE HEADER FIXED --- */
     .header {
-        background: var(--primary); /* Blue Background */
+        background: var(--primary);
         padding: 15px 30px; 
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         display: flex; align-items: center; justify-content: space-between;
         position: fixed; width: 100%; top: 0; left: 0; z-index: 1000;
     }
     .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 1.4rem; }
-    .logo-area img { height: 45px; border-radius: 5px; background: white; padding: 2px; } /* White border for logo */
+    .logo-area img { height: 45px; border-radius: 5px; background: white; padding: 2px; }
     
-    .nav { display: flex; gap: 20px; }
+    .nav { display: flex; gap: 20px; align-items: center; }
     .nav a { 
         text-decoration: none; color: rgba(255,255,255,0.9); font-weight: 500; transition: 0.2s; 
-        padding: 8px 16px; border-radius: 8px;
+        padding: 8px 16px; border-radius: 8px; font-size: 0.95rem;
     }
     .nav a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
     .nav a.active { background: var(--accent); color: var(--primary); font-weight: 700; }
+
+    /* --- USER PROFILE (RESTORED) --- */
+    .user-profile { display: none; align-items: center; gap: 12px; margin-left: 10px; }
+    .user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
+    .logout-btn { 
+        padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; 
+        border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
     /* --- FILTER BAR --- */
     .main-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
@@ -47,36 +56,21 @@
     }
 
     .filter-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 5px; }
-    
-    .filter-input, .filter-select {
-        width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;
-        font-family: inherit; font-size: 0.95rem; outline: none; background: #f8fafc;
-    }
+    .filter-input, .filter-select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; outline: none; background: #f8fafc; }
     .filter-input:focus, .filter-select:focus { border-color: var(--primary); background: white; }
 
-    .btn-reset {
-        background: var(--primary); color: white; border: none; padding: 12px 20px;
-        border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; height: 45px;
-    }
+    .btn-reset { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; height: 45px; }
     .btn-reset:hover { background: #1a2d4d; }
 
     /* --- PROPERTIES GRID --- */
     .properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
     
-    .prop-card {
-        background: white; border-radius: 15px; overflow: hidden;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.3s;
-        border: 1px solid transparent; cursor: pointer;
-    }
+    .prop-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.3s; border: 1px solid transparent; cursor: pointer; }
     .prop-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     
     .prop-img { height: 200px; width: 100%; object-fit: cover; background: #eee; }
-    
     .prop-info { padding: 20px; }
-    .prop-badge { 
-        display: inline-block; padding: 4px 10px; background: #e2e8f0; 
-        border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #4a5568; margin-bottom: 10px;
-    }
+    .prop-badge { display: inline-block; padding: 4px 10px; background: #e2e8f0; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #4a5568; margin-bottom: 10px; }
     .prop-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .prop-loc { color: #718096; font-size: 0.9rem; margin-bottom: 15px; }
     .prop-price { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
@@ -87,6 +81,7 @@
         .filter-bar { grid-template-columns: 1fr; }
         .header { flex-direction: column; height: auto; padding: 15px; gap: 15px; }
         body { padding-top: 160px; }
+        .user-profile { margin: 0; }
     }
   </style>
 </head>
@@ -101,6 +96,13 @@
       <a href="properties.html" class="active">Properties</a>
       <a href="team.html">Team</a>
       <a href="contact.html">Contact</a>
+      <a href="login.html" id="navLoginLink">Login</a>
+    </div>
+    
+    <div class="user-profile" id="userProfile">
+        <img id="userAvatar" src="" class="user-avatar">
+        <span id="userName" style="color: white; font-weight: 500;"></span>
+        <button onclick="api.logout()" class="logout-btn">Logout</button>
     </div>
   </div>
 
@@ -150,6 +152,11 @@
   <script src="js/api.js"></script>
   <script>
     (() => {
+        // --- AUTH CHECK ---
+        // Manually trigger the auth UI update if api.js doesn't do it automatically
+        if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
+
+        // --- PROPERTIES LOGIC ---
         const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
         const API = `${API_URL}/api`;
         const UPLOADS = `${API_URL}/uploads/`;
