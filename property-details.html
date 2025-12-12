@@ -6,13 +6,13 @@
   <title>Property Details - Y M REAL ESTATE</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* --- CSS STYLES --- */
+    /* CSS STYLES */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: #f8f9fa; color: #333; }
 
     /* Header */
     .header {
-      background: #263f6e; /* Changed to Blue for better contrast */
+      background: #263f6e;
       padding: 15px 40px;
       position: sticky; top: 0; z-index: 1000;
       display: flex; justify-content: space-between; align-items: center; gap: 40px;
@@ -21,15 +21,12 @@
     .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
     .logo-img { width: 40px; height: 40px; border-radius: 8px; }
     .logo-text { font-size: 20px; font-weight: 700; white-space: nowrap; }
-
     .nav { display: flex; gap: 20px; }
     .nav a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s; }
     .nav a:hover { color: #ffd700; }
 
     /* Hero Section */
-    .property-hero {
-      position: relative; height: 60vh; background: #000; overflow: hidden; margin-bottom: 50px;
-    }
+    .property-hero { position: relative; height: 60vh; background: #000; overflow: hidden; margin-bottom: 50px; }
     .hero-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
     .hero-overlay {
       position: absolute; bottom: 0; left: 0; right: 0;
@@ -46,18 +43,12 @@
     /* Layout */
     .container { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; }
     .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-    
-    .main-content {
-      background: white; border-radius: 12px; padding: 30px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    }
+    .main-content { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
     .sidebar { position: sticky; top: 100px; height: fit-content; }
 
     /* Highlights */
     .highlights { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
-    .highlight-item {
-      text-align: center; padding: 15px; background: #f0f4ff; border-radius: 10px;
-    }
+    .highlight-item { text-align: center; padding: 15px; background: #f0f4ff; border-radius: 10px; }
     .highlight-icon { font-size: 24px; color: #263f6e; margin-bottom: 5px; }
     .highlight-value { font-weight: 700; font-size: 18px; }
     .highlight-label { font-size: 12px; color: #666; }
@@ -65,7 +56,6 @@
     /* Sections */
     .section-title { font-size: 22px; color: #263f6e; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #eee; }
     .description { line-height: 1.6; color: #555; margin-bottom: 30px; }
-    
     .amenities-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 30px; }
     .amenity { display: flex; align-items: center; gap: 10px; font-size: 14px; }
     .amenity i { color: #10b981; }
@@ -75,14 +65,8 @@
     .gallery img:hover { transform: scale(1.05); }
 
     /* Sidebar Cards */
-    .contact-card {
-      background: #263f6e; color: white; padding: 25px; border-radius: 12px; margin-bottom: 20px;
-    }
-    .contact-btn {
-      width: 100%; padding: 12px; background: #ffd700; color: #263f6e;
-      border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px;
-    }
-    
+    .contact-card { background: #263f6e; color: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; }
+    .contact-btn { width: 100%; padding: 12px; background: #ffd700; color: #263f6e; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
     .quick-facts { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
     .fact-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
     .fact-label { color: #666; }
@@ -119,7 +103,6 @@
 
   <div class="container">
     <div class="content-grid">
-      
       <div class="main-content" id="mainContent">
         <div style="text-align: center; padding: 40px;">
           <i class="fas fa-spinner fa-spin fa-3x" style="color:#263f6e"></i>
@@ -137,11 +120,9 @@
             <i class="fas fa-envelope"></i> Send Message
           </button>
         </div>
-
         <div class="quick-facts" id="quickFacts">
            </div>
       </div>
-
     </div>
   </div>
 
@@ -159,15 +140,10 @@
     // --- 2. IMAGE HELPER (Fixes Broken Links) ---
     function resolveImageUrl(imagePath) {
       if (!imagePath) return 'https://placehold.co/1200x600?text=No+Image';
-      
-      // If it's already a web link, return it
       if (imagePath.startsWith('http')) return imagePath;
 
-      // Clean the filename (remove existing /uploads/ if stored in DB to avoid double slash)
+      // Clean the filename and add server URL
       const cleanPath = imagePath.replace(/^\\uploads\\/, '').replace(/^\/uploads\//, '');
-      
-      // Combine Server URL + /uploads/ + Filename
-      // encodeURIComponent fixes spaces in filenames (like "WhatsApp Image...")
       return `${UPLOADS_URL}${cleanPath}`;
     }
 
@@ -185,8 +161,6 @@
         console.log("Fetching:", `${API_URL}/properties/${propertyId}`);
         const response = await fetch(`${API_URL}/properties/${propertyId}`);
         const json = await response.json();
-        
-        // Handle data wrapper
         const property = json.data || json;
 
         if (!property || json.success === false) throw new Error("Property not found");
@@ -227,7 +201,6 @@
       `;
 
       // --- MAIN CONTENT ---
-      // Features (Bed/Bath/Area)
       const beds = p.features?.bedrooms || 0;
       const baths = p.features?.bathrooms || 0;
       const area = p.features?.area || 0;
@@ -275,7 +248,7 @@
         ${galleryHtml ? `<h2 class="section-title">Gallery</h2><div class="gallery">${galleryHtml}</div>` : ''}
       `;
 
-      // --- SIDEBAR INFO ---
+      // --- SIDEBAR INFO (Safe Check) ---
       const ownerName = p.owner?.name || "Y M Real Estate";
       const ownerPhone = p.owner?.phone || "+91 77958 11097";
       const ownerEmail = p.owner?.email || "info@ymrealestate.com";
@@ -295,7 +268,7 @@
       `;
     }
 
-    // Start
+    // Start loading safely
     document.addEventListener('DOMContentLoaded', loadProperty);
   </script>
 </body>
