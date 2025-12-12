@@ -4,712 +4,275 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Properties - Y M REAL ESTATE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    body {
-      background: #fff;
-      color: #263f6e;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+    /* --- CSS VARIABLES & RESET --- */
+    :root {
+      --primary: #263f6e;
+      --light: #f6faff;
+      --accent: #ffd700;
+      --text: #2d3748;
+      --border: #e2e8f0;
     }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); padding-top: 80px; }
+
+    /* --- HEADER --- */
     .header {
-      background: #263f6e;
-      color: #fff;
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
+        background: rgba(255, 255, 255, 0.98);
+        padding: 15px 30px; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        display: flex; align-items: center; justify-content: space-between;
+        position: fixed; width: 100%; top: 0; left: 0; z-index: 1000;
     }
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .logo-img {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      object-fit: cover;
-      background: #fff;
-      flex-shrink: 0;
-    }
-    .nav {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-      flex-grow: 1;
-    }
-    .nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      padding: 10px 16px;
-      border-radius: 4px;
-      transition: background 0.2s;
-      white-space: nowrap;
-    }
-    .nav a:hover {
-      background: #18284b;
-    }
-    .main-container {
-      max-width: 1200px;
-      margin: 32px auto;
-      padding: 0 20px;
-    }
-    .properties-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 24px;
-      padding: 20px 0;
-    }
-    .property-card {
-      background: #fff;
-      border: 2px solid #263f6e;
-      border-radius: 14px;
-      padding: 16px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    .property-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(38,63,110,0.2);
-    }
-    .property-card.reveal {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .property-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      transition: transform 0.3s ease;
-    }
-    .property-card:hover img {
-      transform: scale(1.05);
-    }
-    .property-desc {
-      font-size: 18px;
-      font-weight: bold;
-      color: #263f6e;
-      margin: 10px 0;
-      text-align: center;
-    }
-    .property-price {
-      font-size: 20px;
-      color: #263f6e;
-      font-weight: bold;
-      margin: 10px 0;
-      text-align: center;
-    }
-    h1 {
-      color: #263f6e;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    /* Floating Add Property Button - Only for Team Members */
-    .add-property-fab {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 65px;
-      height: 65px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      border-radius: 50%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      box-shadow: 0 6px 25px rgba(16,185,129,0.4);
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      z-index: 1000;
-      border: 3px solid white;
-      animation: pulseGreen 3s ease-in-out infinite;
-    }
+    .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 1.4rem; }
+    .logo-area img { height: 45px; border-radius: 5px; }
+    .nav { display: flex; gap: 20px; }
+    .nav a { text-decoration: none; color: var(--text); font-weight: 500; transition: 0.2s; }
+    .nav a:hover, .nav a.active { color: var(--primary); }
+
+    /* --- FILTER BAR --- */
+    .main-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
     
-    .add-property-fab::after {
-      content: '';
-      position: absolute;
-      inset: -8px;
-      border-radius: 50%;
-      border: 2px solid rgba(16,185,129,0.3);
-      animation: ripple 2s infinite;
-    }
-    
-    .add-property-fab:hover {
-      transform: scale(1.15) rotate(90deg);
-      box-shadow: 0 10px 40px rgba(16,185,129,0.6);
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    }
-    
-    .add-property-fab.show {
-      display: flex;
-    }
-    
-    @keyframes pulseGreen {
-      0%, 100% {
-        box-shadow: 0 6px 25px rgba(16,185,129,0.4);
-      }
-      50% {
-        box-shadow: 0 8px 35px rgba(16,185,129,0.7);
-      }
-    }
-    
-    @keyframes ripple {
-      0% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1.5);
-        opacity: 0;
-      }
-    }
-    
-    /* Enhanced Tooltip */
-    .add-property-fab::before {
-      content: 'Add New Property';
-      position: absolute;
-      right: 80px;
-      background: linear-gradient(135deg, #263f6e, #1a2d4d);
-      color: white;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      transform: translateX(10px);
-      font-family: 'Arial', sans-serif;
-    }
-    
-    .add-property-fab::before::after {
-      content: '';
-      position: absolute;
-      right: -6px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 6px 0 6px 6px;
-      border-color: transparent transparent transparent #1a2d4d;
-    }
-    
-    .add-property-fab:hover::before {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    
-    /* Icon animation */
-    .add-property-fab i {
-      transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    
-    .add-property-fab:hover i {
-      transform: rotate(90deg) scale(1.1);
-    }
-    
-    @media (max-width: 768px) {
-      .add-property-fab {
-        width: 56px;
-        height: 56px;
-        font-size: 22px;
-        bottom: 20px;
-        right: 20px;
-        border-width: 2px;
-      }
-      
-      .add-property-fab::before {
-        display: none;
-      }
-      
-      .add-property-fab::after {
-        inset: -6px;
-      }
-    }
     .filter-bar {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(38,63,110,0.08);
-      margin-bottom: 25px;
-      border: 1px solid #e0e7ff;
+        background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 15px; align-items: end;
+        margin-bottom: 30px; border: 1px solid var(--border);
     }
-    .filter-grid {
-      display: grid;
-      grid-template-columns: 2.5fr 1.2fr 1fr auto;
-      gap: 12px;
-      align-items: end;
-    }
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .filter-group label {
-      font-weight: 600;
-      color: #263f6e;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .filter-group label i {
-      font-size: 12px;
-    }
+
+    .filter-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 5px; }
+    
     .filter-input, .filter-select {
-      padding: 10px 12px;
-      border: 1.5px solid #e0e7ff;
-      border-radius: 6px;
-      font-size: 14px;
-      transition: all 0.3s;
+        width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;
+        font-family: inherit; font-size: 0.95rem; outline: none; background: #f8fafc;
     }
-    .filter-input:focus, .filter-select:focus {
-      outline: none;
-      border-color: #263f6e;
-      box-shadow: 0 0 0 3px rgba(38,63,110,0.1);
-    }
-    .filter-btn {
-      padding: 10px 20px;
-      background: #263f6e;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 13px;
-      transition: all 0.3s;
-      white-space: nowrap;
-    }
-    .filter-btn:hover {
-      background: #18284b;
-      transform: translateY(-1px);
-    }
-    .city-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #f0f4ff;
-    }
-    .city-badge {
-      padding: 6px 14px;
-      background: #f6faff;
-      border: 1.5px solid #dce7ff;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-weight: 500;
-      font-size: 13px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .city-badge:hover {
-      border-color: #263f6e;
-      background: #e8f0ff;
-    }
-    .city-badge.active {
-      background: #263f6e;
-      color: white;
-      border-color: #263f6e;
-    }
-    .results-count {
-      text-align: center;
-      color: #666;
-      margin-bottom: 15px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    .badge-label {
-      font-size: 11px;
-      opacity: 0.75;
-    }
-    @media (max-width: 768px) {
-      .filter-bar {
-        padding: 15px;
-      }
-      .filter-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-      .filter-btn {
-        width: 100%;
-      }
-      .city-badges {
-        gap: 6px;
-      }
-      .city-badge {
-        font-size: 12px;
-        padding: 5px 12px;
-      }
-    }
+    .filter-input:focus, .filter-select:focus { border-color: var(--primary); background: white; }
 
-    /* =========================================
-     MOBILE ONLY FIXES (Desktop remains untouched)
-     ========================================= */
-  @media (max-width: 768px) {
+    .btn-reset {
+        background: var(--primary); color: white; border: none; padding: 12px 20px;
+        border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; height: 45px;
+    }
+    .btn-reset:hover { background: #1a2d4d; }
+
+    /* --- PROPERTIES GRID --- */
+    .properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
     
-    /* 1. Fix the "Too Wide" Issue (Mobile Only) */
-    .properties-section, .footer {
-      width: 100% !important;
-      left: auto !important;
-      right: auto !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      padding-left: 15px !important;
-      padding-right: 15px !important;
+    .prop-card {
+        background: white; border-radius: 15px; overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.3s;
+        border: 1px solid transparent; cursor: pointer;
     }
-
-    /* 2. Header Fix: Stack Logo and Nav */
-    .header {
-      flex-direction: column;
-      padding: 15px;
-      gap: 15px;
-      position: relative; 
-    }
+    .prop-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     
-    .nav {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-    }
+    .prop-img { height: 200px; width: 100%; object-fit: cover; background: #eee; }
     
-    .nav a {
-      font-size: 13px;
-      padding: 8px 12px;
-      flex-grow: 1; 
-      justify-content: center;
+    .prop-info { padding: 20px; }
+    .prop-badge { 
+        display: inline-block; padding: 4px 10px; background: #e2e8f0; 
+        border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #4a5568; margin-bottom: 10px;
     }
+    .prop-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prop-loc { color: #718096; font-size: 0.9rem; margin-bottom: 15px; }
+    .prop-price { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
 
-    /* 3. Hero Section: Adjust Height & Text */
-    .hero-section {
-      height: auto;
-      min-height: 50vh;
-      padding: 120px 20px 60px; /* Extra top padding for stacked header */
-    }
+    /* --- LOADING & EMPTY STATES --- */
+    .loading { text-align: center; grid-column: 1/-1; padding: 50px; color: #718096; }
     
-    .hero-title {
-      font-size: 2rem; 
+    @media (max-width: 900px) {
+        .filter-bar { grid-template-columns: 1fr; }
+        .header { flex-direction: column; height: auto; padding: 15px; gap: 15px; }
+        body { padding-top: 140px; }
     }
-
-    /* 4. Fix the Circles (Stack them) */
-    .stats-circles {
-      gap: 30px;
-    }
-
-    /* 5. Force Cards to Stack Vertically */
-    .properties-row, 
-    .team-members, 
-    .instagram-grid,
-    .footer-content {
-      grid-template-columns: 1fr !important; /* Force 1 column */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .property-card, .team-card, .insta-card {
-      width: 100%;
-      max-width: 100%; /* Use full phone width */
-      margin-bottom: 20px;
-    }
-    
-    /* 6. Fix Developer Section Layout */
-    .developer-section div[style*="display:flex"],
-    .developer-section div[style*="display: flex"] {
-      flex-direction: column !important;
-      text-align: center !important;
-    }
-
-    /* 7. Hide/Adjust Floating Buttons */
-    .edit-reels-fab, .add-property-fab {
-      bottom: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-    }
-  }
   </style>
 </head>
 <body>
+
   <div class="header">
-    <a href="index.html" class="logo-area" style="text-decoration: none;">
-      <img src="ym.jpg" alt="Y" class="logo-img">
-      <span style="font-size: 1.4em; font-weight: bold; color: #fff;">Y M REAL ESTATE</span>
+    <a href="index.html" class="logo-area">
+      <img src="ymr.jpg" onerror="this.src='https://placehold.co/50'" alt="Logo"> Y M REAL ESTATE
     </a>
     <div class="nav">
       <a href="index.html">Home</a>
-      <a href="properties.html">View Properties</a>
-      <a href="team.html">Our Team</a>
-      <a href="login.html" id="navLoginLink">Login / Signup</a>
-      <a href="contact.html">Contact Us</a>
-    </div>
-    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 12px; margin-left: auto; flex-shrink: 0;">
-      <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff;">
-      <span id="userName" style="color: #fff; font-weight: 500; white-space: nowrap;"></span>
-      <button onclick="logout()" style="padding: 8px 16px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; font-weight: 500; white-space: nowrap;">Logout</button>
+      <a href="properties.html" class="active">Properties</a>
+      <a href="team.html">Team</a>
+      <a href="contact.html">Contact</a>
     </div>
   </div>
-  
+
   <div class="main-container">
-    <h1>Our Featured Properties</h1>
-    
-    <!-- Compact Smart Filter Bar -->
+    <h1 style="color:var(--primary); margin-bottom:20px;">Find Your Property</h1>
+
     <div class="filter-bar">
-      <div class="filter-grid">
+        
         <div class="filter-group">
-          <label><i class="fas fa-search"></i> Search Properties</label>
-          <input type="text" id="searchInput" class="filter-input" placeholder="Search by title, city, or state...">
+            <label><i class="fas fa-search"></i> Search</label>
+            <input type="text" id="search" class="filter-input" placeholder="City, Locality or Title...">
         </div>
+
         <div class="filter-group">
-          <label><i class="fas fa-map-marker-alt"></i> City Filter</label>
-          <select id="cityFilter" class="filter-select">
-            <option value="">All Cities</option>
-          </select>
+            <label><i class="fas fa-home"></i> Type</label>
+            <select id="typeFilter" class="filter-select">
+                <option value="">All Types</option>
+                <option value="House">House</option>
+                <option value="Farmland">Farmlands</option>
+                <option value="Plot">Plots</option>
+                <option value="Shop">Shops</option>
+                <option value="Villa">Villa</option>
+                <option value="Apartment">Apartment</option>
+            </select>
         </div>
+
         <div class="filter-group">
-          <label><i class="fas fa-tag"></i> Status</label>
-          <select id="statusFilter" class="filter-select">
-            <option value="">All</option>
-            <option value="sale">For Sale</option>
-            <option value="rent">For Rent</option>
-          </select>
+            <label><i class="fas fa-tag"></i> Status</label>
+            <select id="statusFilter" class="filter-select">
+                <option value="">Any Status</option>
+                <option value="sale">For Sale</option>
+                <option value="rent">For Rent</option>
+            </select>
         </div>
-        <button class="filter-btn" onclick="resetFilters()">
-          <i class="fas fa-redo"></i> Reset
-        </button>
-      </div>
-      <div class="city-badges" id="cityBadges">
-        <!-- Top cities loaded dynamically -->
-      </div>
+
+        <div class="filter-group">
+            <label><i class="fas fa-map-marker-alt"></i> City</label>
+            <select id="cityFilter" class="filter-select">
+                <option value="">All Cities</option>
+                </select>
+        </div>
+
+        <button class="btn-reset" onclick="resetFilters()">Reset</button>
     </div>
 
-    <div class="results-count" id="resultsCount"></div>
-    
-    <div class="properties-grid" id="propertiesGrid">
-      <!-- Properties loaded from API -->
+    <div id="resultsCount" style="margin-bottom:15px; color:#666; font-size:0.9rem;"></div>
+    <div class="properties-grid" id="grid">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading properties...</div>
     </div>
-  </div>
 
-  <!-- Floating Add Property Button (Team Members Only) -->
-  <div class="add-property-fab" id="addPropertyFab" onclick="redirectToAddProperty()">
-    <i class="fas fa-plus"></i>
   </div>
 
   <script src="js/api.js"></script>
   <script>
-    let allProperties = [];
-    let filteredProperties = [];
+    (() => {
+        // CONFIG
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
+        const API = `${API_URL}/api`;
+        const UPLOADS = `${API_URL}/uploads/`;
 
-    const cardObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add('reveal');
-          }, index * 100);
+        // STATE
+        let allProps = [];
+
+        // IMAGE HELPER
+        const getImg = (path) => {
+            if(!path) return 'https://placehold.co/600x400?text=No+Image';
+            if(path.includes('http') && !path.includes('localhost')) return path;
+            const file = path.split(/[/\\]/).pop();
+            return `${UPLOADS}${file}`;
+        };
+
+        // LOAD DATA
+        async function load() {
+            try {
+                const res = await fetch(`${API}/properties`);
+                const json = await res.json();
+                allProps = json.data || json;
+                
+                populateCities();
+                checkUrlParams(); // Check if user came from search bar
+                applyFilters();
+            } catch(e) {
+                document.getElementById('grid').innerHTML = '<div class="loading">Failed to load data.</div>';
+                console.error(e);
+            }
         }
-      });
-    }, { threshold: 0.1 });
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Safely try to update auth status if API exists
-      if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
-      
-      checkTeamAccess();
-      await loadProperties();
-      setupFilters();
-    });
-
-    async function loadProperties() {
-      try {
-        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-          ? 'http://localhost:5011/api'
-          : 'https://ym-real-estate.onrender.com/api'; 
-        
-        const response = await fetch(`${API_URL}/properties`);
-        const json = await response.json();
-        
-        // Handle both data formats {data: []} or []
-        const data = json.data || json;
-        
-        if (json.success !== false && data.length > 0) {
-          allProperties = data;
-          filteredProperties = allProperties;
-          populateCityFilters();
-          renderProperties(filteredProperties);
-        } else {
-          document.getElementById('propertiesGrid').innerHTML = '<p style="text-align:center; color:#263f6e;">No properties available at the moment.</p>';
+        // POPULATE CITY DROPDOWN DYNAMICALLY
+        function populateCities() {
+            const cities = [...new Set(allProps.map(p => p.address?.city).filter(Boolean))].sort();
+            const select = document.getElementById('cityFilter');
+            cities.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.textContent = city;
+                select.appendChild(opt);
+            });
         }
-      } catch (error) {
-        console.error('Error loading properties:', error);
-        document.getElementById('propertiesGrid').innerHTML = '<p style="text-align:center; color:#dc2626;">Failed to load properties. Please try again later.</p>';
-      }
-    }
 
-    function populateCityFilters() {
-      const cityCounts = {};
-      allProperties.forEach(p => {
-        const city = p.address?.city || 'Unknown';
-        cityCounts[city] = (cityCounts[city] || 0) + 1;
-      });
+        // CHECK URL PARAMS (e.g. ?type=Farmland)
+        function checkUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type');
+            const search = params.get('search');
 
-      const sortedCities = Object.entries(cityCounts)
-        .sort((a, b) => b[1] - a[1])
-        .map(([city, count]) => ({ city, count }));
+            if(type) document.getElementById('typeFilter').value = type;
+            if(search) document.getElementById('search').value = search;
+        }
 
-      // Populate dropdown
-      const citySelect = document.getElementById('cityFilter');
-      // Keep first option
-      citySelect.innerHTML = '<option value="">All Cities</option>'; 
-      
-      sortedCities.forEach(({ city, count }) => {
-        const option = document.createElement('option');
-        option.value = city;
-        option.textContent = `${city} (${count})`;
-        citySelect.appendChild(option);
-      });
+        // FILTER LOGIC
+        window.applyFilters = () => {
+            const search = document.getElementById('search').value.toLowerCase();
+            const type = document.getElementById('typeFilter').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const city = document.getElementById('cityFilter').value;
 
-      // Populate compact badges for top 5 cities
-      const cityBadges = document.getElementById('cityBadges');
-      cityBadges.innerHTML = ''; // Clear existing
-      sortedCities.slice(0, 5).forEach(({ city, count }) => {
-        const badge = document.createElement('div');
-        badge.className = 'city-badge';
-        badge.innerHTML = `${city} <span class="badge-label">(${count})</span>`;
-        badge.onclick = () => filterByCity(city, badge);
-        cityBadges.appendChild(badge);
-      });
-    }
+            const filtered = allProps.filter(p => {
+                const pType = (p.propertyType || '').toLowerCase();
+                // Handle "Farmland" vs "Farmlands" (singular/plural matching)
+                const typeMatch = !type || pType.includes(type) || type.includes(pType);
+                
+                const statusMatch = !status || p.status === status;
+                const cityMatch = !city || (p.address?.city === city);
+                const searchMatch = !search || 
+                                    (p.title || '').toLowerCase().includes(search) || 
+                                    (p.address?.city || '').toLowerCase().includes(search);
 
-    function filterByCity(city, badgeElement) {
-      const isActive = badgeElement.classList.contains('active');
-      document.querySelectorAll('.city-badge').forEach(b => b.classList.remove('active'));
-      
-      if (!isActive) {
-        badgeElement.classList.add('active');
-        document.getElementById('cityFilter').value = city;
-      } else {
-        document.getElementById('cityFilter').value = '';
-      }
-      
-      applyFilters();
-    }
+                return typeMatch && statusMatch && cityMatch && searchMatch;
+            });
 
-    function setupFilters() {
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
-      document.getElementById('cityFilter').addEventListener('change', () => {
-        const val = document.getElementById('cityFilter').value;
-        document.querySelectorAll('.city-badge').forEach(b => {
-          // Simple check for text content match
-          b.classList.toggle('active', b.innerText.includes(val) && val !== '');
+            render(filtered);
+        };
+
+        // RENDER GRID
+        function render(props) {
+            const grid = document.getElementById('grid');
+            document.getElementById('resultsCount').textContent = `Showing ${props.length} properties`;
+
+            if(props.length === 0) {
+                grid.innerHTML = '<div class="loading">No properties found matching your filters.</div>';
+                return;
+            }
+
+            grid.innerHTML = props.map(p => `
+                <div class="prop-card" onclick="window.location.href='property-details.html?id=${p._id}'">
+                    <img src="${getImg(p.images[0])}" class="prop-img" onerror="this.src='https://placehold.co/600x400'">
+                    <div class="prop-info">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span class="prop-badge">${p.propertyType}</span>
+                            <span class="prop-badge" style="background:${p.status==='sale'?'#dcfce7':'#fef9c3'}; color:${p.status==='sale'?'#166534':'#854d0e'}">
+                                ${p.status === 'sale' ? 'For Sale' : 'For Rent'}
+                            </span>
+                        </div>
+                        <div class="prop-title">${p.title}</div>
+                        <div class="prop-loc"><i class="fas fa-map-marker-alt"></i> ${p.address?.city}, ${p.address?.state}</div>
+                        <div class="prop-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.resetFilters = () => {
+            document.getElementById('search').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('cityFilter').value = '';
+            applyFilters();
+        };
+
+        // EVENT LISTENERS
+        ['search', 'typeFilter', 'statusFilter', 'cityFilter'].forEach(id => {
+            document.getElementById(id).addEventListener('input', applyFilters);
         });
-        applyFilters();
-      });
-      document.getElementById('statusFilter').addEventListener('change', applyFilters);
-    }
 
-    function applyFilters() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const cityFilter = document.getElementById('cityFilter').value;
-      const statusFilter = document.getElementById('statusFilter').value;
-
-      filteredProperties = allProperties.filter(property => {
-        const title = property.title || '';
-        const city = property.address?.city || '';
-        const state = property.address?.state || '';
-
-        const matchesSearch = !searchTerm || 
-          title.toLowerCase().includes(searchTerm) ||
-          city.toLowerCase().includes(searchTerm) ||
-          state.toLowerCase().includes(searchTerm);
-        
-        const matchesCity = !cityFilter || city === cityFilter;
-        const matchesStatus = !statusFilter || property.status === statusFilter;
-
-        return matchesSearch && matchesCity && matchesStatus;
-      });
-
-      renderProperties(filteredProperties);
-    }
-
-    function resetFilters() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('cityFilter').value = '';
-      document.getElementById('statusFilter').value = '';
-      document.querySelectorAll('.city-badge').forEach(b => b.classList.remove('active'));
-      filteredProperties = allProperties;
-      renderProperties(filteredProperties);
-    }
-
-    function renderProperties(properties) {
-      const container = document.getElementById('propertiesGrid');
-      const resultsCount = document.getElementById('resultsCount');
-      
-      resultsCount.textContent = `Showing ${properties.length} of ${allProperties.length} properties`;
-
-      if (properties.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#666; grid-column: 1/-1;">No properties match your filters.</p>';
-        return;
-      }
-
-      container.innerHTML = properties.map(property => `
-        <div class="property-card" onclick="window.location.href='property-details.html?id=${property._id}'">
-          <img src="${property.images[0] || 'https://placehold.co/500x300?text=No+Image'}" alt="${property.title}">
-          <div class="property-desc">${property.title}</div>
-          <div class="property-price">₹${Number(property.price).toLocaleString('en-IN')}</div>
-          <div style="text-align: center; margin-top: 10px; color: #666; font-size: 0.9em;">
-            <i class="fas fa-map-marker-alt"></i> ${property.address?.city || 'City'}, ${property.address?.state || 'State'}
-          </div>
-          <div style="text-align: center; margin-top: 10px;">
-            <span style="background: #263f6e; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85em;">
-              ${property.features?.bedrooms || 0} BHK | ${property.features?.area || 0} sqft
-            </span>
-          </div>
-        </div>
-      `).join('');
-
-      document.querySelectorAll('.property-card').forEach(card => cardObserver.observe(card));
-    }
-
-    // Check if user is team member and show add button
-    function checkTeamAccess() {
-      // ✅ FIX: Check BOTH possible keys
-      const userStr = localStorage.getItem('user') || localStorage.getItem('currentUser');
-      
-      if (!userStr) return;
-
-      try {
-        const currentUser = JSON.parse(userStr);
-        const addPropertyBtn = document.getElementById('addPropertyFab');
-        
-        // ✅ TRUST TEAM@TEST.COM AUTOMATICALLY
-        if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'team' || currentUser.email === 'team@test.com')) {
-          addPropertyBtn.classList.add('show');
-        } else {
-          addPropertyBtn.classList.remove('show');
-        }
-      } catch (e) {
-        console.error("Auth check error", e);
-      }
-    }
-    
-    // Redirect to ADMIN page (where the form is)
-    function redirectToAddProperty() {
-      // ✅ FIX: Point to the actual admin page
-      window.location.href = 'admin.html';
-    }
+        load();
+    })();
   </script>
+</body>
+</html>
