@@ -4,534 +4,299 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Property Details - Y M REAL ESTATE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f8f9fa;
-      color: #333;
-    }
+    /* --- CSS STYLES --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f8f9fa; color: #333; }
+
+    /* Header */
     .header {
-      background: #fff;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background: #263f6e; /* Changed to Blue for better contrast */
       padding: 15px 40px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 40px;
+      position: sticky; top: 0; z-index: 1000;
+      display: flex; justify-content: space-between; align-items: center; gap: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .logo {
-      font-size: 24px;
-      font-weight: 700;
-      color: #263f6e;
-      white-space: nowrap;
-    }
-    .nav {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-      flex-grow: 1;
-    }
-    .nav a {
-      color: #666;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      padding: 8px 12px;
-    }
-    .nav a:hover {
-      color: #263f6e;
-    }
-    
+    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
+    .logo-img { width: 40px; height: 40px; border-radius: 8px; }
+    .logo-text { font-size: 20px; font-weight: 700; white-space: nowrap; }
+
+    .nav { display: flex; gap: 20px; }
+    .nav a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s; }
+    .nav a:hover { color: #ffd700; }
+
+    /* Hero Section */
     .property-hero {
-      position: relative;
-      height: 70vh;
-      background: #000;
-      overflow: hidden;
-      margin-bottom: 60px;
+      position: relative; height: 60vh; background: #000; overflow: hidden; margin-bottom: 50px;
     }
-    .hero-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.85;
-    }
+    .hero-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
     .hero-overlay {
-      position: absolute;
-      bottom: -40px;
-      left: 0;
-      right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.85));
-      padding: 100px 40px 60px;
-      color: white;
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      padding: 80px 40px 40px; color: white;
     }
-    .property-title {
-      font-size: 42px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-    }
-    .property-location {
-      font-size: 18px;
-      opacity: 0.95;
-      margin-bottom: 25px;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-    }
+    .property-title { font-size: 38px; font-weight: 700; margin-bottom: 10px; }
     .property-price {
-      font-size: 38px;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(135deg, #263f6e 0%, #1a2d4d 100%);
-      padding: 18px 35px;
-      border-radius: 12px;
-      display: inline-block;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-      border: 2px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
+      font-size: 32px; font-weight: 700; color: #ffd700;
+      background: rgba(38, 63, 110, 0.8); padding: 10px 20px;
+      border-radius: 8px; display: inline-block; margin-top: 10px;
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto 60px;
-      padding: 0 20px;
-      position: relative;
-      z-index: 10;
-    }
-    .content-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 30px;
-    }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; }
+    .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    
     .main-content {
-      background: white;
-      border-radius: 15px;
-      padding: 40px;
-      box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+      background: white; border-radius: 12px; padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     }
-    .sidebar {
-      background: white;
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-      height: fit-content;
-      position: sticky;
-      top: 100px;
-    }
-    .highlights {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin: 30px 0;
-    }
+    .sidebar { position: sticky; top: 100px; height: fit-content; }
+
+    /* Highlights */
+    .highlights { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
     .highlight-item {
-      text-align: center;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 10px;
-      opacity: 0;
-      transform: scale(0.8);
-      transition: all 0.6s ease-out;
+      text-align: center; padding: 15px; background: #f0f4ff; border-radius: 10px;
     }
-    .highlight-item.reveal {
-      opacity: 1;
-      transform: scale(1);
-    }
-    .highlight-icon {
-      font-size: 32px;
-      color: #263f6e;
-      margin-bottom: 10px;
-    }
-    .highlight-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #333;
-    }
-    .highlight-label {
-      font-size: 13px;
-      color: #666;
-      margin-top: 5px;
-    }
-    .section {
-      margin: 40px 0;
-    }
-    .section-title {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: #263f6e;
-      border-bottom: 2px solid #ffd700;
-      padding-bottom: 10px;
-    }
-    .description {
-      line-height: 1.8;
-      color: #555;
-      font-size: 15px;
-    }
-    .amenities-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-    .amenity {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-    .amenity i {
-      color: #28a745;
-      font-size: 18px;
-    }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .gallery img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-    .gallery img:hover {
-      transform: scale(1.05);
-    }
+    .highlight-icon { font-size: 24px; color: #263f6e; margin-bottom: 5px; }
+    .highlight-value { font-weight: 700; font-size: 18px; }
+    .highlight-label { font-size: 12px; color: #666; }
+
+    /* Sections */
+    .section-title { font-size: 22px; color: #263f6e; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #eee; }
+    .description { line-height: 1.6; color: #555; margin-bottom: 30px; }
+    
+    .amenities-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 30px; }
+    .amenity { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    .amenity i { color: #10b981; }
+
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .gallery img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+    .gallery img:hover { transform: scale(1.05); }
+
+    /* Sidebar Cards */
     .contact-card {
-      background: linear-gradient(135deg, #263f6e, #1a2d4d);
-      color: white;
-      padding: 30px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-    }
-    .contact-card h3 {
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-    .contact-info {
-      margin: 15px 0;
-    }
-    .contact-info i {
-      margin-right: 10px;
-      color: #ffd700;
+      background: #263f6e; color: white; padding: 25px; border-radius: 12px; margin-bottom: 20px;
     }
     .contact-btn {
-      width: 100%;
-      padding: 15px;
-      background: #ffd700;
-      color: #263f6e;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: all 0.3s;
+      width: 100%; padding: 12px; background: #ffd700; color: #263f6e;
+      border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px;
     }
-    .contact-btn:hover {
-      background: #ffc800;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(255,215,0,0.3);
-    }
-    .quick-facts {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    .fact-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #dee2e6;
-    }
-    .fact-row:last-child {
-      border-bottom: none;
-    }
-    .fact-label {
-      font-weight: 500;
-      color: #666;
-    }
-    .fact-value {
-      font-weight: 600;
-      color: #333;
-    }
-    .scroll-reveal {
-      opacity: 0;
-      transform: translateY(50px);
-      transition: all 0.8s ease-out;
-    }
-    .scroll-reveal.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .user-profile {
-      align-items: center;
-      gap: 12px;
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-    .user-profile button:hover {
-      background: rgba(0,0,0,0.05) !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-    }
+    
+    .quick-facts { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .fact-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+    .fact-label { color: #666; }
+    .fact-value { font-weight: 600; }
+
+    /* Mobile */
     @media (max-width: 768px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-      .highlights {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .amenities-grid {
-        grid-template-columns: 1fr;
-      }
-      .gallery {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .property-title {
-        font-size: 28px;
-      }
-      .property-price {
-        font-size: 28px;
-        padding: 14px 28px;
-      }
-      .hero-overlay {
-        bottom: -30px;
-        padding: 80px 20px 50px;
-      }
-      .sidebar {
-        position: relative;
-        top: 0;
-      }
+      .header { padding: 15px; flex-direction: column; gap: 15px; }
+      .nav { flex-wrap: wrap; justify-content: center; }
+      .content-grid { grid-template-columns: 1fr; }
+      .highlights { grid-template-columns: repeat(2, 1fr); }
+      .property-hero { height: 50vh; }
+      .property-title { font-size: 24px; }
     }
   </style>
 </head>
 <body>
+
   <div class="header">
-    <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
-      <img src="ym.jpg" alt="Y" class="logo-img"> 
-      <div class="logo">Y M REAL ESTATE</div>
+    <a href="index.html" class="logo-area">
+      <img src="ym.jpg" alt="Logo" class="logo-img"> 
+      <div class="logo-text">Y M REAL ESTATE</div>
     </a>
     <div class="nav">
       <a href="index.html">Home</a>
       <a href="properties.html">Properties</a>
       <a href="team.html">Our Team</a>
-      <a href="login.html" id="navLoginLink">Login / Signup</a>
       <a href="contact.html">Contact</a>
-    </div>
-    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 12px; margin-left: auto; flex-shrink: 0;">
-      <img id="userAvatar" src="" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #666;">
-      <span id="userName" style="color: #666; font-weight: 500; white-space: nowrap;"></span>
-      <button onclick="api.logout()" style="padding: 8px 16px; background: #f0f0f0; color: #666; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.3s; font-weight: 500; font-size: 14px; white-space: nowrap;">Logout</button>
     </div>
   </div>
 
   <div class="property-hero" id="propertyHero">
-    <!-- Loaded dynamically -->
-  </div>
+    </div>
 
   <div class="container">
     <div class="content-grid">
-      <div class="main-content scroll-reveal" id="mainContent">
-        <!-- Loaded dynamically -->
+      
+      <div class="main-content" id="mainContent">
+        <div style="text-align: center; padding: 40px;">
+          <i class="fas fa-spinner fa-spin fa-3x" style="color:#263f6e"></i>
+          <p style="margin-top:20px;">Loading Property Details...</p>
+        </div>
       </div>
       
-      <div class="sidebar scroll-reveal">
+      <div class="sidebar">
         <div class="contact-card">
-          <h3>Contact Listing Agent</h3>
-          <div class="contact-info" id="ownerInfo">
-            <!-- Loaded dynamically -->
+          <h3 style="margin-bottom:15px">Contact Agent</h3>
+          <div id="ownerInfo">
+             <p>Loading contact info...</p>
           </div>
           <button class="contact-btn" onclick="window.location.href='contact.html'">
-            <i class="fas fa-envelope"></i> Send Inquiry
-          </button>
-        </div>
-
-        <div class="contact-card">
-          <h3>Y M Real Estate</h3>
-          <div class="contact-info">
-            <p><i class="fas fa-phone"></i> +91 77958 11097</p>
-            <p><i class="fas fa-envelope"></i> info@ymrealestate.com</p>
-          </div>
-          <button class="contact-btn" onclick="window.open('https://wa.me/917795811097', '_blank')">
-            <i class="fab fa-whatsapp"></i> WhatsApp Us
+            <i class="fas fa-envelope"></i> Send Message
           </button>
         </div>
 
         <div class="quick-facts" id="quickFacts">
-          <!-- Loaded dynamically -->
-        </div>
+           </div>
       </div>
+
     </div>
   </div>
 
- <script src="js/api.js"></script>
-<script>
-  // --- CONFIGURATION ---
-  const SERVER_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5011'
-    : 'https://ym-real-estate.onrender.com';
-
-  const API_URL = `${SERVER_BASE_URL}/api`;
-
-  // --- HELPER TO FIX BROKEN IMAGES ---
-  function resolveImageUrl(imagePath) {
-    if (!imagePath) return 'https://placehold.co/1200x600?text=No+Image';
+  <script src="js/api.js"></script>
+  <script>
+    // --- 1. CONFIGURATION ---
+    const SERVER_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:5011'
+      : 'https://ym-real-estate.onrender.com';
     
-    // If it's already a full URL (like a placeholder), leave it alone
-    if (imagePath.startsWith('http') || imagePath.startsWith('https')) return imagePath;
-    
-    // ✅ CRITICAL FIX: Add '/uploads/' to match your app.use('/uploads'...)
-    // Also uses encodeURIComponent to handle spaces/special characters in filenames safely
-    return `${SERVER_BASE_URL}/uploads/${imagePath}`;
-  }
+    // IMPORTANT: Point to the '/uploads/' folder on your server
+    const UPLOADS_URL = `${SERVER_BASE_URL}/uploads/`;
+    const API_URL = `${SERVER_BASE_URL}/api`;
 
-  const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -50px 0px'
-  };
+    // --- 2. IMAGE HELPER (Fixes Broken Links) ---
+    function resolveImageUrl(imagePath) {
+      if (!imagePath) return 'https://placehold.co/1200x600?text=No+Image';
+      
+      // If it's already a web link, return it
+      if (imagePath.startsWith('http')) return imagePath;
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      }
-    });
-  }, observerOptions);
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const propertyId = urlParams.get('id');
-
-  async function loadProperty() {
-    if (!propertyId) {
-      document.body.innerHTML = '<h2 style="text-align:center; margin-top:100px;">Property not found</h2>';
-      return;
+      // Clean the filename (remove existing /uploads/ if stored in DB to avoid double slash)
+      const cleanPath = imagePath.replace(/^\\uploads\\/, '').replace(/^\/uploads\//, '');
+      
+      // Combine Server URL + /uploads/ + Filename
+      // encodeURIComponent fixes spaces in filenames (like "WhatsApp Image...")
+      return `${UPLOADS_URL}${cleanPath}`;
     }
 
-    try {
-      console.log("Fetching property:", `${API_URL}/properties/${propertyId}`);
-      
-      const response = await fetch(`${API_URL}/properties/${propertyId}`);
-      const json = await response.json();
-      const property = json.data || json;
+    // --- 3. LOAD PROPERTY LOGIC ---
+    async function loadProperty() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const propertyId = urlParams.get('id');
 
-      if (!property || (json.success === false)) {
-        throw new Error('Property not found');
+      if (!propertyId) {
+        document.getElementById('mainContent').innerHTML = '<h2>Error: No Property ID Found</h2>';
+        return;
       }
 
-      displayProperty(property);
-    } catch (error) {
-      console.error('Error loading property:', error);
-      document.getElementById('propertyHero').style.display = 'none';
-      document.getElementById('mainContent').innerHTML = `
-        <div style="text-align:center; color:#dc2626; padding: 40px;">
-          <h2>Failed to load property</h2>
-          <p>Please try again later.</p>
-          <a href="properties.html" style="color:#263f6e; text-decoration:underline;">Return to Properties</a>
+      try {
+        console.log("Fetching:", `${API_URL}/properties/${propertyId}`);
+        const response = await fetch(`${API_URL}/properties/${propertyId}`);
+        const json = await response.json();
+        
+        // Handle data wrapper
+        const property = json.data || json;
+
+        if (!property || json.success === false) throw new Error("Property not found");
+
+        renderPage(property);
+
+      } catch (error) {
+        console.error("Load Error:", error);
+        document.getElementById('mainContent').innerHTML = `
+          <div style="text-align:center; color:red; padding:20px;">
+            <h3>Unable to load property</h3>
+            <p>${error.message}</p>
+            <a href="properties.html" style="color:blue; text-decoration:underline">Go Back</a>
+          </div>
+        `;
+      }
+    }
+
+    // --- 4. RENDER FUNCTION ---
+    function renderPage(p) {
+      // SAFE DATA EXTRACTION (Prevents Crashes)
+      const title = p.title || "Untitled Property";
+      const price = p.price ? Number(p.price).toLocaleString('en-IN') : "0";
+      const loc = p.address ? `${p.address.city || ''}, ${p.address.state || ''}` : "Location N/A";
+      const desc = p.description || "No description provided.";
+      
+      // Images
+      const mainImg = (p.images && p.images.length > 0) ? resolveImageUrl(p.images[0]) : 'https://placehold.co/1200x600?text=No+Image';
+
+      // --- HERO SECTION ---
+      document.getElementById('propertyHero').innerHTML = `
+        <img src="${mainImg}" alt="${title}" class="hero-image" onerror="this.src='https://placehold.co/1200x600?text=Image+Error'">
+        <div class="hero-overlay">
+          <h1 class="property-title">${title}</h1>
+          <p><i class="fas fa-map-marker-alt"></i> ${loc}</p>
+          <div class="property-price">₹${price}</div>
         </div>
       `;
-    }
-  }
 
-  function displayProperty(p) {
-    const ownerName = p.owner?.name || 'Y M Real Estate Team';
-    const ownerPhone = p.owner?.phone || '+91 77958 11097';
-    const ownerEmail = p.owner?.email || 'info@ymrealestate.com';
-    
-    // Fix the Main Hero Image
-    const mainImage = resolveImageUrl(p.images[0]);
+      // --- MAIN CONTENT ---
+      // Features (Bed/Bath/Area)
+      const beds = p.features?.bedrooms || 0;
+      const baths = p.features?.bathrooms || 0;
+      const area = p.features?.area || 0;
+      const parking = p.features?.parking ? "Yes" : "No";
 
-    document.getElementById('propertyHero').innerHTML = `
-      <img src="${mainImage}" alt="${p.title}" class="hero-image" onerror="this.src='https://placehold.co/1200x600?text=Image+Not+Found'">
-      <div class="hero-overlay">
-        <h1 class="property-title">${p.title}</h1>
-        <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${p.address?.city || ''}, ${p.address?.state || ''}</p>
-        <div class="property-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
-      </div>
-    `;
+      // Amenities List
+      const amenitiesHtml = (p.amenities || []).map(a => 
+        `<div class="amenity"><i class="fas fa-check-circle"></i> ${a}</div>`
+      ).join('');
 
-    // Prepare Gallery HTML safely
-    let galleryHtml = '';
-    if (p.images && p.images.length > 1) {
-       galleryHtml = `
-        <div class="section">
-          <h2 class="section-title">Gallery</h2>
-          <div class="gallery">
-            ${p.images.map(img => {
-                const fullUrl = resolveImageUrl(img);
-                return `<img src="${fullUrl}" alt="Gallery" onclick="window.open('${fullUrl}', '_blank')" onerror="this.style.display='none'">`;
-            }).join('')}
+      // Gallery Images
+      const galleryHtml = (p.images || []).map(img => 
+        `<img src="${resolveImageUrl(img)}" onclick="window.open('${resolveImageUrl(img)}', '_blank')" onerror="this.style.display='none'">`
+      ).join('');
+
+      document.getElementById('mainContent').innerHTML = `
+        <div class="highlights">
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="fas fa-bed"></i></div>
+            <div class="highlight-value">${beds}</div>
+            <div class="highlight-label">Bedrooms</div>
           </div>
-        </div>`;
-    }
-
-    document.getElementById('mainContent').innerHTML = `
-      <div class="highlights">
-        ${p.features?.bedrooms ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-bed"></i></div><div class="highlight-value">${p.features.bedrooms}</div><div class="highlight-label">Bedrooms</div></div>` : ''}
-        ${p.features?.bathrooms ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-bath"></i></div><div class="highlight-value">${p.features.bathrooms}</div><div class="highlight-label">Bathrooms</div></div>` : ''}
-        ${p.features?.area ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-ruler-combined"></i></div><div class="highlight-value">${p.features.area}</div><div class="highlight-label">Sq Ft</div></div>` : ''}
-        ${p.features?.parking ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-car"></i></div><div class="highlight-value">Yes</div><div class="highlight-label">Parking</div></div>` : ''}
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">Description</h2>
-        <p class="description">${p.description || 'No description available.'}</p>
-      </div>
-
-      ${p.amenities && p.amenities.length > 0 ? `
-        <div class="section">
-          <h2 class="section-title">Amenities & Features</h2>
-          <div class="amenities-grid">
-            ${p.amenities.map(a => `<div class="amenity"><i class="fas fa-check-circle"></i><span>${a}</span></div>`).join('')}
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="fas fa-bath"></i></div>
+            <div class="highlight-value">${baths}</div>
+            <div class="highlight-label">Bathrooms</div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="fas fa-ruler-combined"></i></div>
+            <div class="highlight-value">${area}</div>
+            <div class="highlight-label">Sq Ft</div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="fas fa-car"></i></div>
+            <div class="highlight-value">${parking}</div>
+            <div class="highlight-label">Parking</div>
           </div>
         </div>
-      ` : ''}
 
-      ${galleryHtml}
-    `;
+        <h2 class="section-title">Description</h2>
+        <div class="description">${desc}</div>
 
-    document.getElementById('ownerInfo').innerHTML = `
-      <p><i class="fas fa-user"></i> ${ownerName}</p>
-      <p><i class="fas fa-phone"></i> <a href="tel:${ownerPhone}" style="color:white; text-decoration:none;">${ownerPhone}</a></p>
-      <p><i class="fas fa-envelope"></i> ${ownerEmail}</p>
-    `;
+        ${amenitiesHtml ? `<h2 class="section-title">Amenities</h2><div class="amenities-grid">${amenitiesHtml}</div>` : ''}
+        
+        ${galleryHtml ? `<h2 class="section-title">Gallery</h2><div class="gallery">${galleryHtml}</div>` : ''}
+      `;
 
-    document.getElementById('quickFacts').innerHTML = `
-      <h3 style="margin-bottom:15px; font-size:18px;">Quick Facts</h3>
-      <div class="fact-row"><span class="fact-label">Property Type</span><span class="fact-value">${p.propertyType || 'N/A'}</span></div>
-      <div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">${p.status === 'sale' ? 'For Sale' : 'For Rent'}</span></div>
-      ${p.features?.yearBuilt ? `<div class="fact-row"><span class="fact-label">Year Built</span><span class="fact-value">${p.features.yearBuilt}</span></div>` : ''}
-      <div class="fact-row"><span class="fact-label">Furnished</span><span class="fact-value">${p.features?.furnished ? 'Yes' : 'No'}</span></div>
-    `;
+      // --- SIDEBAR INFO ---
+      const ownerName = p.owner?.name || "Y M Real Estate";
+      const ownerPhone = p.owner?.phone || "+91 77958 11097";
+      const ownerEmail = p.owner?.email || "info@ymrealestate.com";
 
-    setTimeout(() => {
-      document.querySelectorAll('.highlight-item').forEach((item, index) => {
-        setTimeout(() => item.classList.add('reveal'), index * 100);
-      });
-    }, 200);
+      document.getElementById('ownerInfo').innerHTML = `
+        <p style="margin-bottom:8px;"><i class="fas fa-user"></i> ${ownerName}</p>
+        <p style="margin-bottom:8px;"><i class="fas fa-phone"></i> <a href="tel:${ownerPhone}" style="color:white;">${ownerPhone}</a></p>
+        <p><i class="fas fa-envelope"></i> ${ownerEmail}</p>
+      `;
 
-    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    if (typeof ui !== 'undefined' && ui.updateAuthStatus) {
-       try { ui.updateAuthStatus(); } catch(e) {}
+      document.getElementById('quickFacts').innerHTML = `
+        <h3 style="margin-bottom:15px; font-size:16px;">Quick Facts</h3>
+        <div class="fact-row"><span class="fact-label">Type</span><span class="fact-value">${p.propertyType || 'N/A'}</span></div>
+        <div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">${p.status === 'sale' ? 'For Sale' : 'For Rent'}</span></div>
+        <div class="fact-row"><span class="fact-label">Year Built</span><span class="fact-value">${p.features?.yearBuilt || 'N/A'}</span></div>
+        <div class="fact-row"><span class="fact-label">Furnished</span><span class="fact-value">${p.features?.furnished ? 'Yes' : 'No'}</span></div>
+      `;
     }
-    loadProperty();
-  });
-</script>
+
+    // Start
+    document.addEventListener('DOMContentLoaded', loadProperty);
+  </script>
 </body>
 </html>
