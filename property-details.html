@@ -378,7 +378,7 @@
     </div>
   </div>
 
-  <script src="js/api.js"></script>
+ <script src="js/api.js"></script>
   <script>
     const observerOptions = {
       threshold: 0.15,
@@ -403,44 +403,65 @@
       }
 
       try {
+        // --- FIX 1: Corrected API URL based on your previous messages ---
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
           ? 'http://localhost:5011/api'
-          : 'https://ym-realestate-api.onrender.com/api'; // REPLACE with your actual Render URL
+          : 'https://ym-real-estate.onrender.com/api'; 
         
+        console.log("Fetching from:", `${API_URL}/properties/${propertyId}`); // Debug log
+
         const response = await fetch(`${API_URL}/properties/${propertyId}`);
-        const data = await response.json();
+        const json = await response.json();
 
-        if (!data.success) throw new Error('Property not found');
+        // Handle different data structures ({ success: true, data: ... } vs direct object)
+        const property = json.data || json;
 
-        const property = data.data;
+        if (!property || (json.success === false)) {
+            throw new Error('Property not found');
+        }
+
         displayProperty(property);
       } catch (error) {
-        console.error('Error:', error);
-        document.body.innerHTML = '<h2 style="text-align:center; margin-top:100px; color:#dc2626;">Failed to load property</h2>';
+        console.error('Error loading property:', error);
+        document.getElementById('propertyHero').style.display = 'none';
+        document.getElementById('mainContent').innerHTML = `
+            <div style="text-align:center; color:#dc2626; padding: 40px;">
+                <h2>Failed to load property</h2>
+                <p>Please try again later. (Error: ${error.message})</p>
+                <a href="properties.html" style="color:#263f6e; text-decoration:underline;">Return to Properties</a>
+            </div>
+        `;
       }
     }
 
     function displayProperty(p) {
+      // --- FIX 2: Safely handle missing owner data ---
+      const ownerName = p.owner?.name || 'Y M Real Estate Team';
+      const ownerPhone = p.owner?.phone || '+91 77958 11097';
+      const ownerEmail = p.owner?.email || 'info@ymrealestate.com';
+      
+      // Hero Section
       document.getElementById('propertyHero').innerHTML = `
         <img src="${p.images[0] || 'https://via.placeholder.com/1200x600?text=Property'}" alt="${p.title}" class="hero-image">
         <div class="hero-overlay">
           <h1 class="property-title">${p.title}</h1>
-          <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${p.address.city}, ${p.address.state}</p>
-          <div class="property-price">₹${p.price.toLocaleString('en-IN')}</div>
+          <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${p.address?.city || ''}, ${p.address?.state || ''}</p>
+          <div class="property-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
         </div>
       `;
 
+      // Main Content
       document.getElementById('mainContent').innerHTML = `
         <div class="highlights">
-          ${p.features.bedrooms ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-bed"></i></div><div class="highlight-value">${p.features.bedrooms}</div><div class="highlight-label">Bedrooms</div></div>` : ''}
-          ${p.features.bathrooms ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-bath"></i></div><div class="highlight-value">${p.features.bathrooms}</div><div class="highlight-label">Bathrooms</div></div>` : ''}
-          ${p.features.area ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-ruler-combined"></i></div><div class="highlight-value">${p.features.area}</div><div class="highlight-label">Sq Ft</div></div>` : ''}
-          ${p.features.parking ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-car"></i></div><div class="highlight-value">${p.features.parking}</div><div class="highlight-label">Parking</div></div>` : ''}
+          ${p.features?.bedrooms ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-bed"></i></div><div class="highlight-value">${p.features.bedrooms}</div><div class="highlight-label">Bedrooms</div></div>` : ''}
+          ${p.features?.bathrooms ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-bath"></i></div><div class="highlight-value">${p.features.bathrooms}</div><div class="highlight-label">Bathrooms</div></div>` : ''}
+          ${p.features?.area ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-ruler-combined"></i></div><div class="highlight-value">${p.features.area}</div><div class="highlight-label">Sq Ft</div></div>` : ''}
+          ${p.features?.parking ? `<div class="highlight-item"><div class="highlight-icon"><i class="fas fa-car"></i></div><div class="highlight-value">Yes</div><div class="highlight-label">Parking</div></div>` : ''}
         </div>
 
         <div class="section">
           <h2 class="section-title">Description</h2>
-          <p class="description">${p.description}</p>
+          <p class="description">${p.description || 'No description available.'}</p>
         </div>
 
         ${p.amenities && p.amenities.length > 0 ? `
@@ -452,7 +473,7 @@
           </div>
         ` : ''}
 
-        ${p.images.length > 1 ? `
+        ${p.images && p.images.length > 1 ? `
           <div class="section">
             <h2 class="section-title">Gallery</h2>
             <div class="gallery">
@@ -462,20 +483,23 @@
         ` : ''}
       `;
 
+      // Owner Info Sidebar
       document.getElementById('ownerInfo').innerHTML = `
-        <p><i class="fas fa-user"></i> ${p.owner.name}</p>
-        <p><i class="fas fa-phone"></i> <a href="tel:${p.owner.phone}" style="color:white; text-decoration:none;">${p.owner.phone}</a></p>
-        <p><i class="fas fa-envelope"></i> ${p.owner.email}</p>
+        <p><i class="fas fa-user"></i> ${ownerName}</p>
+        <p><i class="fas fa-phone"></i> <a href="tel:${ownerPhone}" style="color:white; text-decoration:none;">${ownerPhone}</a></p>
+        <p><i class="fas fa-envelope"></i> ${ownerEmail}</p>
       `;
 
+      // Quick Facts
       document.getElementById('quickFacts').innerHTML = `
         <h3 style="margin-bottom:15px; font-size:18px;">Quick Facts</h3>
-        <div class="fact-row"><span class="fact-label">Property Type</span><span class="fact-value">${p.propertyType}</span></div>
+        <div class="fact-row"><span class="fact-label">Property Type</span><span class="fact-value">${p.propertyType || 'N/A'}</span></div>
         <div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">${p.status === 'sale' ? 'For Sale' : 'For Rent'}</span></div>
-        ${p.features.yearBuilt ? `<div class="fact-row"><span class="fact-label">Year Built</span><span class="fact-value">${p.features.yearBuilt}</span></div>` : ''}
-        ${p.features.furnished !== undefined ? `<div class="fact-row"><span class="fact-label">Furnished</span><span class="fact-value">${p.features.furnished ? 'Yes' : 'No'}</span></div>` : ''}
+        ${p.features?.yearBuilt ? `<div class="fact-row"><span class="fact-label">Year Built</span><span class="fact-value">${p.features.yearBuilt}</span></div>` : ''}
+        <div class="fact-row"><span class="fact-label">Furnished</span><span class="fact-value">${p.features?.furnished ? 'Yes' : 'No'}</span></div>
       `;
 
+      // Animation triggers
       setTimeout(() => {
         document.querySelectorAll('.highlight-item').forEach((item, index) => {
           setTimeout(() => item.classList.add('reveal'), index * 100);
@@ -486,11 +510,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      ui.updateAuthStatus();
+      // --- FIX 3: Safe UI check so the page loads even if auth fails ---
+      if (typeof ui !== 'undefined' && ui.updateAuthStatus) {
+         try { ui.updateAuthStatus(); } catch(e) { console.log("Auth UI skipped"); }
+      }
       loadProperty();
     });
-
-    loadProperty();
   </script>
 </body>
 </html>
