@@ -4,443 +4,154 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Property Details | Y M REAL ESTATE</title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
   <style>
-    /* --- CSS VARIABLES FROM HOMEPAGE --- */
-    :root {
-        --primary-color: #263f6e;
-        --primary-light: #f6faff;
-        --primary-dark: #18284b;
-        --accent-color: #ffd700;
-        --accent-dark: #ffc800;
-        --text-dark: #2d3748;
-        --text-light: #718096;
-        --white: #ffffff;
-        --shadow-sm: 0 2px 4px rgba(38, 63, 110, 0.1);
-        --shadow-md: 0 4px 6px rgba(38, 63, 110, 0.1);
-        --shadow-lg: 0 10px 15px rgba(38, 63, 110, 0.1);
-        --gradient-primary: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
-        --gradient-accent: linear-gradient(135deg, #ffd700 0%, #ffc800 100%);
-    }
-
-    /* --- RESET & BASE --- */
+    /* VARS */
+    :root { --primary: #263f6e; --light: #f6faff; --accent: #ffd700; --text: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-        font-family: 'Poppins', sans-serif; 
-        background-color: var(--primary-light); 
-        color: var(--text-dark); 
-        overflow-x: hidden;
-    }
+    body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); overflow-x: hidden; }
 
-    /* --- HEADER (MATCHING HOMEPAGE) --- */
-    .header {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 15px 30px; 
-        backdrop-filter: blur(10px);
-        box-shadow: var(--shadow-sm);
-        display: flex; align-items: center; justify-content: space-between;
-        position: fixed; width: 100%; top: 0; left: 0; z-index: 1000;
-    }
-    .logo-area { display: flex; align-items: center; text-decoration: none; gap: 12px; }
-    .logo-img { height: 50px; border-radius: 5px; }
-    .logo-text {
-        font-size: 1.6rem; font-weight: 700;
-        background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        display: block;
-    }
-    .nav { display: flex; gap: 24px; }
-    .nav a {
-        color: var(--text-dark); background: var(--white); text-decoration: none;
-        font-weight: 500; padding: 10px 20px; border-radius: 12px;
-        transition: all 0.3s ease; box-shadow: var(--shadow-sm); font-size: 0.95rem;
-    }
-    .nav a:hover { transform: translateY(-2px); background: #f3f7ff; color: var(--primary-color); }
-
-    /* --- MAIN LAYOUT --- */
-    .main-container {
-        max-width: 1280px; margin: 100px auto 60px; padding: 0 20px;
-    }
+    /* HEADER */
+    .header { background: rgba(255,255,255,0.95); padding: 15px 30px; backdrop-filter: blur(10px); display: flex; justify-content: space-between; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 1.5rem; }
+    .logo-area img { height: 45px; border-radius: 5px; }
+    .nav { display: flex; gap: 20px; }
+    .nav a { text-decoration: none; color: var(--text); font-weight: 500; }
     
-    .layout-grid {
-        display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; margin-top: 30px;
-    }
+    /* LAYOUT */
+    .container { max-width: 1200px; margin: 100px auto 60px; padding: 0 20px; }
+    
+    /* BACK BUTTON */
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--primary); font-weight: 600; margin-bottom: 20px; transition: 0.2s; }
+    .back-btn:hover { color: var(--accent); transform: translateX(-5px); }
 
-    /* --- GALLERY MOSAIC (Inspired by Instagram Section) --- */
-    .gallery-container {
-        display: grid; grid-template-columns: 2fr 1fr; gap: 15px;
-        height: 500px; border-radius: 20px; overflow: hidden;
-        box-shadow: var(--shadow-lg); margin-bottom: 20px; background: #fff;
-    }
-    .gallery-main { grid-row: span 2; position: relative; overflow: hidden; }
+    .gallery { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; height: 450px; border-radius: 20px; overflow: hidden; margin-bottom: 30px; }
+    .gallery img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; background: #ddd; }
+    .gallery-main { grid-row: span 2; }
     .gallery-side { display: flex; flex-direction: column; gap: 15px; }
-    .gallery-img { 
-        width: 100%; height: 100%; object-fit: cover; cursor: pointer; 
-        transition: transform 0.4s ease; background: #eee;
-    }
-    .gallery-wrapper { overflow: hidden; position: relative; height: 100%; }
-    .gallery-wrapper:hover .gallery-img { transform: scale(1.05); }
 
-    /* --- PROPERTY HEADER INFO --- */
-    .prop-header-card {
-        background: var(--white); padding: 30px; border-radius: 20px;
-        box-shadow: var(--shadow-sm); margin-bottom: 30px;
-    }
-    .badge-row { display: flex; gap: 10px; margin-bottom: 15px; }
-    .badge { 
-        padding: 6px 16px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .badge-status { background: var(--primary-color); color: white; }
-    .badge-type { background: var(--primary-light); color: var(--primary-color); border: 1px solid rgba(38,63,110,0.1); }
-
-    .prop-title {
-        font-size: 2.2rem; font-weight: 700; color: var(--primary-color); line-height: 1.2; margin-bottom: 10px;
-    }
-    .prop-location {
-        color: var(--text-light); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;
-    }
-    .prop-price {
-        font-size: 2.5rem; font-weight: 700; color: var(--accent-dark); 
-        text-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 15px;
-    }
-
-    /* --- STATS BAR --- */
-    .stats-card {
-        background: var(--primary-light); padding: 25px; border-radius: 15px;
-        display: flex; justify-content: space-around; margin-bottom: 30px;
-        border: 1px solid rgba(38,63,110,0.1);
-    }
-    .stat-item { text-align: center; }
-    .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); display: block; }
-    .stat-label { font-size: 0.9rem; color: var(--text-light); text-transform: uppercase; }
-    .stat-icon { color: var(--accent-dark); font-size: 1.2rem; margin-bottom: 5px; }
-
-    /* --- CONTENT BLOCKS --- */
-    .content-card {
-        background: var(--white); padding: 30px; border-radius: 20px;
-        box-shadow: var(--shadow-sm); margin-bottom: 30px;
-    }
-    .section-head {
-        font-size: 1.5rem; color: var(--primary-color); font-weight: 600; 
-        margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary-light);
-    }
-    .description-text { line-height: 1.8; color: var(--text-dark); white-space: pre-line; }
-
-    .amenities-grid { display: flex; flex-wrap: wrap; gap: 12px; }
-    .amenity-tag {
-        background: var(--primary-light); color: var(--primary-color);
-        padding: 10px 20px; border-radius: 12px; font-weight: 500; font-size: 0.95rem;
-        display: flex; align-items: center; gap: 10px; transition: all 0.3s;
-    }
-    .amenity-tag i { color: var(--accent-dark); }
-    .amenity-tag:hover { transform: translateY(-2px); background: #fff; box-shadow: var(--shadow-md); }
-
-    /* --- SIDEBAR AGENT CARD (Matches Homepage Owner Section) --- */
-    .sticky-sidebar { position: sticky; top: 110px; }
+    .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
     
-    .agent-card {
-        background: var(--gradient-primary); /* Dark Blue Gradient */
-        color: white;
-        padding: 40px 30px; border-radius: 20px;
-        text-align: center; box-shadow: var(--shadow-lg);
-        position: relative; overflow: hidden;
-    }
-    /* Subtle texture overlay */
-    .agent-card::before {
-        content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-        pointer-events: none;
-    }
-
-    .agent-img {
-        width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--white);
-        object-fit: cover; margin-bottom: 20px; background: #fff;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative; z-index: 2;
-    }
-    .agent-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; position: relative; z-index: 2; }
-    .agent-role { opacity: 0.8; font-size: 0.95rem; margin-bottom: 25px; position: relative; z-index: 2; }
-
-    .contact-btn {
-        display: block; width: 100%; padding: 14px; margin-bottom: 12px;
-        border-radius: 50px; font-weight: 600; text-decoration: none;
-        transition: all 0.3s; position: relative; z-index: 2; cursor: pointer; border: none; font-size: 1rem;
-    }
-    .btn-gold { background: var(--gradient-accent); color: var(--primary-dark); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); }
-    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); background: #ffe033; }
+    .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+    .title { font-size: 2.2rem; font-weight: 700; color: var(--primary); }
+    .price { font-size: 2rem; color: #ffc800; font-weight: 700; }
     
-    .btn-white { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px); }
-    .btn-white:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .agent-card { background: linear-gradient(135deg, #263f6e, #18284b); color: white; text-align: center; padding: 40px; border-radius: 20px; position: sticky; top: 110px; }
+    .agent-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 15px; }
+    .contact-btn { display: block; width: 100%; padding: 12px; margin-top: 10px; border-radius: 50px; text-decoration: none; font-weight: 600; }
+    .btn-gold { background: var(--accent); color: var(--primary); }
 
-    /* --- FOOTER (MATCHING HOMEPAGE) --- */
-    .footer {
-        background-color: #0f172a; color: #94a3b8; font-size: 0.95rem; position: relative;
-        width: 100%; margin-top: 80px; padding-top: 60px;
-    }
-    .footer-content {
-        max-width: 1200px; margin: 0 auto; padding: 0 20px 40px;
-        display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 40px;
-    }
-    .footer-col h3 { color: #fff; font-size: 1.2rem; margin-bottom: 25px; border-left: 3px solid var(--accent-color); padding-left: 15px; }
-    .footer-col ul { list-style: none; }
-    .footer-col ul li { margin-bottom: 12px; }
-    .footer-col ul li a { color: #94a3b8; text-decoration: none; transition: 0.3s; }
-    .footer-col ul li a:hover { color: var(--accent-color); padding-left: 5px; }
-    .social-links a { color: #fff; margin-right: 15px; font-size: 1.2rem; transition: 0.3s; }
-    .social-links a:hover { color: var(--accent-color); }
-    .footer-bottom { background: #0b1120; text-align: center; padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); }
+    /* SKELETON */
+    .skeleton { background: #eee; animation: blink 1.5s infinite; }
+    @keyframes blink { 50% { opacity: 0.5; } }
 
-    /* --- LOADING SKELETONS --- */
-    .skeleton {
-        background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
-        background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
-    }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .sk-img { width: 100%; height: 100%; }
-    .sk-text { height: 20px; margin-bottom: 10px; width: 80%; }
-    .sk-title { height: 40px; margin-bottom: 20px; width: 60%; }
-
-    /* --- RESPONSIVE --- */
-    @media (max-width: 900px) {
-        .layout-grid { grid-template-columns: 1fr; }
-        .gallery-container { height: 350px; }
-        .footer-content { grid-template-columns: 1fr 1fr; }
-        .header { flex-direction: column; gap: 15px; padding: 15px; }
-        .nav { flex-wrap: wrap; justify-content: center; width: 100%; }
-        .nav a { flex: 1; text-align: center; }
-        .logo-text { display: none; }
-    }
-    @media (max-width: 600px) {
-        .footer-content { grid-template-columns: 1fr; text-align: center; }
-        .footer-col h3 { border-left: none; padding-left: 0; text-decoration: underline var(--accent-color); }
-        .prop-title { font-size: 1.8rem; }
-        .prop-price { font-size: 2rem; }
-        .stats-card { flex-wrap: wrap; gap: 20px; }
-    }
+    @media(max-width:900px) { .grid-layout { grid-template-columns: 1fr; } .gallery { height: 300px; } }
   </style>
 </head>
 <body>
 
   <div class="header">
     <a href="index.html" class="logo-area">
-      <img src="ymr.jpg" alt="YM" class="logo-img" onerror="this.src='https://placehold.co/50?text=YM'">
-      <span class="logo-text">Y M REAL ESTATE</span>
+      <img src="ymr.jpg" onerror="this.src='https://placehold.co/50'" alt="Logo"> Y M REAL ESTATE
     </a>
     <div class="nav">
-      <a href="index.html">Home</a>
       <a href="properties.html">Properties</a>
-      <a href="team.html">Our Team</a>
-      <a href="contact.html">Contact Us</a>
+      <a href="contact.html">Contact</a>
     </div>
   </div>
 
-  <div class="main-container" id="mainContainer">
+  <div class="container" id="mainContainer">
     
-    <div class="gallery-container" id="gallerySection">
-        <div class="gallery-main skeleton sk-img"></div>
+    <a href="properties.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Properties</a>
+
+    <div class="gallery">
+        <img class="gallery-main skeleton" id="imgMain">
         <div class="gallery-side">
-            <div class="gallery-wrapper skeleton sk-img"></div>
-            <div class="gallery-wrapper skeleton sk-img"></div>
+            <img class="skeleton" id="imgSub1">
+            <img class="skeleton" id="imgSub2">
         </div>
     </div>
 
-    <div class="layout-grid">
-        
-        <div class="left-col" id="propertyDetails">
-            <div class="prop-header-card">
-                <div class="skeleton sk-title"></div>
-                <div class="skeleton sk-text"></div>
+    <div class="grid-layout">
+        <div id="detailsCol">
+            <div class="card">
+                <h1 class="title skeleton" style="width:60%; height:40px; margin-bottom:10px;" id="propTitle"></h1>
+                <div class="price skeleton" style="width:30%; height:30px;" id="propPrice"></div>
+                <p id="propLoc" style="margin-top:10px; color:#666;"></p>
             </div>
-            <div class="stats-card">
-                 <div class="skeleton sk-text" style="width: 100px;"></div>
+            <div class="card">
+                <h3 style="color:var(--primary); margin-bottom:15px;">Description</h3>
+                <p id="propDesc" style="line-height:1.8;"></p>
             </div>
-            <div class="content-card">
-                <div class="skeleton sk-text"></div>
-                <div class="skeleton sk-text"></div>
-            </div>
-        </div>
-
-        <div class="sticky-sidebar">
-            <div class="agent-card" id="agentCard">
-                <div style="display:flex; justify-content:center;">
-                    <div class="agent-img skeleton"></div>
-                </div>
-                <div class="skeleton sk-text" style="margin: 0 auto 10px;"></div>
+            <div class="card">
+                <h3 style="color:var(--primary); margin-bottom:15px;">Amenities</h3>
+                <div id="propAmenities" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
             </div>
         </div>
 
+        <div>
+            <div class="agent-card">
+                <img src="https://placehold.co/100" class="agent-img" id="agentImg">
+                <h3 id="agentName">Loading...</h3>
+                <p>Listing Agent</p>
+                <br>
+                <a href="#" class="contact-btn btn-gold" id="btnCall">Call Agent</a>
+                <a href="#" class="contact-btn" style="background:rgba(255,255,255,0.2); color:white;" id="btnWhatsapp">WhatsApp</a>
+            </div>
+        </div>
     </div>
   </div>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-col">
-        <h3>Y M Real Estate</h3>
-        <p>Redefining real estate with trust and transparency. We help you find not just a house, but a place to call home.</p>
-        <div class="social-links" style="margin-top:20px;">
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-facebook"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="properties.html">Properties</a></li>
-          <li><a href="team.html">Team</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h3>Contact Info</h3>
-        <ul>
-            <li><i class="fas fa-phone-alt" style="color:#ffd700; margin-right:8px;"></i> +91 77958 11097</li>
-            <li><i class="fas fa-envelope" style="color:#ffd700; margin-right:8px;"></i> info@ymrealestate.com</li>
-            <li><i class="fas fa-map-marker-alt" style="color:#ffd700; margin-right:8px;"></i> Hubballi, Karnataka</li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2025 Y M Real Estate. All rights reserved.</p>
-    </div>
-  </footer>
 
   <script src="js/api.js"></script>
   <script>
     (() => {
-      // 1. CONFIGURATION
-      const APP_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:5011'
-        : 'https://ym-real-estate.onrender.com';
-      
-      const API_URL = `${APP_BASE_URL}/api`;
-      const UPLOADS_URL = `${APP_BASE_URL}/uploads/`;
-      const PLACEHOLDER = 'https://placehold.co/1200x800?text=No+Image';
-
-      // 2. SMART IMAGE FIXER (Keep this logic!)
-      function getImgUrl(path) {
-        if (!path) return PLACEHOLDER;
-        if (path.startsWith('http') && !path.includes('localhost')) return path; // Valid external link
-        const filename = path.split(/[/\\]/).pop(); // Extract filename only
-        return `${UPLOADS_URL}${filename}`; // Force Render URL
-      }
-
-      // 3. LOAD LOGIC
-      async function init() {
-        const id = new URLSearchParams(window.location.search).get('id');
-        if (!id) return showError("Property ID missing");
-
-        try {
-          const res = await fetch(`${API_URL}/properties/${id}`);
-          const json = await res.json();
-          const p = json.data || json;
-          
-          if (!p || json.success === false) throw new Error("Property not found");
-          renderUI(p);
-        } catch (e) {
-          console.error(e);
-          showError("Failed to load property details");
-        }
-      }
-
-      function renderUI(p) {
-        // --- RENDER GALLERY ---
-        const imgs = (p.images && p.images.length > 0) ? p.images : [null];
-        const mainImg = getImgUrl(imgs[0]);
-        const subImg1 = imgs[1] ? getImgUrl(imgs[1]) : mainImg;
-        const subImg2 = imgs[2] ? getImgUrl(imgs[2]) : mainImg;
-
-        document.getElementById('gallerySection').innerHTML = `
-            <div class="gallery-main gallery-wrapper">
-                <img src="${mainImg}" class="gallery-img" onclick="window.open('${mainImg}')" onerror="this.src='${PLACEHOLDER}'">
-            </div>
-            <div class="gallery-side">
-                <div class="gallery-wrapper">
-                    <img src="${subImg1}" class="gallery-img" onclick="window.open('${subImg1}')" onerror="this.src='${PLACEHOLDER}'">
-                </div>
-                <div class="gallery-wrapper">
-                    <img src="${subImg2}" class="gallery-img" onclick="window.open('${subImg2}')" onerror="this.src='${PLACEHOLDER}'">
-                </div>
-            </div>
-        `;
-
-        // --- RENDER DETAILS (LEFT COL) ---
-        const price = p.price ? "₹ " + Number(p.price).toLocaleString('en-IN') : "Price on Request";
-        const status = p.status === 'rent' ? 'For Rent' : 'For Sale';
+        const API = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
         
-        document.getElementById('propertyDetails').innerHTML = `
-            <div class="prop-header-card">
-                <div class="badge-row">
-                    <span class="badge badge-status">${status}</span>
-                    <span class="badge badge-type">${p.propertyType || 'Home'}</span>
-                </div>
-                <h1 class="prop-title">${p.title}</h1>
-                <div class="prop-location"><i class="fas fa-map-marker-alt" style="color:var(--accent-color)"></i> ${p.address?.city}, ${p.address?.state}</div>
-                <div class="prop-price">${price}</div>
-            </div>
+        // Smart Image Fixer
+        const getImg = (path) => {
+            if(!path) return 'https://placehold.co/800x600?text=No+Image';
+            if(path.includes('http') && !path.includes('localhost')) return path;
+            const file = path.split(/[/\\]/).pop();
+            return `${API}/uploads/${file}`;
+        };
 
-            <div class="stats-card">
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-bed"></i></div>
-                    <span class="stat-val">${p.features?.bedrooms || 0}</span>
-                    <span class="stat-label">Beds</span>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-bath"></i></div>
-                    <span class="stat-val">${p.features?.bathrooms || 0}</span>
-                    <span class="stat-label">Baths</span>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-ruler-combined"></i></div>
-                    <span class="stat-val">${p.features?.area || 0}</span>
-                    <span class="stat-label">Sq Ft</span>
-                </div>
-            </div>
+        async function init() {
+            const id = new URLSearchParams(window.location.search).get('id');
+            if(!id) return;
+            try {
+                const res = await fetch(`${API}/api/properties/${id}`);
+                const d = await res.json();
+                render(d.data || d);
+            } catch(e) { console.error(e); }
+        }
 
-            <div class="content-card">
-                <h3 class="section-head">About this property</h3>
-                <p class="description-text">${p.description || "No description provided."}</p>
-            </div>
-
-            <div class="content-card">
-                <h3 class="section-head">Amenities</h3>
-                <div class="amenities-grid">
-                    ${(p.amenities || []).map(a => 
-                        `<div class="amenity-tag"><i class="fas fa-check-circle"></i> ${a}</div>`
-                    ).join('')}
-                </div>
-            </div>
-        `;
-
-        // --- RENDER AGENT CARD (RIGHT COL - COLORFUL) ---
-        const ownerName = p.owner?.name || "Y M Real Estate";
-        const ownerPhone = p.owner?.phone || "+91 77958 11097";
-        const ownerEmail = p.owner?.email || "info@ymrealestate.com";
-
-        document.getElementById('agentCard').innerHTML = `
-            <img src="https://placehold.co/150?text=${ownerName.charAt(0)}" class="agent-img" alt="Agent">
-            <div class="agent-name">${ownerName}</div>
-            <div class="agent-role">Listing Agent</div>
+        function render(p) {
+            // Text
+            document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+            document.getElementById('propTitle').textContent = p.title;
+            document.getElementById('propPrice').textContent = "₹ " + Number(p.price).toLocaleString('en-IN');
+            document.getElementById('propLoc').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${p.address?.city}, ${p.address?.state}`;
+            document.getElementById('propDesc').textContent = p.description || "No description.";
             
-            <button class="contact-btn btn-gold" onclick="window.location.href='tel:${ownerPhone}'">
-                <i class="fas fa-phone-alt"></i> Call Agent
-            </button>
-            <button class="contact-btn btn-white" onclick="window.open('https://wa.me/917795811097')">
-                <i class="fab fa-whatsapp"></i> WhatsApp
-            </button>
-            <button class="contact-btn btn-white" onclick="window.location.href='mailto:${ownerEmail}'">
-                <i class="fas fa-envelope"></i> Email
-            </button>
-        `;
-      }
+            // Images
+            const imgs = p.images || [];
+            document.getElementById('imgMain').src = getImg(imgs[0]);
+            document.getElementById('imgSub1').src = getImg(imgs[1] || imgs[0]);
+            document.getElementById('imgSub2').src = getImg(imgs[2] || imgs[0]);
+            
+            // Amenities
+            document.getElementById('propAmenities').innerHTML = (p.amenities || []).map(a => 
+                `<span style="background:#f0f4ff; padding:8px 15px; border-radius:10px; font-size:0.9rem; color:#263f6e;">${a}</span>`
+            ).join('');
 
-      function showError(msg) {
-        document.querySelector('.layout-grid').innerHTML = `<h2 style="grid-column:1/-1; text-align:center; color:red;">${msg}</h2>`;
-      }
-
-      document.addEventListener('DOMContentLoaded', init);
+            // Agent
+            const phone = p.owner?.phone || '+917795811097';
+            document.getElementById('agentName').textContent = p.owner?.name || 'Y M Real Estate';
+            document.getElementById('btnCall').href = `tel:${phone}`;
+            document.getElementById('btnWhatsapp').href = `https://wa.me/${phone.replace(/[^0-9]/g,'')}`;
+        }
+        init();
     })();
   </script>
 </body>
