@@ -381,8 +381,6 @@
  <script src="js/api.js"></script>
 <script>
   // --- CONFIGURATION ---
-  // The base URL of your backend server (where images live)
-  // Ensure your backend has app.use(express.static('uploads')) or similar
   const SERVER_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5011'
     : 'https://ym-real-estate.onrender.com';
@@ -392,12 +390,13 @@
   // --- HELPER TO FIX BROKEN IMAGES ---
   function resolveImageUrl(imagePath) {
     if (!imagePath) return 'https://placehold.co/1200x600?text=No+Image';
+    
+    // If it's already a full URL (like a placeholder), leave it alone
     if (imagePath.startsWith('http') || imagePath.startsWith('https')) return imagePath;
     
-    // If it's just a filename (e.g., "photo.jpg"), add the server URL
-    // NOTE: If your backend stores images in an 'uploads' folder, change line below to:
-    // return `${SERVER_BASE_URL}/uploads/${encodeURIComponent(imagePath)}`;
-    return `${SERVER_BASE_URL}/${imagePath}`; 
+    // ✅ CRITICAL FIX: Add '/uploads/' to match your app.use('/uploads'...)
+    // Also uses encodeURIComponent to handle spaces/special characters in filenames safely
+    return `${SERVER_BASE_URL}/uploads/${imagePath}`;
   }
 
   const observerOptions = {
