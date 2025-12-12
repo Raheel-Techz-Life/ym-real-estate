@@ -7,28 +7,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* --- VARIABLES & RESET --- */
-    :root { --primary: #263f6e; --secondary: #18284b; --accent: #ffd700; --bg: #f4f7fc; --text: #1a1a1a; --border: #e2e8f0; }
+    /* --- RESET & VARIABLES --- */
+    :root { --primary: #263f6e; --secondary: #18284b; --accent: #ffd700; --bg-color: #f4f7fc; --text-dark: #1a1a1a; --border-color: #e2e8f0; }
     * { box-sizing: border-box; outline: none; }
-    body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 50px; }
+    body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-dark); padding-bottom: 50px; }
 
     /* LAYOUT */
     .wrap { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
     h1 { color: var(--primary); margin-bottom: 30px; font-weight: 700; }
 
-    /* FORM STYLES */
-    .form-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 40px; border: 1px solid var(--border); }
-    .form-card.editing { border-left: 5px solid var(--accent); background: #fffff9; }
-    .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin: 20px 0 10px; font-weight: 600; border-bottom: 1px dashed #e2e8f0; padding-bottom: 5px; }
+    /* FORM CARD */
+    .form-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 40px; border: 1px solid var(--border-color); transition: 0.3s; }
+    .form-card.editing { border: 2px solid var(--accent); background: #fffbeb; }
     
+    .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin: 20px 0 10px; font-weight: 600; border-bottom: 1px dashed #e2e8f0; padding-bottom: 5px; }
     .row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
     .form-group { flex: 1; min-width: 240px; }
     label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--secondary); font-size: 0.9rem; }
-    input, select, textarea { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; background: #f8fafc; font-family: inherit; }
+    input, select, textarea { width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 10px; background: #f8fafc; font-family: inherit; }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
     textarea { resize: vertical; min-height: 100px; }
 
-    /* IMAGE UPLOADER */
+    /* IMAGE MANAGER */
     .upload-box { border: 2px dashed #cbd5e0; border-radius: 12px; padding: 30px; text-align: center; background: #f8fafc; cursor: pointer; transition: 0.3s; }
     .upload-box:hover { border-color: var(--primary); background: #f0f4ff; }
     .upload-box i { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
@@ -36,13 +36,10 @@
     .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; margin-top: 15px; }
     .preview-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
     .preview-item img { width: 100%; height: 100%; object-fit: cover; }
-    
     .img-badge { position: absolute; bottom: 0; width: 100%; text-align: center; font-size: 10px; color: white; padding: 2px; font-weight: bold; }
     .badge-old { background: rgba(59, 130, 246, 0.9); } 
     .badge-new { background: rgba(34, 197, 94, 0.9); } 
-
     .btn-remove { position: absolute; top: 4px; right: 4px; background: rgba(220, 38, 38, 0.9); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
-    .btn-remove:hover { background: red; }
 
     /* BUTTONS */
     .btn-group { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
@@ -51,12 +48,19 @@
     .btn-primary:hover { background: var(--secondary); }
     .btn-cancel { background: #e2e8f0; color: #64748b; display: none; } 
 
-    /* LIST */
-    .card { background: white; padding: 15px; border-radius: 12px; display: flex; gap: 15px; margin-bottom: 15px; align-items: center; border: 1px solid #eee; }
+    /* PROPERTY LIST (RESTORED) */
+    .card { background: white; padding: 15px; border-radius: 12px; display: flex; gap: 15px; margin-bottom: 15px; align-items: center; border: 1px solid #eee; flex-wrap: wrap; }
     .card img { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; background: #eee; }
-    .controls { margin-left: auto; display: flex; gap: 10px; }
-    .btn-edit { background: #3b82f6; color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.8rem; }
-    .btn-delete { background: #ef4444; color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.8rem; }
+    
+    .meta { flex: 1; min-width: 200px; }
+    .meta h3 { margin: 0 0 5px; font-size: 1rem; color: var(--primary); }
+    .meta small { color: #666; font-size: 0.85rem; }
+
+    .controls { display: flex; gap: 10px; margin-left: auto; }
+    .btn-edit { background: #3b82f6; color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.85rem; }
+    .btn-delete { background: #ef4444; color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.85rem; }
+    .btn-edit:hover { background: #2563eb; }
+    .btn-delete:hover { background: #dc2626; }
 
     #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
     .spinner { border: 4px solid #eee; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
@@ -114,199 +118,161 @@
         </div>
     </div>
 
-    <div class="list" id="listContainer"></div>
+    <div class="list">
+        <h2 style="margin-bottom:20px; font-size:1.3rem; border-bottom:2px solid var(--accent); display:inline-block; padding-bottom:5px;">Manage Listings</h2>
+        <div id="listContainer">
+            <p style="text-align:center; color:#888;">Loading properties...</p>
+        </div>
+    </div>
 </div>
 
 <script>
-    // --- 1. CONFIGURATION ---
-    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:5011/api' 
-        : 'https://ym-real-estate.onrender.com/api'; 
-    
-    const UPLOADS_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:5011/uploads/' 
-        : 'https://ym-real-estate.onrender.com/uploads/';
+    // --- CONFIG ---
+    const API = window.location.hostname === 'localhost' ? 'http://localhost:5011/api' : 'https://ym-real-estate.onrender.com/api';
+    const UPLOADS = window.location.hostname === 'localhost' ? 'http://localhost:5011/uploads/' : 'https://ym-real-estate.onrender.com/uploads/';
 
-    // --- 2. STATE ---
-    let currentUser = null;
+    // --- STATE ---
     let editingId = null;
     let existingImages = []; 
     let newFiles = [];       
-    let imagesToDelete = []; 
 
-    // --- 3. INIT ---
+    // --- INIT ---
     window.onload = async () => {
-        checkAuth();
+        const user = localStorage.getItem('user');
+        if(!user) return window.location.href = 'index.html';
         
-        // CHECK URL FOR DIRECT EDIT
+        // 1. Load the list at the bottom
+        loadProperties();
+
+        // 2. Check if we need to edit specific property (from details page)
         const params = new URLSearchParams(window.location.search);
         const editId = params.get('edit');
-        if(editId) {
-            await fetchAndLoadProperty(editId);
-        }
+        if(editId) await loadAndEdit(editId);
     };
 
-    function checkAuth() {
-        const userStr = localStorage.getItem('user');
-        if (!userStr) return window.location.href = 'index.html'; 
-        currentUser = JSON.parse(userStr);
-        
-        if (currentUser.email === 'team@test.com' || currentUser.role === 'admin' || currentUser.role === 'team') {
-            grantAccess();
-        } else {
-            alert("Access Denied."); 
-            window.location.href = 'index.html'; 
-        }
-    }
-
-    function grantAccess() {
-        document.getElementById('auth-warning').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        
-        if (!editingId && currentUser) {
-            document.getElementById('ownerName').value = currentUser.name || '';
-            document.getElementById('ownerEmail').value = currentUser.email || '';
-            document.getElementById('ownerPhone').value = currentUser.phone || '';
-        }
-        loadProperties();
-    }
-
-    // --- 4. DATA FETCHING (SAFE) ---
-    async function safeFetch(url, options = {}) {
-        try {
-            const res = await fetch(url, options);
-            
-            // IF SERVER RETURNS HTML ERROR (404/500)
-            const contentType = res.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") === -1) {
-                const text = await res.text();
-                throw new Error(`Server returned HTML instead of JSON. (Status: ${res.status}). Check Console.`);
-            }
-
-            const json = await res.json();
-            if (!res.ok) throw new Error(json.message || json.error || "Server Error");
-            
-            return json;
-        } catch (e) {
-            console.error("Fetch Error:", e);
-            alert("Error: " + e.message);
-            throw e;
-        }
-    }
-
-    async function loadProperties() {
-        const itemsEl = document.getElementById('items');
-        itemsEl.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Fetching data...</p>';
-
-        try {
-            const json = await safeFetch(`${API_URL}/properties`);
-            const properties = json.data || json;
-
-            if (!properties || properties.length === 0) {
-                itemsEl.innerHTML = '<div style="text-align:center; padding:40px; background:white; border-radius:16px;"><p style="color:#888;">No properties found.</p></div>';
-                return;
-            }
-
-            itemsEl.innerHTML = ''; 
-            properties.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                
-                let thumb = 'https://placehold.co/100?text=No+Img';
-                if(p.images && p.images.length > 0) {
-                    const imgPath = p.images[0];
-                    thumb = imgPath.startsWith('http') ? imgPath : `${UPLOADS_URL}${imgPath.split(/[/\\]/).pop()}`;
-                }
-                
-                // Safe stringify for onclick
-                const dataString = encodeURIComponent(JSON.stringify(p));
-
-                div.innerHTML = `
-                    <img src="${thumb}" onerror="this.src='https://placehold.co/100'" style="object-fit:cover;">
-                    <div class="meta">
-                        <h3>${p.title} <span class="status ${p.status}">${p.status}</span></h3>
-                        <div class="note">
-                          <span><i class="fas fa-tag"></i> ₹${Number(p.price).toLocaleString()}</span>
-                          <span><i class="fas fa-map-marker-alt"></i> ${p.address?.city || 'Unknown'}</span>
-                        </div>
-                    </div>
-                    <div class="controls">
-                        <button class="btn-edit" onclick="startEdit('${dataString}')"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="btn-delete" onclick="deleteProperty('${p._id}')"><i class="fas fa-trash"></i> Delete</button>
-                    </div>
-                `;
-                itemsEl.appendChild(div);
-            });
-        } catch (err) {
-            itemsEl.innerHTML = `<p style="color:red; text-align:center;">Failed to load.</p>`;
-        }
-    }
-
-    async function fetchAndLoadProperty(id) {
+    // --- LOAD SINGLE PROPERTY FOR EDITING ---
+    async function loadAndEdit(id) {
         try {
             document.getElementById('loading').style.display = 'flex';
-            const json = await safeFetch(`${API_URL}/properties/${id}`);
+            const res = await fetch(`${API}/properties/${id}`);
+            const json = await res.json();
             const p = json.data || json;
-            if (p) startEdit(encodeURIComponent(JSON.stringify(p)));
+            if(p) startEdit(encodeURIComponent(JSON.stringify(p)));
+        } catch(e) { console.error(e); } 
+        finally { document.getElementById('loading').style.display = 'none'; }
+    }
+
+    // --- IMAGE LOGIC ---
+    function handleNewFiles(e) {
+        newFiles = [...newFiles, ...Array.from(e.target.files)];
+        renderGallery();
+        e.target.value = ''; 
+    }
+
+    function renderGallery() {
+        const grid = document.getElementById('previewGrid');
+        grid.innerHTML = '';
+
+        // Old Images
+        existingImages.forEach((url, i) => {
+            let src = url.startsWith('http') ? url : UPLOADS + url.split(/[/\\]/).pop();
+            grid.innerHTML += `
+                <div class="preview-item">
+                    <img src="${src}" onerror="this.src='https://placehold.co/100'">
+                    <div class="img-badge badge-old">SAVED</div>
+                    <button class="btn-remove" onclick="removeOld(${i})"><i class="fas fa-times"></i></button>
+                </div>`;
+        });
+
+        // New Images
+        newFiles.forEach((file, i) => {
+            grid.innerHTML += `
+                <div class="preview-item">
+                    <img src="${URL.createObjectURL(file)}">
+                    <div class="img-badge badge-new">NEW</div>
+                    <button class="btn-remove" onclick="removeNew(${i})"><i class="fas fa-times"></i></button>
+                </div>`;
+        });
+    }
+
+    function removeOld(i) { existingImages.splice(i, 1); renderGallery(); }
+    function removeNew(i) { newFiles.splice(i, 1); renderGallery(); }
+
+    // --- HELPER FOR VALUES ---
+    function val(id) { return document.getElementById(id).value; }
+
+    // --- SAVE LOGIC ---
+    async function saveProperty() {
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true; btn.innerText = "Processing...";
+        document.getElementById('loading').style.display = 'flex';
+
+        try {
+            const token = localStorage.getItem('token');
+            if(!token) throw new Error("Please login again.");
+
+            // 1. Upload New Images
+            let newUrls = [];
+            if(newFiles.length > 0) {
+                const fd = new FormData();
+                newFiles.forEach(f => fd.append('images', f));
+                const upRes = await fetch(`${API}/upload`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: fd
+                });
+                if(!upRes.ok) throw new Error("Image Upload Failed");
+                const upJson = await upRes.json();
+                newUrls = upJson.urls || upJson.data || [];
+            }
+
+            // 2. Save Data
+            const payload = {
+                title: val('title'),
+                price: val('price'),
+                propertyType: val('propertyType'),
+                status: val('status'),
+                description: val('description'),
+                address: { city: val('city'), state: 'India' },
+                features: { area: val('area') },
+                owner: { name: val('ownerName'), phone: val('ownerPhone'), email: val('ownerEmail') },
+                images: [...existingImages, ...newUrls]
+            };
+
+            const url = editingId ? `${API}/properties/${editingId}` : `${API}/properties`;
+            const method = editingId ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
+
+            const json = await res.json();
+            if(!json.success && !json._id) throw new Error(json.message || "Save failed");
+
+            alert("Success!");
+            resetForm();
+            loadProperties();
+            
+            if(window.location.search.includes('edit=')) {
+                window.history.replaceState({}, document.title, "admin.html");
+            }
+
         } catch(e) {
-            console.error(e);
+            alert("Error: " + e.message);
         } finally {
+            btn.disabled = false; btn.innerText = "Save Property";
             document.getElementById('loading').style.display = 'none';
         }
     }
 
-    // --- 5. IMAGE HANDLING ---
-    function handleNewFiles(event) {
-        newFiles = [...newFiles, ...Array.from(event.target.files)];
-        renderGallery();
-        event.target.value = ''; 
-    }
-
-    function renderGallery() {
-        const container = document.getElementById('previewContainer');
-        container.innerHTML = '';
-
-        existingImages.forEach((url, index) => {
-            const div = document.createElement('div');
-            div.className = 'preview-item';
-            let src = url.startsWith('http') ? url : `${UPLOADS_URL}${url.split(/[/\\]/).pop()}`;
-            
-            div.innerHTML = `
-                <img src="${src}" onerror="this.src='https://placehold.co/100'">
-                <div class="img-badge badge-old">SAVED</div>
-                <button type="button" class="btn-remove-img" onclick="removeExisting(${index})"><i class="fas fa-times"></i></button>
-            `;
-            container.appendChild(div);
-        });
-
-        newFiles.forEach((file, index) => {
-            const div = document.createElement('div');
-            div.className = 'preview-item';
-            div.innerHTML = `
-                <img src="${URL.createObjectURL(file)}">
-                <div class="img-badge badge-new">NEW</div>
-                <button type="button" class="btn-remove-img" onclick="removeNew(${index})"><i class="fas fa-times"></i></button>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    function removeExisting(index) {
-        imagesToDelete.push(existingImages[index]);
-        existingImages.splice(index, 1);
-        renderGallery();
-    }
-
-    function removeNew(index) {
-        newFiles.splice(index, 1);
-        renderGallery();
-    }
-
-    // --- 6. SAVE & EDIT ---
-    function startEdit(dataStr) {
-        const p = JSON.parse(decodeURIComponent(dataStr));
+    // --- EDIT & DELETE ---
+    function startEdit(pStr) {
+        const p = JSON.parse(decodeURIComponent(pStr));
         editingId = p._id;
-
+        
+        // Populate fields
         document.getElementById('title').value = p.title;
         document.getElementById('price').value = p.price;
         document.getElementById('propertyType').value = p.propertyType;
@@ -318,110 +284,77 @@
         document.getElementById('ownerPhone').value = p.owner?.phone || '';
         document.getElementById('ownerEmail').value = p.owner?.email || '';
 
+        // Handle Images
         existingImages = p.images || []; 
         newFiles = []; 
-        imagesToDelete = [];
         renderGallery();
 
+        // UI Feedback
+        document.getElementById('formCard').classList.add('editing');
         document.getElementById('formTitle').innerText = "Edit Property";
-        document.getElementById('saveBtn').innerHTML = "Update Property";
-        document.getElementById('cancelBtn').style.display = "inline-flex";
-        document.getElementById('propertyFormCard').classList.add('editing');
+        document.getElementById('saveBtn').innerText = "Update Property";
+        document.getElementById('cancelBtn').style.display = "inline-block";
+        
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function resetForm() {
         editingId = null;
-        existingImages = [];
-        newFiles = [];
-        imagesToDelete = [];
-        renderGallery();
-        document.querySelectorAll('input:not(#ownerName,#ownerPhone,#ownerEmail), textarea').forEach(i => i.value = '');
-        document.getElementById('formTitle').innerText = "Add New Property";
-        document.getElementById('saveBtn').innerHTML = "Save Property";
-        document.getElementById('cancelBtn').style.display = "none";
-        document.getElementById('propertyFormCard').classList.remove('editing');
+        existingImages = []; newFiles = []; renderGallery();
+        document.querySelectorAll('input:not([type=file]), textarea').forEach(i => i.value = '');
         
-        if(window.location.search.includes('edit=')) {
-            window.history.replaceState({}, document.title, "admin.html");
+        document.getElementById('formCard').classList.remove('editing');
+        document.getElementById('formTitle').innerText = "Add New Property";
+        document.getElementById('saveBtn').innerText = "Save Property";
+        document.getElementById('cancelBtn').style.display = "none";
+        
+        // Restore Admin Defaults
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user) {
+            document.getElementById('ownerName').value = user.name || '';
+            document.getElementById('ownerPhone').value = user.phone || '';
+            document.getElementById('ownerEmail').value = user.email || '';
         }
     }
 
-    async function saveProperty() {
-        const btn = document.getElementById('saveBtn');
-        btn.disabled = true; btn.innerText = "Processing...";
-        document.getElementById('loading').style.display = 'flex';
-
+    async function loadProperties() {
         try {
-            const token = localStorage.getItem('token');
-            if(!token) throw new Error("Please login again.");
+            const res = await fetch(`${API}/properties`);
+            const json = await res.json();
+            const list = document.getElementById('listContainer');
+            list.innerHTML = '';
+            
+            const data = json.data || json;
+            if(!data || data.length === 0) { list.innerHTML = '<p style="text-align:center;color:#888">No properties found.</p>'; return; }
 
-            // 1. Upload Images First
-            let newUrls = [];
-            if(newFiles.length > 0) {
-                const fd = new FormData();
-                newFiles.forEach(f => fd.append('images', f));
+            data.forEach(p => {
+                let thumb = (p.images && p.images[0]) 
+                    ? (p.images[0].startsWith('http') ? p.images[0] : UPLOADS + p.images[0].split(/[/\\]/).pop()) 
+                    : 'https://placehold.co/100';
                 
-                // Note: Using safeFetch handles HTML error pages automatically
-                const upJson = await safeFetch(`${API_URL}/upload`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: fd
-                });
-                newUrls = upJson.urls || upJson.data || [];
-            }
-
-            // 2. Save Data
-            const payload = {
-                title: document.getElementById('title').value,
-                price: document.getElementById('price').value,
-                propertyType: document.getElementById('propertyType').value,
-                status: document.getElementById('status').value,
-                description: document.getElementById('description').value,
-                address: { city: document.getElementById('city').value, state: 'India' },
-                features: { area: document.getElementById('area').value },
-                owner: {
-                    name: document.getElementById('ownerName').value,
-                    phone: document.getElementById('ownerPhone').value,
-                    email: document.getElementById('ownerEmail').value
-                },
-                images: [...existingImages, ...newUrls] // Merge
-            };
-
-            const url = editingId ? `${API_URL}/properties/${editingId}` : `${API_URL}/properties`;
-            const method = editingId ? 'PUT' : 'POST';
-
-            await safeFetch(url, {
-                method: method,
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
+                list.innerHTML += `
+                    <div class="card">
+                        <img src="${thumb}" onerror="this.src='https://placehold.co/100'">
+                        <div class="meta">
+                            <h3>${p.title}</h3>
+                            <small>${p.address?.city} | ₹${Number(p.price).toLocaleString()}</small>
+                        </div>
+                        <div class="controls">
+                            <button class="btn-edit" onclick="startEdit('${encodeURIComponent(JSON.stringify(p))}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn-delete" onclick="deleteProp('${p._id}')"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>`;
             });
-
-            alert("Success!");
-            resetForm();
-            loadProperties();
-
-        } catch(e) {
-            // Error is handled in safeFetch or here
-        } finally {
-            btn.disabled = false; btn.innerHTML = "Save Property";
-            document.getElementById('loading').style.display = 'none';
-        }
+        } catch(e) { console.error(e); }
     }
 
-    async function deleteProperty(id) {
-        if(!confirm("Are you sure?")) return;
-        try {
-            const token = localStorage.getItem('token');
-            await safeFetch(`${API_URL}/properties/${id}`, { 
-                method: 'DELETE',
-                headers: {'Authorization': `Bearer ${token}`}
-            });
-            loadProperties();
-        } catch(e) {}
+    async function deleteProp(id) {
+        if(!confirm("Delete?")) return;
+        await fetch(`${API}/properties/${id}`, { 
+            method: 'DELETE', 
+            headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`} 
+        });
+        loadProperties();
     }
 </script>
 </body>
