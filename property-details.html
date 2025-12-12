@@ -127,24 +127,26 @@
   </div>
 
   <script src="js/api.js"></script>
-  <script>
-    // --- 1. CONFIGURATION ---
-    const SERVER_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+<script>
+  // We wrap everything in an anonymous function to prevent conflicts
+  (() => {
+    // --- 1. CONFIGURATION (Renamed to prevent conflicts) ---
+    const APP_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:5011'
       : 'https://ym-real-estate.onrender.com';
     
-    // IMPORTANT: Point to the '/uploads/' folder on your server
-    const UPLOADS_URL = `${SERVER_BASE_URL}/uploads/`;
-    const API_URL = `${SERVER_BASE_URL}/api`;
+    // Use unique names for this page's variables
+    const PROPERTY_IMAGES_URL = `${APP_BASE_URL}/uploads/`;
+    const PROPERTY_API_ENDPOINT = `${APP_BASE_URL}/api`;
 
-    // --- 2. IMAGE HELPER (Fixes Broken Links) ---
+    // --- 2. IMAGE HELPER ---
     function resolveImageUrl(imagePath) {
       if (!imagePath) return 'https://placehold.co/1200x600?text=No+Image';
       if (imagePath.startsWith('http')) return imagePath;
 
-      // Clean the filename and add server URL
+      // Clean the path and prepend the server URL
       const cleanPath = imagePath.replace(/^\\uploads\\/, '').replace(/^\/uploads\//, '');
-      return `${UPLOADS_URL}${cleanPath}`;
+      return `${PROPERTY_IMAGES_URL}${cleanPath}`;
     }
 
     // --- 3. LOAD PROPERTY LOGIC ---
@@ -153,14 +155,19 @@
       const propertyId = urlParams.get('id');
 
       if (!propertyId) {
-        document.getElementById('mainContent').innerHTML = '<h2>Error: No Property ID Found</h2>';
+        if(document.getElementById('mainContent')) {
+            document.getElementById('mainContent').innerHTML = '<h2>Error: No Property ID Found</h2>';
+        }
         return;
       }
 
       try {
-        console.log("Fetching:", `${API_URL}/properties/${propertyId}`);
-        const response = await fetch(`${API_URL}/properties/${propertyId}`);
+        console.log("Fetching property from:", `${PROPERTY_API_ENDPOINT}/properties/${propertyId}`);
+        
+        const response = await fetch(`${PROPERTY_API_ENDPOINT}/properties/${propertyId}`);
         const json = await response.json();
+        
+        // Handle data wrapper
         const property = json.data || json;
 
         if (!property || json.success === false) throw new Error("Property not found");
@@ -169,107 +176,120 @@
 
       } catch (error) {
         console.error("Load Error:", error);
-        document.getElementById('mainContent').innerHTML = `
-          <div style="text-align:center; color:red; padding:20px;">
-            <h3>Unable to load property</h3>
-            <p>${error.message}</p>
-            <a href="properties.html" style="color:blue; text-decoration:underline">Go Back</a>
-          </div>
-        `;
+        const contentDiv = document.getElementById('mainContent');
+        if (contentDiv) {
+            contentDiv.innerHTML = `
+              <div style="text-align:center; color:red; padding:20px;">
+                <h3>Unable to load property</h3>
+                <p>${error.message}</p>
+                <a href="properties.html" style="color:blue; text-decoration:underline">Go Back</a>
+              </div>
+            `;
+        }
       }
     }
 
     // --- 4. RENDER FUNCTION ---
     function renderPage(p) {
-      // SAFE DATA EXTRACTION (Prevents Crashes)
+      // Safe Data Extraction
       const title = p.title || "Untitled Property";
       const price = p.price ? Number(p.price).toLocaleString('en-IN') : "0";
       const loc = p.address ? `${p.address.city || ''}, ${p.address.state || ''}` : "Location N/A";
       const desc = p.description || "No description provided.";
       
-      // Images
       const mainImg = (p.images && p.images.length > 0) ? resolveImageUrl(p.images[0]) : 'https://placehold.co/1200x600?text=No+Image';
 
-      // --- HERO SECTION ---
-      document.getElementById('propertyHero').innerHTML = `
-        <img src="${mainImg}" alt="${title}" class="hero-image" onerror="this.src='https://placehold.co/1200x600?text=Image+Error'">
-        <div class="hero-overlay">
-          <h1 class="property-title">${title}</h1>
-          <p><i class="fas fa-map-marker-alt"></i> ${loc}</p>
-          <div class="property-price">₹${price}</div>
-        </div>
-      `;
+      // Render Hero
+      const heroEl = document.getElementById('propertyHero');
+      if (heroEl) {
+          heroEl.innerHTML = `
+            <img src="${mainImg}" alt="${title}" class="hero-image" onerror="this.src='https://placehold.co/1200x600?text=Image+Error'">
+            <div class="hero-overlay">
+              <h1 class="property-title">${title}</h1>
+              <p><i class="fas fa-map-marker-alt"></i> ${loc}</p>
+              <div class="property-price">₹${price}</div>
+            </div>
+          `;
+      }
 
-      // --- MAIN CONTENT ---
+      // Render Content
       const beds = p.features?.bedrooms || 0;
       const baths = p.features?.bathrooms || 0;
       const area = p.features?.area || 0;
       const parking = p.features?.parking ? "Yes" : "No";
 
-      // Amenities List
       const amenitiesHtml = (p.amenities || []).map(a => 
         `<div class="amenity"><i class="fas fa-check-circle"></i> ${a}</div>`
       ).join('');
 
-      // Gallery Images
       const galleryHtml = (p.images || []).map(img => 
         `<img src="${resolveImageUrl(img)}" onclick="window.open('${resolveImageUrl(img)}', '_blank')" onerror="this.style.display='none'">`
       ).join('');
 
-      document.getElementById('mainContent').innerHTML = `
-        <div class="highlights">
-          <div class="highlight-item">
-            <div class="highlight-icon"><i class="fas fa-bed"></i></div>
-            <div class="highlight-value">${beds}</div>
-            <div class="highlight-label">Bedrooms</div>
-          </div>
-          <div class="highlight-item">
-            <div class="highlight-icon"><i class="fas fa-bath"></i></div>
-            <div class="highlight-value">${baths}</div>
-            <div class="highlight-label">Bathrooms</div>
-          </div>
-          <div class="highlight-item">
-            <div class="highlight-icon"><i class="fas fa-ruler-combined"></i></div>
-            <div class="highlight-value">${area}</div>
-            <div class="highlight-label">Sq Ft</div>
-          </div>
-          <div class="highlight-item">
-            <div class="highlight-icon"><i class="fas fa-car"></i></div>
-            <div class="highlight-value">${parking}</div>
-            <div class="highlight-label">Parking</div>
-          </div>
-        </div>
+      const mainContentEl = document.getElementById('mainContent');
+      if (mainContentEl) {
+          mainContentEl.innerHTML = `
+            <div class="highlights">
+              <div class="highlight-item">
+                <div class="highlight-icon"><i class="fas fa-bed"></i></div>
+                <div class="highlight-value">${beds}</div>
+                <div class="highlight-label">Bedrooms</div>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-icon"><i class="fas fa-bath"></i></div>
+                <div class="highlight-value">${baths}</div>
+                <div class="highlight-label">Bathrooms</div>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-icon"><i class="fas fa-ruler-combined"></i></div>
+                <div class="highlight-value">${area}</div>
+                <div class="highlight-label">Sq Ft</div>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-icon"><i class="fas fa-car"></i></div>
+                <div class="highlight-value">${parking}</div>
+                <div class="highlight-label">Parking</div>
+              </div>
+            </div>
 
-        <h2 class="section-title">Description</h2>
-        <div class="description">${desc}</div>
+            <h2 class="section-title">Description</h2>
+            <div class="description">${desc}</div>
 
-        ${amenitiesHtml ? `<h2 class="section-title">Amenities</h2><div class="amenities-grid">${amenitiesHtml}</div>` : ''}
-        
-        ${galleryHtml ? `<h2 class="section-title">Gallery</h2><div class="gallery">${galleryHtml}</div>` : ''}
-      `;
+            ${amenitiesHtml ? `<h2 class="section-title">Amenities</h2><div class="amenities-grid">${amenitiesHtml}</div>` : ''}
+            
+            ${galleryHtml ? `<h2 class="section-title">Gallery</h2><div class="gallery">${galleryHtml}</div>` : ''}
+          `;
+      }
 
-      // --- SIDEBAR INFO (Safe Check) ---
+      // Render Sidebar Info
       const ownerName = p.owner?.name || "Y M Real Estate";
       const ownerPhone = p.owner?.phone || "+91 77958 11097";
       const ownerEmail = p.owner?.email || "info@ymrealestate.com";
 
-      document.getElementById('ownerInfo').innerHTML = `
-        <p style="margin-bottom:8px;"><i class="fas fa-user"></i> ${ownerName}</p>
-        <p style="margin-bottom:8px;"><i class="fas fa-phone"></i> <a href="tel:${ownerPhone}" style="color:white;">${ownerPhone}</a></p>
-        <p><i class="fas fa-envelope"></i> ${ownerEmail}</p>
-      `;
+      const ownerInfoEl = document.getElementById('ownerInfo');
+      if (ownerInfoEl) {
+          ownerInfoEl.innerHTML = `
+            <p style="margin-bottom:8px;"><i class="fas fa-user"></i> ${ownerName}</p>
+            <p style="margin-bottom:8px;"><i class="fas fa-phone"></i> <a href="tel:${ownerPhone}" style="color:white;">${ownerPhone}</a></p>
+            <p><i class="fas fa-envelope"></i> ${ownerEmail}</p>
+          `;
+      }
 
-      document.getElementById('quickFacts').innerHTML = `
-        <h3 style="margin-bottom:15px; font-size:16px;">Quick Facts</h3>
-        <div class="fact-row"><span class="fact-label">Type</span><span class="fact-value">${p.propertyType || 'N/A'}</span></div>
-        <div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">${p.status === 'sale' ? 'For Sale' : 'For Rent'}</span></div>
-        <div class="fact-row"><span class="fact-label">Year Built</span><span class="fact-value">${p.features?.yearBuilt || 'N/A'}</span></div>
-        <div class="fact-row"><span class="fact-label">Furnished</span><span class="fact-value">${p.features?.furnished ? 'Yes' : 'No'}</span></div>
-      `;
+      const quickFactsEl = document.getElementById('quickFacts');
+      if (quickFactsEl) {
+          quickFactsEl.innerHTML = `
+            <h3 style="margin-bottom:15px; font-size:16px;">Quick Facts</h3>
+            <div class="fact-row"><span class="fact-label">Type</span><span class="fact-value">${p.propertyType || 'N/A'}</span></div>
+            <div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">${p.status === 'sale' ? 'For Sale' : 'For Rent'}</span></div>
+            <div class="fact-row"><span class="fact-label">Year Built</span><span class="fact-value">${p.features?.yearBuilt || 'N/A'}</span></div>
+            <div class="fact-row"><span class="fact-label">Furnished</span><span class="fact-value">${p.features?.furnished ? 'Yes' : 'No'}</span></div>
+          `;
+      }
     }
 
-    // Start loading safely
+    // Init
     document.addEventListener('DOMContentLoaded', loadProperty);
-  </script>
+  })();
+</script>
 </body>
 </html>
