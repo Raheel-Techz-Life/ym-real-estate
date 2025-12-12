@@ -1,338 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Dashboard | Y M REAL ESTATE</title>
+  <title>Details | Y M REAL ESTATE</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  
   <style>
-    /* --- NAVY BLUE THEME --- */
-    :root { 
-        --primary: #263f6e;
-        --accent: #ffd700;
-        --bg-gradient: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%);
-        --danger: #ef4444;
-    }
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-    body { background: var(--bg-gradient); color: #333; min-height: 100vh; padding-bottom: 60px; }
+    :root { --primary: #263f6e; --accent: #ffd700; --bg: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%); }
+    body { margin:0; font-family:'Segoe UI', sans-serif; background:var(--bg); padding-bottom:40px; }
 
-    /* HEADER */
-    .header { background: var(--primary); color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-    .logo-area { display: flex; align-items: center; gap: 10px; color: white; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-    .nav { display: flex; gap: 15px; }
-    .nav button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-    .nav button:hover { background: rgba(255,255,255,0.3); }
+    .header { background:var(--primary); padding:15px 40px; display:flex; justify-content:space-between; align-items:center; color:white; }
+    .nav a { color:white; text-decoration:none; margin-left:20px; font-weight:500; }
+    
+    .container { max-width:1100px; margin:30px auto; padding:0 20px; }
+    
+    /* SLIDER */
+    .slider { position:relative; height:450px; background:#ddd; border-radius:15px; overflow:hidden; margin-bottom:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+    .slide-track { display:flex; height:100%; transition:transform 0.4s; }
+    .slide { min-width:100%; height:100%; }
+    .slide img { width:100%; height:100%; object-fit:cover; }
+    .arrow { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.8); border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:20px; color:var(--primary); }
+    .prev { left:20px; } .next { right:20px; }
+    .badge { position:absolute; bottom:20px; right:20px; background:rgba(38,63,110,0.8); color:white; padding:5px 15px; border-radius:20px; }
 
-    /* LAYOUT */
-    .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+    /* INFO */
+    .grid { display:grid; grid-template-columns:2fr 1fr; gap:30px; }
+    .card { background:white; padding:30px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.05); }
     
-    .card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #eef2ff; }
-    .card.editing { border: 2px solid var(--accent); background: #fffcf0; position: relative; }
-    .card.editing::before { content:'EDITING MODE'; position:absolute; top:0; right:0; background:var(--accent); font-size:0.7rem; font-weight:bold; padding:4px 10px; border-bottom-left-radius:8px; }
+    .title { color:var(--primary); margin:0; font-size:2rem; }
+    .price { color:var(--accent); font-size:1.8rem; font-weight:bold; }
+    .loc { color:#666; margin-bottom:20px; }
+    .feats { display:flex; gap:20px; margin:20px 0; padding:20px 0; border-top:1px solid #eee; border-bottom:1px solid #eee; }
+    .feat { display:flex; align-items:center; gap:8px; font-weight:600; color:var(--primary); }
+    
+    .agent-box { text-align:center; background:var(--primary); color:white; padding:30px; border-radius:15px; position:sticky; top:20px; }
+    .agent-img { width:100px; height:100px; border-radius:50%; background:white; object-fit:cover; border:3px solid rgba(255,255,255,0.3); margin-bottom:15px; }
+    .btn { display:block; padding:12px; margin-top:10px; border-radius:8px; text-decoration:none; font-weight:bold; }
+    .btn-wa { background:#25D366; color:white; }
 
-    h2 { color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; }
-    
-    /* FORM */
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .full { grid-column: 1 / -1; }
-    .form-group label { display: block; margin-bottom: 5px; color: var(--primary); font-weight: 600; font-size: 0.9rem; }
-    .form-group input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; }
-    
-    /* IMAGES */
-    .upload-box { border: 2px dashed #ccc; padding: 30px; text-align: center; cursor: pointer; background: #fafafa; border-radius: 8px; transition: 0.3s; }
-    .upload-box:hover { border-color: var(--primary); background: #eef2ff; }
-    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 15px; }
-    .thumb { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
-    .thumb-wrap { position: relative; }
-    .del-img { position: absolute; top: 2px; right: 2px; background: rgba(255,255,255,0.9); color: red; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-weight:bold; }
-
-    /* LIST */
-    .list-item { display: flex; background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; align-items: center; gap: 15px; transition:0.2s; }
-    .list-item:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,0,0,0.05); }
-    .list-img { width: 80px; height: 60px; object-fit: cover; border-radius: 4px; background: #eee; }
-    .list-info { flex: 1; }
-    .list-title { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
-    .btn-action { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight:600; }
-    .btn-edit { background: #e0e7ff; color: var(--primary); }
-    .btn-del { background: #fee2e2; color: var(--danger); }
-    
-    .btn-primary { background: var(--primary); color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight:600; }
-    .btn-cancel { background: #fff; border: 1px solid #ccc; color: #666; padding: 12px 25px; border-radius: 6px; cursor: pointer; display: none; margin-right: 10px; }
-    
-    @media(max-width:700px){ .header{flex-direction:column; gap:10px;} .grid{grid-template-columns:1fr;} }
+    @media(max-width:800px) { .grid{grid-template-columns:1fr;} .slider{height:300px;} }
   </style>
 </head>
 <body>
 
 <div class="header">
-    <a href="index.html" class="logo-area"><i class="fas fa-user-shield"></i> ADMIN PANEL</a>
+    <div style="font-weight:bold; font-size:1.2rem;">Y M REAL ESTATE</div>
     <div class="nav">
-        <button onclick="window.location.href='index.html'">View Website</button>
-        <button onclick="logout()" style="background:rgba(239,68,68,0.2); color:#ffcece;">Logout</button>
+        <a href="index.html">Home</a>
+        <a href="properties.html">Properties</a>
     </div>
 </div>
 
 <div class="container">
-
-    <div class="card" id="formCard">
-        <h2 id="formTitle"><i class="fas fa-plus-circle"></i> Add Property</h2>
-        
-        <div class="grid">
-            <div class="form-group"><label>Title</label><input id="title"></div>
-            <div class="form-group"><label>Price (₹)</label><input id="price" type="number"></div>
-            <div class="form-group"><label>Type</label>
-                <select id="propertyType"><option>House</option><option>Villa</option><option>Plot</option><option>Apartment</option><option>Shop</option></select>
-            </div>
-            <div class="form-group"><label>City</label><input id="city"></div>
-            <div class="form-group"><label>Area (sqft)</label><input id="area"></div>
-            <div class="form-group"><label>Bedrooms</label><input id="bedrooms"></div>
-            <div class="form-group"><label>Bathrooms</label><input id="bathrooms"></div>
-            <div class="form-group"><label>Parking</label><select id="parking"><option value="true">Yes</option><option value="false">No</option></select></div>
-        </div>
-        <div class="form-group full" style="margin-top:15px"><label>Description</label><textarea id="description"></textarea></div>
-        <div class="form-group full"><label>Amenities</label><input id="propAmenities" placeholder="Wifi, Pool, Gym..."></div>
-        
-        <input type="hidden" id="ownerName"><input type="hidden" id="ownerPhone"><input type="hidden" id="ownerEmail">
-
-        <div style="margin-top:20px;">
-            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-                <i class="fas fa-cloud-upload-alt" style="font-size:2rem; color:#ccc;"></i><br>
-                Click to Upload Images from Device
-            </div>
-            <input type="file" id="fileInput" multiple accept="image/*" style="display:none;" onchange="handleFiles(event)">
-            <div class="gallery" id="gallery"></div>
-        </div>
-
-        <div style="margin-top:20px; text-align:right;">
-            <button class="btn-cancel" id="cancelBtn" onclick="resetForm()">Cancel</button>
-            <button class="btn-primary" id="saveBtn" onclick="saveProperty()">Save Property</button>
-        </div>
+    <div class="slider" id="slider">
+        <div class="slide-track" id="track"></div>
+        <button class="arrow prev" onclick="move(-1)">&#10094;</button>
+        <button class="arrow next" onclick="move(1)">&#10095;</button>
+        <div class="badge" id="counter">1/1</div>
     </div>
 
-    <h2 style="display:flex; justify-content:space-between; align-items:center;">
-        Current Listings 
-        <button class="btn-action btn-edit" onclick="loadProps()" style="font-size:0.9rem;">Refresh</button>
-    </h2>
-    <div id="list"></div>
+    <div class="grid">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <span style="background:var(--primary); color:white; padding:4px 10px; border-radius:20px; font-size:0.8rem;" id="type">Type</span>
+                    <h1 class="title" id="title">Loading...</h1>
+                    <div class="loc" id="city">Location</div>
+                </div>
+                <div class="price" id="price">...</div>
+            </div>
+
+            <div class="feats">
+                <div class="feat"><i class="fas fa-ruler"></i> <span id="area">0</span> sqft</div>
+                <div class="feat"><i class="fas fa-bed"></i> <span id="beds">0</span> Bed</div>
+                <div class="feat"><i class="fas fa-bath"></i> <span id="baths">0</span> Bath</div>
+            </div>
+
+            <h3>Description</h3>
+            <p id="desc" style="line-height:1.6; color:#555;">...</p>
+            <h3>Amenities</h3>
+            <div id="amenities" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+        </div>
+
+        <div class="agent-box">
+            <img src="https://placehold.co/100" class="agent-img" id="aImg">
+            <h3 id="aName">Agent</h3>
+            <p>Property Consultant</p>
+            <a href="#" class="btn btn-wa" id="btnWa">WhatsApp</a>
+            <a href="#" class="btn" style="background:white; color:var(--primary);" id="btnCall">Call Now</a>
+        </div>
+    </div>
 </div>
 
 <script>
-    // --- 1. CONFIGURATION ---
-    // Force the correct backend URL. 
-    // If you are testing on phone, replace 'localhost' with your PC's IP address (e.g., '192.168.1.5')
-    const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:5011' 
-        : 'https://ym-real-estate.onrender.com';
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
 
-    // --- 2. IMAGE FIXER ---
+    // --- MIXED CONTENT FIXER ---
     function getImgUrl(path) {
-        if (!path) return 'https://placehold.co/100?text=No+Img';
+        if (!path) return 'https://placehold.co/1200x600?text=No+Image';
+        
+        // BUG FIX: If path contains "localhost" but we are live, FIX IT.
+        if (!isLocal && path.includes('localhost')) {
+            const filename = path.split(/[/\\]/).pop();
+            return `${API}/uploads/${filename}`;
+        }
+
         if (path.startsWith('http')) return path;
-        // Strip everything before the filename
+        
         const filename = path.split(/[/\\]/).pop();
         return `${API}/uploads/${filename}`;
     }
 
-    let user = null;
-    let editId = null;
-    let oldImgs = [];
-    let newFiles = [];
+    let curr = 0; let total = 0;
 
-    // --- 3. ACCESS CHECK ---
-    window.onload = () => {
-        const u = localStorage.getItem('user');
-        if(!u) return window.location.href = 'login.html';
-        
-        user = JSON.parse(u);
-        const email = (user.email || "").toLowerCase();
-        
-        // KEYWORD CHECK
-        const keywords = ['team', 'test', 'tester', 'ym'];
-        const isAllowed = keywords.some(k => email.includes(k)) || user.role === 'admin' || user.role === 'team';
+    window.onload = async () => {
+        const id = new URLSearchParams(window.location.search).get('id');
+        if(!id) return document.body.innerHTML = "<h1>Not Found</h1>";
 
-        if (!isAllowed) {
-            alert("Access Denied.");
-            window.location.href = 'index.html';
-            return;
-        }
-        
-        // Fill Agent Data
-        document.getElementById('ownerName').value = user.name || 'Agent';
-        document.getElementById('ownerEmail').value = user.email || 'info@ymrealestate.com';
-        document.getElementById('ownerPhone').value = user.phone || '9999999999';
+        try {
+            const res = await fetch(`${API}/api/properties/${id}`);
+            const d = await res.json();
+            const p = d.data || d;
 
-        loadProps();
+            document.getElementById('title').innerText = p.title;
+            document.getElementById('price').innerText = "₹ " + Number(p.price).toLocaleString();
+            document.getElementById('city').innerText = p.address?.city || 'India';
+            document.getElementById('type').innerText = p.propertyType;
+            document.getElementById('desc').innerText = p.description || 'No description.';
+            document.getElementById('area').innerText = p.features?.area || 0;
+            document.getElementById('beds').innerText = p.features?.bedrooms || 0;
+            document.getElementById('baths').innerText = p.features?.bathrooms || 0;
+
+            const am = p.amenities ? (Array.isArray(p.amenities) ? p.amenities : p.amenities.split(',')) : [];
+            document.getElementById('amenities').innerHTML = am.map(a => `<span style="background:#f0f4ff; border:1px solid #dbeafe; color:#1e40af; padding:5px 12px; border-radius:20px;">${a}</span>`).join('');
+
+            if(p.owner) {
+                document.getElementById('aName').innerText = p.owner.name;
+                document.getElementById('aImg').src = `https://placehold.co/100/263f6e/FFF?text=${p.owner.name[0]}`;
+                document.getElementById('btnCall').href = `tel:${p.owner.phone}`;
+                document.getElementById('btnWa').href = `https://wa.me/${p.owner.phone.replace(/\D/g,'')}?text=Hi, interested in ${p.title}`;
+            }
+
+            setupSlider(p.images);
+        } catch(e) { console.error(e); }
     };
 
-    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
-
-    // --- 4. IMAGES ---
-    function handleFiles(e) { newFiles = [...newFiles, ...e.target.files]; renderGallery(); }
-    
-    function renderGallery() {
-        const g = document.getElementById('gallery'); g.innerHTML = '';
-        oldImgs.forEach((url, i) => {
-            g.innerHTML += `<div class="thumb-wrap"><img src="${getImgUrl(url)}" class="thumb" onerror="this.src='https://placehold.co/100?text=Error'"><button class="del-img" onclick="delOld(${i})">x</button></div>`;
-        });
-        newFiles.forEach((f, i) => {
-            g.innerHTML += `<div class="thumb-wrap"><img src="${URL.createObjectURL(f)}" class="thumb"><button class="del-img" onclick="delNew(${i})">x</button></div>`;
-        });
-    }
-    
-    function delOld(i) { oldImgs.splice(i,1); renderGallery(); }
-    function delNew(i) { newFiles.splice(i,1); renderGallery(); }
-
-    // --- 5. SAVE WITH ERROR LOGGING ---
-    async function saveProperty() {
-        const btn = document.getElementById('saveBtn'); 
-        btn.innerText = "Saving..."; 
-        btn.disabled = true;
+    function setupSlider(imgs) {
+        const t = document.getElementById('track');
+        if(!imgs || !imgs.length) { t.innerHTML = `<div class="slide"><img src="https://placehold.co/800x400?text=No+Image"></div>`; return; }
         
-        try {
-            const token = localStorage.getItem('token');
-            let uploadedUrls = [];
-
-            // Upload Files
-            if(newFiles.length > 0) {
-                const fd = new FormData();
-                newFiles.forEach(f => fd.append('images', f));
-                
-                console.log("Uploading images to:", `${API}/api/upload`); // Debug Log
-                
-                const res = await fetch(`${API}/api/upload`, { 
-                    method:'POST', 
-                    headers:{'Authorization':`Bearer ${token}`}, 
-                    body:fd 
-                });
-                
-                if(!res.ok) throw new Error(`Image Upload Failed: ${res.statusText}`);
-                
-                const d = await res.json();
-                if(d.success) uploadedUrls = d.urls;
-            }
-
-            const data = {
-                title: val('title'), 
-                price: val('price'), 
-                propertyType: val('propertyType'),
-                description: val('description'),
-                amenities: val('propAmenities').split(','),
-                address: { city: val('city') },
-                features: { 
-                    area: val('area'), 
-                    bedrooms: val('bedrooms'), 
-                    bathrooms: val('bathrooms'), 
-                    parking: val('parking')==='true' 
-                },
-                owner: { 
-                    name: val('ownerName'), 
-                    phone: val('ownerPhone'), 
-                    email: val('ownerEmail') 
-                },
-                images: [...oldImgs, ...uploadedUrls]
-            };
-
-            const url = editId ? `${API}/api/properties/${editId}` : `${API}/api/properties`;
-            const method = editId ? 'PUT' : 'POST';
-
-            console.log("Saving property to:", url); // Debug Log
-
-            const res = await fetch(url, { 
-                method, 
-                headers:{
-                    'Content-Type':'application/json', 
-                    'Authorization':`Bearer ${token}`
-                }, 
-                body:JSON.stringify(data)
-            });
-            
-            const result = await res.json();
-            
-            if(res.ok) { 
-                alert("Success!"); 
-                resetForm(); 
-                loadProps(); 
-            } else { 
-                alert("Server Error: " + (result.message || JSON.stringify(result))); 
-            }
-
-        } catch(e) { 
-            console.error(e); 
-            alert("Error: " + e.message + "\nCheck console (F12) for details."); 
-        } finally { 
-            btn.innerText = "Save Property"; 
-            btn.disabled = false; 
-        }
+        total = imgs.length;
+        t.innerHTML = imgs.map(url => `<div class="slide"><img src="${getImgUrl(url)}" onerror="this.src='https://placehold.co/800x400?text=Error'"></div>`).join('');
     }
 
-    // --- 6. LOAD ---
-    async function loadProps() {
-        const list = document.getElementById('list'); 
-        try {
-            const res = await fetch(`${API}/api/properties`);
-            const d = await res.json();
-            const items = d.data || d;
-            
-            list.innerHTML = items.map(p => `
-                <div class="list-item">
-                    <img src="${getImgUrl(p.images?.[0])}" class="list-img" onerror="this.src='https://placehold.co/100?text=Broken'">
-                    <div class="list-info">
-                        <div class="list-title">${p.title}</div>
-                        <div>${p.propertyType} - ₹${p.price}</div>
-                    </div>
-                    <div>
-                        <button class="btn-action btn-edit" onclick="edit('${encodeURIComponent(JSON.stringify(p))}')">Edit</button>
-                        <button class="btn-action btn-del" onclick="del('${p._id}')">Del</button>
-                    </div>
-                </div>
-            `).join('');
-        } catch(e) { 
-            list.innerHTML = "<p style='color:red'>Backend not connected.</p>"; 
-        }
+    function move(d) {
+        if(total < 2) return;
+        curr += d;
+        if(curr >= total) curr = 0;
+        if(curr < 0) curr = total - 1;
+        document.getElementById('track').style.transform = `translateX(-${curr * 100}%)`;
+        document.getElementById('counter').innerText = `${curr+1}/${total}`;
     }
-
-    // HELPERS
-    function val(id) { return document.getElementById(id).value; }
     
-    function edit(str) {
-        const p = JSON.parse(decodeURIComponent(str));
-        editId = p._id;
-        document.getElementById('title').value = p.title;
-        document.getElementById('price').value = p.price;
-        document.getElementById('propertyType').value = p.propertyType;
-        document.getElementById('city').value = p.address?.city || '';
-        document.getElementById('area').value = p.features?.area || '';
-        document.getElementById('bedrooms').value = p.features?.bedrooms || '';
-        document.getElementById('bathrooms').value = p.features?.bathrooms || '';
-        document.getElementById('parking').value = p.features?.parking ? 'true' : 'false';
-        document.getElementById('description').value = p.description;
-        document.getElementById('propAmenities').value = p.amenities?.join(',') || '';
-        oldImgs = p.images || []; newFiles = []; renderGallery();
-        document.getElementById('formCard').classList.add('editing');
-        document.getElementById('formTitle').innerText = "Edit Property";
-        document.getElementById('saveBtn').innerText = "Update";
-        document.getElementById('cancelBtn').style.display = "inline-block";
-        window.scrollTo(0,0);
-    }
-
-    function resetForm() {
-        editId = null;
-        document.getElementById('formCard').classList.remove('editing');
-        document.getElementById('formTitle').innerText = "Add Property";
-        document.getElementById('saveBtn').innerText = "Save Property";
-        document.getElementById('cancelBtn').style.display = "none";
-        document.querySelectorAll('input:not([type=hidden]), textarea').forEach(i => i.value = '');
-        oldImgs=[]; newFiles=[]; renderGallery();
-    }
-
-    async function del(id) {
-        if(confirm("Delete?")) {
-            await fetch(`${API}/api/properties/${id}`, { method:'DELETE', headers:{'Authorization':`Bearer ${localStorage.getItem('token')}`} });
-            loadProps();
-        }
-    }
+    let ts = 0;
+    const s = document.getElementById('slider');
+    s.addEventListener('touchstart', e => ts = e.touches[0].clientX);
+    s.addEventListener('touchend', e => {
+        if(ts - e.changedTouches[0].clientX > 50) move(1);
+        if(e.changedTouches[0].clientX - ts > 50) move(-1);
+    });
 </script>
 </body>
 </html>
