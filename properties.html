@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* --- CSS VARIABLES & RESET --- */
+    /* --- CSS VARIABLES --- */
     :root {
       --primary: #263f6e;
       --light: #f6faff;
@@ -18,19 +18,24 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); padding-top: 80px; }
 
-    /* --- HEADER --- */
+    /* --- BLUE HEADER FIXED --- */
     .header {
-        background: rgba(255, 255, 255, 0.98);
+        background: var(--primary); /* Blue Background */
         padding: 15px 30px; 
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         display: flex; align-items: center; justify-content: space-between;
         position: fixed; width: 100%; top: 0; left: 0; z-index: 1000;
     }
-    .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 1.4rem; }
-    .logo-area img { height: 45px; border-radius: 5px; }
+    .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 1.4rem; }
+    .logo-area img { height: 45px; border-radius: 5px; background: white; padding: 2px; } /* White border for logo */
+    
     .nav { display: flex; gap: 20px; }
-    .nav a { text-decoration: none; color: var(--text); font-weight: 500; transition: 0.2s; }
-    .nav a:hover, .nav a.active { color: var(--primary); }
+    .nav a { 
+        text-decoration: none; color: rgba(255,255,255,0.9); font-weight: 500; transition: 0.2s; 
+        padding: 8px 16px; border-radius: 8px;
+    }
+    .nav a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
+    .nav a.active { background: var(--accent); color: var(--primary); font-weight: 700; }
 
     /* --- FILTER BAR --- */
     .main-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
@@ -76,13 +81,12 @@
     .prop-loc { color: #718096; font-size: 0.9rem; margin-bottom: 15px; }
     .prop-price { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
 
-    /* --- LOADING & EMPTY STATES --- */
     .loading { text-align: center; grid-column: 1/-1; padding: 50px; color: #718096; }
     
     @media (max-width: 900px) {
         .filter-bar { grid-template-columns: 1fr; }
         .header { flex-direction: column; height: auto; padding: 15px; gap: 15px; }
-        body { padding-top: 140px; }
+        body { padding-top: 160px; }
     }
   </style>
 </head>
@@ -104,12 +108,10 @@
     <h1 style="color:var(--primary); margin-bottom:20px;">Find Your Property</h1>
 
     <div class="filter-bar">
-        
         <div class="filter-group">
             <label><i class="fas fa-search"></i> Search</label>
             <input type="text" id="search" class="filter-input" placeholder="City, Locality or Title...">
         </div>
-
         <div class="filter-group">
             <label><i class="fas fa-home"></i> Type</label>
             <select id="typeFilter" class="filter-select">
@@ -122,7 +124,6 @@
                 <option value="Apartment">Apartment</option>
             </select>
         </div>
-
         <div class="filter-group">
             <label><i class="fas fa-tag"></i> Status</label>
             <select id="statusFilter" class="filter-select">
@@ -131,14 +132,12 @@
                 <option value="rent">For Rent</option>
             </select>
         </div>
-
         <div class="filter-group">
             <label><i class="fas fa-map-marker-alt"></i> City</label>
             <select id="cityFilter" class="filter-select">
                 <option value="">All Cities</option>
-                </select>
+            </select>
         </div>
-
         <button class="btn-reset" onclick="resetFilters()">Reset</button>
     </div>
 
@@ -146,21 +145,16 @@
     <div class="properties-grid" id="grid">
         <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading properties...</div>
     </div>
-
   </div>
 
   <script src="js/api.js"></script>
   <script>
     (() => {
-        // CONFIG
         const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
         const API = `${API_URL}/api`;
         const UPLOADS = `${API_URL}/uploads/`;
-
-        // STATE
         let allProps = [];
 
-        // IMAGE HELPER
         const getImg = (path) => {
             if(!path) return 'https://placehold.co/600x400?text=No+Image';
             if(path.includes('http') && !path.includes('localhost')) return path;
@@ -168,23 +162,19 @@
             return `${UPLOADS}${file}`;
         };
 
-        // LOAD DATA
         async function load() {
             try {
                 const res = await fetch(`${API}/properties`);
                 const json = await res.json();
                 allProps = json.data || json;
-                
                 populateCities();
-                checkUrlParams(); // Check if user came from search bar
+                checkUrlParams();
                 applyFilters();
             } catch(e) {
                 document.getElementById('grid').innerHTML = '<div class="loading">Failed to load data.</div>';
-                console.error(e);
             }
         }
 
-        // POPULATE CITY DROPDOWN DYNAMICALLY
         function populateCities() {
             const cities = [...new Set(allProps.map(p => p.address?.city).filter(Boolean))].sort();
             const select = document.getElementById('cityFilter');
@@ -196,17 +186,14 @@
             });
         }
 
-        // CHECK URL PARAMS (e.g. ?type=Farmland)
         function checkUrlParams() {
             const params = new URLSearchParams(window.location.search);
             const type = params.get('type');
             const search = params.get('search');
-
             if(type) document.getElementById('typeFilter').value = type;
             if(search) document.getElementById('search').value = search;
         }
 
-        // FILTER LOGIC
         window.applyFilters = () => {
             const search = document.getElementById('search').value.toLowerCase();
             const type = document.getElementById('typeFilter').value.toLowerCase();
@@ -215,31 +202,22 @@
 
             const filtered = allProps.filter(p => {
                 const pType = (p.propertyType || '').toLowerCase();
-                // Handle "Farmland" vs "Farmlands" (singular/plural matching)
                 const typeMatch = !type || pType.includes(type) || type.includes(pType);
-                
                 const statusMatch = !status || p.status === status;
                 const cityMatch = !city || (p.address?.city === city);
-                const searchMatch = !search || 
-                                    (p.title || '').toLowerCase().includes(search) || 
-                                    (p.address?.city || '').toLowerCase().includes(search);
-
+                const searchMatch = !search || (p.title || '').toLowerCase().includes(search) || (p.address?.city || '').toLowerCase().includes(search);
                 return typeMatch && statusMatch && cityMatch && searchMatch;
             });
-
             render(filtered);
         };
 
-        // RENDER GRID
         function render(props) {
             const grid = document.getElementById('grid');
             document.getElementById('resultsCount').textContent = `Showing ${props.length} properties`;
-
             if(props.length === 0) {
                 grid.innerHTML = '<div class="loading">No properties found matching your filters.</div>';
                 return;
             }
-
             grid.innerHTML = props.map(p => `
                 <div class="prop-card" onclick="window.location.href='property-details.html?id=${p._id}'">
                     <img src="${getImg(p.images[0])}" class="prop-img" onerror="this.src='https://placehold.co/600x400'">
@@ -266,7 +244,6 @@
             applyFilters();
         };
 
-        // EVENT LISTENERS
         ['search', 'typeFilter', 'statusFilter', 'cityFilter'].forEach(id => {
             document.getElementById(id).addEventListener('input', applyFilters);
         });
