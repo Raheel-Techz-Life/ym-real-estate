@@ -21,9 +21,9 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); overflow-x: hidden; padding-top: 100px; }
 
-    /* --- BLUE HEADER --- */
+    /* --- HEADER --- */
     .header {
-        background: var(--primary); /* Blue */
+        background: var(--primary);
         padding: 15px 30px; 
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         display: flex; align-items: center; justify-content: space-between;
@@ -34,53 +34,29 @@
     .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 1.4rem; white-space: nowrap; }
     .logo-area img { height: 45px; border-radius: 5px; background: white; padding: 2px; }
 
-    /* --- SEARCH BAR (Contrast for Blue) --- */
+    /* SEARCH BAR */
     .search-container {
         flex: 1;
         max-width: 600px;
         display: flex;
         align-items: center;
-        background: white; /* White background for visibility */
+        background: white;
         border-radius: 50px;
         padding: 4px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-
     .search-select {
-        border: none;
-        background: transparent;
-        padding: 8px 15px;
-        font-weight: 600;
-        color: var(--primary);
-        cursor: pointer;
-        border-right: 1px solid #ddd;
-        outline: none;
-        font-size: 0.9rem;
+        border: none; background: transparent; padding: 8px 15px; font-weight: 600;
+        color: var(--primary); cursor: pointer; border-right: 1px solid #ddd; outline: none; font-size: 0.9rem;
     }
-
-    .search-input {
-        flex: 1;
-        border: none;
-        background: transparent;
-        padding: 10px 15px;
-        outline: none;
-        font-size: 0.95rem;
-    }
-
+    .search-input { flex: 1; border: none; background: transparent; padding: 10px 15px; outline: none; font-size: 0.95rem; }
     .search-btn {
-        background: var(--accent); /* Gold button */
-        color: var(--primary);
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: 0.2s;
-        display: flex; align-items: center; justify-content: center;
+        background: var(--accent); color: var(--primary); border: none; width: 40px; height: 40px;
+        border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
     }
     .search-btn:hover { background: #ffc800; }
 
-    /* --- NAV LINKS (White Text) --- */
+    /* NAV */
     .nav { display: flex; gap: 15px; align-items: center; }
     .nav a {
         text-decoration: none; color: rgba(255,255,255,0.9); font-weight: 500; font-size: 0.95rem;
@@ -89,7 +65,6 @@
     .nav a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
     .nav a.active { background: var(--accent); color: var(--primary); font-weight: 700; }
 
-    /* RESPONSIVE HEADER */
     @media (max-width: 1024px) {
         .header { flex-direction: column; padding: 15px; gap: 15px; height: auto; }
         .search-container { width: 100%; order: 2; }
@@ -97,9 +72,8 @@
         body { padding-top: 180px; }
     }
 
-    /* --- CONTENT --- */
+    /* --- LAYOUT & GALLERY --- */
     .container { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; }
-    
     .back-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--primary); font-weight: 600; margin-bottom: 20px; transition: 0.2s; }
     .back-btn:hover { color: var(--accent); transform: translateX(-5px); }
 
@@ -111,13 +85,37 @@
     .gallery-side img { height: 50%; }
 
     .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
-    
     .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+    
     .title { font-size: 2.2rem; font-weight: 700; color: var(--primary); line-height: 1.2; }
     .price { font-size: 2rem; color: #ffc800; font-weight: 700; margin-top: 10px; }
-    
     .badge { display: inline-block; padding: 5px 12px; background: #e2e8f0; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 10px; color: #64748b; }
-    
+
+    /* --- NEW: PROPERTY DETAILS GRID --- */
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Two Columns */
+        gap: 20px 40px;
+        margin-top: 15px;
+    }
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px dashed #e2e8f0;
+        padding-bottom: 12px;
+    }
+    .detail-label {
+        font-weight: 600;
+        color: #718096;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .detail-label i { color: var(--primary); width: 20px; }
+    .detail-value { font-weight: 600; color: var(--text); }
+
+    /* --- AGENT CARD --- */
     .agent-card { background: linear-gradient(135deg, #263f6e, #18284b); color: white; text-align: center; padding: 40px; border-radius: 20px; position: sticky; top: 180px; box-shadow: 0 10px 30px rgba(38,63,110,0.2); }
     .agent-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 15px; background: white; }
     
@@ -130,7 +128,11 @@
     .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% {background-position: 200% 0} 100% {background-position: -200% 0} }
 
-    @media(max-width:900px) { .grid-layout { grid-template-columns: 1fr; } .gallery { height: 300px; } }
+    @media(max-width:900px) { 
+        .grid-layout { grid-template-columns: 1fr; } 
+        .gallery { height: 300px; } 
+        .details-grid { grid-template-columns: 1fr; } /* 1 Column on Mobile */
+    }
   </style>
 </head>
 <body>
@@ -139,7 +141,6 @@
     <a href="index.html" class="logo-area">
       <img src="ymr.jpg" onerror="this.src='https://placehold.co/50'" alt="Logo"> Y M REAL ESTATE
     </a>
-
     <div class="search-container">
         <select class="search-select" id="searchType">
             <option value="">All Types</option>
@@ -149,21 +150,17 @@
             <option value="Shop">Shops</option>
         </select>
         <input type="text" class="search-input" id="searchInput" placeholder="Search...">
-        <button class="search-btn" onclick="performSearch()">
-            <i class="fas fa-search"></i>
-        </button>
+        <button class="search-btn" onclick="performSearch()"><i class="fas fa-search"></i></button>
     </div>
-
     <div class="nav">
       <a href="index.html">Home</a>
-      <a href="properties.html">Properties</a>
+      <a href="properties.html" class="active">Properties</a>
       <a href="team.html">Team</a>
       <a href="contact.html">Contact</a>
     </div>
   </div>
 
   <div class="container" id="mainContainer">
-    
     <a href="properties.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Properties</a>
 
     <div class="gallery">
@@ -187,28 +184,44 @@
             </div>
 
             <div class="card">
-                <h3 style="color:var(--primary); margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">About this Property</h3>
+                <h3 style="color:var(--primary); margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">Property Information</h3>
+                
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-ruler-combined"></i> Built-Up Area</span>
+                        <span class="detail-value" id="infoArea">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-vector-square"></i> Plot Area</span>
+                        <span class="detail-value" id="infoPlot">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-bed"></i> Bedrooms</span>
+                        <span class="detail-value" id="infoBeds">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-bath"></i> Bathrooms</span>
+                        <span class="detail-value" id="infoBaths">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-car"></i> Parking</span>
+                        <span class="detail-value" id="infoParking">Available</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-couch"></i> Furnishing</span>
+                        <span class="detail-value" id="infoFurnish">Semi-Furnished</span>
+                    </div>
+                    </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color:var(--primary); margin-bottom:15px;">About this Property</h3>
                 <p id="propDesc" style="line-height:1.8; color:#4a5568; white-space: pre-line;"></p>
             </div>
 
             <div class="card">
-                <h3 style="color:var(--primary); margin-bottom:15px;">Amenities & Features</h3>
+                <h3 style="color:var(--primary); margin-bottom:15px;">Amenities & Facilities</h3>
                 <div id="propAmenities" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
-                
-                <div style="display:flex; justify-content:space-between; margin-top:20px; padding-top:20px; border-top:1px solid #f0f0f0;">
-                    <div style="text-align:center;">
-                        <i class="fas fa-bed" style="color:var(--primary); font-size:1.5rem;"></i>
-                        <div id="featBed" style="font-weight:bold; margin-top:5px;">-</div><small>Beds</small>
-                    </div>
-                    <div style="text-align:center;">
-                        <i class="fas fa-bath" style="color:var(--primary); font-size:1.5rem;"></i>
-                        <div id="featBath" style="font-weight:bold; margin-top:5px;">-</div><small>Baths</small>
-                    </div>
-                    <div style="text-align:center;">
-                        <i class="fas fa-ruler-combined" style="color:var(--primary); font-size:1.5rem;"></i>
-                        <div id="featArea" style="font-weight:bold; margin-top:5px;">-</div><small>Sq Ft</small>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -228,9 +241,7 @@
   <script src="js/api.js"></script>
   <script>
     (() => {
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
-        const API = `${API_URL}/api`;
-        const UPLOADS = `${API_URL}/uploads/`;
+        const API = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
         
         window.performSearch = () => {
             const type = document.getElementById('searchType').value;
@@ -238,24 +249,20 @@
             window.location.href = `properties.html?type=${encodeURIComponent(type)}&search=${encodeURIComponent(query)}`;
         };
 
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
-
         const getImg = (path) => {
             if(!path) return 'https://placehold.co/600x400?text=No+Image';
             if(path.includes('http') && !path.includes('localhost')) return path;
             const file = path.split(/[/\\]/).pop();
-            return `${UPLOADS}${file}`;
+            return `${API}/uploads/${file}`;
         };
 
-        window.viewImage = (src) => { window.open(src, '_blank'); };
+        window.viewImage = (src) => window.open(src, '_blank');
 
         async function init() {
             const id = new URLSearchParams(window.location.search).get('id');
             if(!id) return;
             try {
-                const res = await fetch(`${API}/properties/${id}`);
+                const res = await fetch(`${API}/api/properties/${id}`);
                 const d = await res.json();
                 render(d.data || d);
             } catch(e) { console.error(e); }
@@ -263,6 +270,8 @@
 
         function render(p) {
             document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+
+            // HEADER INFO
             document.getElementById('propTitle').textContent = p.title;
             document.getElementById('propPrice').textContent = "₹ " + Number(p.price).toLocaleString('en-IN');
             document.getElementById('propLoc').innerHTML = `<i class="fas fa-map-marker-alt" style="color:red"></i> ${p.address?.city}, ${p.address?.state}`;
@@ -270,18 +279,28 @@
             document.getElementById('propTypeBadge').textContent = p.propertyType || 'Property';
             document.getElementById('propStatusBadge').textContent = p.status === 'rent' ? 'For Rent' : 'For Sale';
 
+            // IMAGES
             const imgs = p.images || [];
             document.getElementById('imgMain').src = getImg(imgs[0]);
             document.getElementById('imgSub1').src = getImg(imgs[1] || imgs[0]);
             document.getElementById('imgSub2').src = getImg(imgs[2] || imgs[0]);
+
+            // --- NEW: POPULATE GRID DETAILS ---
+            // Mapping known fields + placeholders for others
+            document.getElementById('infoArea').textContent = (p.features?.area || '0') + " sq.ft";
+            document.getElementById('infoBeds').textContent = p.features?.bedrooms || "N/A";
+            document.getElementById('infoBaths').textContent = p.features?.bathrooms || "N/A";
             
+            // For Plot Area & Furnishing (if you add these fields to DB later, map them here)
+            // Currently using placeholders or existing data if available
+            document.getElementById('infoPlot').textContent = p.features?.plotArea ? p.features.plotArea + " sq.ft" : "Contact Agent";
+            document.getElementById('infoParking').textContent = p.features?.parking ? "Yes" : "Street Parking";
+
+            // AMENITIES
             const amHTML = (p.amenities || []).map(a => `<span style="background:#f0f4ff; padding:8px 15px; border-radius:10px; font-size:0.9rem; color:#263f6e; border:1px solid #e2e8f0;"><i class="fas fa-check-circle" style="color:#ffd700"></i> ${a}</span>`).join('');
             document.getElementById('propAmenities').innerHTML = amHTML || '<span style="color:#999">No amenities listed.</span>';
 
-            document.getElementById('featBed').textContent = p.features?.bedrooms || 0;
-            document.getElementById('featBath').textContent = p.features?.bathrooms || 0;
-            document.getElementById('featArea').textContent = p.features?.area || 0;
-
+            // AGENT
             const phone = p.owner?.phone || '+917795811097';
             const email = p.owner?.email || 'info@ymrealestate.com';
             document.getElementById('agentName').textContent = p.owner?.name || 'Y M Real Estate';
