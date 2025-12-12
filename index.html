@@ -1250,20 +1250,7 @@
             </p>
 
             <div class="team-members scroll-reveal-container">
-                <div class="team-card">
-                    <img src="https://placehold.co/60?text=Team+1" alt="Team Member 1">
-                    <div class="team-name">Saif Ali Abbunavar</div>
-                    <div class="team-role">Heavy Driver</div>
-                </div>
-                <div class="team-card">
-                    <img src="https://placehold.co/60?text=Team+2" alt="Team Member 2">
-                    <div class="team-name">Nijagowda Patil</div>
-                    <div class="team-role">Lead Editor</div>
-                </div>
-                <div class="team-card">
-                    <img src="https://placehold.co/60?text=Team+3" alt="Team Member 3">
-                    <div class="team-name">Ahsan Ali</div>
-                    <div class="team-role">NEET Aspirant</div>
+            <p style="width:100%; text-align:center; color:#666;">Loading Team...</p>
                 </div>
             </div>
         </div>
@@ -1610,12 +1597,44 @@
             document.body.style.overflow = 'auto';
         }
 
+        // ==========================================
+// 5. DYNAMIC TEAM LOADER (HOMEPAGE)
+// ==========================================
+async function loadHomeTeam() {
+    const container = document.querySelector('.team-members');
+    if (!container) return; // Exit if section not found
+
+    try {
+        // Use the same API endpoint as team.html
+        const res = await fetch(`${API_BASE}/team`); 
+        const json = await res.json();
+        const members = json.data || json;
+
+        if (members && members.length > 0) {
+            // Render the cards using index.html's styling (.team-card)
+            container.innerHTML = members.map(member => `
+                <div class="team-card">
+                    <img src="${member.photo || 'https://placehold.co/100?text=User'}" 
+                         alt="${member.name}" 
+                         onerror="this.src='https://placehold.co/100?text=User'">
+                    <div class="team-name">${member.name}</div>
+                    <div class="team-role">${member.role}</div>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error("Failed to load team on homepage:", error);
+        // Optional: Leave the hardcoded HTML as a fallback if API fails
+    }
+}
+
         // --- INITIALIZE EVERYTHING ---
+        document.addEventListener('DOMContentLoaded', () => {
        document.addEventListener('DOMContentLoaded', async () => {
             window.currentSocialData = defaultSocials; 
             await fetchSocials(); 
             renderAllSocials();
-            
+            loadHomeTeam();
             // NOTE: The force-show lines have been DELETED. 
             // The button will only show if checkTeamAccessForReels() approves it.
             checkTeamAccessForReels();
