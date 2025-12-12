@@ -119,18 +119,19 @@
 </div>
 
 <script>
-    // --- 1. CONNECTION ---
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const API = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
+    // --- 1. CONFIGURATION ---
+    // Force the correct backend URL. 
+    // If you are testing on phone, replace 'localhost' with your PC's IP address (e.g., '192.168.1.5')
+    const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:5011' 
+        : 'https://ym-real-estate.onrender.com';
 
-    // --- 2. IMAGE FIXER (Direct Uploads) ---
+    // --- 2. IMAGE FIXER ---
     function getImgUrl(path) {
         if (!path) return 'https://placehold.co/100?text=No+Img';
         if (path.startsWith('http')) return path;
-        
-        // This takes "C:\fakepath\image.jpg" and keeps only "image.jpg"
+        // Strip everything before the filename
         const filename = path.split(/[/\\]/).pop();
-        // Returns "http://localhost:5011/uploads/image.jpg"
         return `${API}/uploads/${filename}`;
     }
 
@@ -139,30 +140,26 @@
     let oldImgs = [];
     let newFiles = [];
 
-    // --- 3. KEYWORD ACCESS LOGIC ---
+    // --- 3. ACCESS CHECK ---
     window.onload = () => {
         const u = localStorage.getItem('user');
         if(!u) return window.location.href = 'login.html';
         
         user = JSON.parse(u);
         const email = (user.email || "").toLowerCase();
-        const role = (user.role || "").toLowerCase();
-
-        // KEYWORD CHECK:
+        
+        // KEYWORD CHECK
         const keywords = ['team', 'test', 'tester', 'ym'];
-        const isTester = keywords.some(k => email.includes(k));
+        const isAllowed = keywords.some(k => email.includes(k)) || user.role === 'admin' || user.role === 'team';
 
-        // If NOT admin/team AND NOT a tester/ym email -> Kick out
-        if (role !== 'admin' && role !== 'team' && !isTester) {
-            alert("Access Denied. You are not recognized as a team member or tester.");
+        if (!isAllowed) {
+            alert("Access Denied.");
             window.location.href = 'index.html';
             return;
         }
-
-        console.log("Access Granted. User:", email);
-
-        // Fill Agent Info
-        document.getElementById('ownerName').value = user.name || 'YM Agent';
+        
+        // Fill Agent Data
+        document.getElementById('ownerName').value = user.name || 'Agent';
         document.getElementById('ownerEmail').value = user.email || 'info@ymrealestate.com';
         document.getElementById('ownerPhone').value = user.phone || '9999999999';
 
@@ -177,7 +174,7 @@
     function renderGallery() {
         const g = document.getElementById('gallery'); g.innerHTML = '';
         oldImgs.forEach((url, i) => {
-            g.innerHTML += `<div class="thumb-wrap"><img src="${getImgUrl(url)}" class="thumb"><button class="del-img" onclick="delOld(${i})">x</button></div>`;
+            g.innerHTML += `<div class="thumb-wrap"><img src="${getImgUrl(url)}" class="thumb" onerror="this.src='https://placehold.co/100?text=Error'"><button class="del-img" onclick="delOld(${i})">x</button></div>`;
         });
         newFiles.forEach((f, i) => {
             g.innerHTML += `<div class="thumb-wrap"><img src="${URL.createObjectURL(f)}" class="thumb"><button class="del-img" onclick="delNew(${i})">x</button></div>`;
@@ -187,77 +184,121 @@
     function delOld(i) { oldImgs.splice(i,1); renderGallery(); }
     function delNew(i) { newFiles.splice(i,1); renderGallery(); }
 
-    // --- 5. SAVE ---
+    // --- 5. SAVE WITH ERROR LOGGING ---
     async function saveProperty() {
-        const btn = document.getElementById('saveBtn'); btn.innerText = "Saving..."; btn.disabled = true;
+        const btn = document.getElementById('saveBtn'); 
+        btn.innerText = "Saving..."; 
+        btn.disabled = true;
         
         try {
             const token = localStorage.getItem('token');
             let uploadedUrls = [];
 
+            // Upload Files
             if(newFiles.length > 0) {
                 const fd = new FormData();
                 newFiles.forEach(f => fd.append('images', f));
-                const res = await fetch(`${API}/api/upload`, { method:'POST', headers:{'Authorization':`Bearer ${token}`}, body:fd });
+                
+                console.log("Uploading images to:", `${API}/api/upload`); // Debug Log
+                
+                const res = await fetch(`${API}/api/upload`, { 
+                    method:'POST', 
+                    headers:{'Authorization':`Bearer ${token}`}, 
+                    body:fd 
+                });
+                
+                if(!res.ok) throw new Error(`Image Upload Failed: ${res.statusText}`);
+                
                 const d = await res.json();
                 if(d.success) uploadedUrls = d.urls;
             }
 
             const data = {
-                title: val('title'), price: val('price'), propertyType: val('propertyType'),
+                title: val('title'), 
+                price: val('price'), 
+                propertyType: val('propertyType'),
                 description: val('description'),
                 amenities: val('propAmenities').split(','),
                 address: { city: val('city') },
-                features: { area: val('area'), bedrooms: val('bedrooms'), bathrooms: val('bathrooms'), parking: val('parking')==='true' },
-                owner: { name: val('ownerName'), phone: val('ownerPhone'), email: val('ownerEmail') },
+                features: { 
+                    area: val('area'), 
+                    bedrooms: val('bedrooms'), 
+                    bathrooms: val('bathrooms'), 
+                    parking: val('parking')==='true' 
+                },
+                owner: { 
+                    name: val('ownerName'), 
+                    phone: val('ownerPhone'), 
+                    email: val('ownerEmail') 
+                },
                 images: [...oldImgs, ...uploadedUrls]
             };
 
             const url = editId ? `${API}/api/properties/${editId}` : `${API}/api/properties`;
             const method = editId ? 'PUT' : 'POST';
 
-            const res = await fetch(url, { method, headers:{'Content-Type':'application/json', 'Authorization':`Bearer ${token}`}, body:JSON.stringify(data)});
-            
-            if(res.ok) { alert("Saved Successfully!"); resetForm(); loadProps(); } 
-            else { alert("Error saving property."); }
+            console.log("Saving property to:", url); // Debug Log
 
-        } catch(e) { console.error(e); alert("Backend Connection Failed"); }
-        finally { btn.innerText = "Save Property"; btn.disabled = false; }
+            const res = await fetch(url, { 
+                method, 
+                headers:{
+                    'Content-Type':'application/json', 
+                    'Authorization':`Bearer ${token}`
+                }, 
+                body:JSON.stringify(data)
+            });
+            
+            const result = await res.json();
+            
+            if(res.ok) { 
+                alert("Success!"); 
+                resetForm(); 
+                loadProps(); 
+            } else { 
+                alert("Server Error: " + (result.message || JSON.stringify(result))); 
+            }
+
+        } catch(e) { 
+            console.error(e); 
+            alert("Error: " + e.message + "\nCheck console (F12) for details."); 
+        } finally { 
+            btn.innerText = "Save Property"; 
+            btn.disabled = false; 
+        }
     }
 
     // --- 6. LOAD ---
     async function loadProps() {
-        const list = document.getElementById('list'); list.innerHTML = "<p>Loading...</p>";
+        const list = document.getElementById('list'); 
         try {
             const res = await fetch(`${API}/api/properties`);
             const d = await res.json();
             const items = d.data || d;
             
-            if(!items.length) { list.innerHTML = "<p>No properties found.</p>"; return; }
-
             list.innerHTML = items.map(p => `
                 <div class="list-item">
-                    <img src="${getImgUrl(p.images?.[0])}" class="list-img">
+                    <img src="${getImgUrl(p.images?.[0])}" class="list-img" onerror="this.src='https://placehold.co/100?text=Broken'">
                     <div class="list-info">
                         <div class="list-title">${p.title}</div>
-                        <div style="color:#666; font-size:0.9rem;">${p.propertyType} • ₹${Number(p.price).toLocaleString()}</div>
+                        <div>${p.propertyType} - ₹${p.price}</div>
                     </div>
                     <div>
                         <button class="btn-action btn-edit" onclick="edit('${encodeURIComponent(JSON.stringify(p))}')">Edit</button>
-                        <button class="btn-action btn-del" onclick="del('${p._id}')">Delete</button>
+                        <button class="btn-action btn-del" onclick="del('${p._id}')">Del</button>
                     </div>
                 </div>
             `).join('');
-        } catch(e) { list.innerHTML = "<p style='color:red'>Error connecting to backend.</p>"; }
+        } catch(e) { 
+            list.innerHTML = "<p style='color:red'>Backend not connected.</p>"; 
+        }
     }
 
-    // --- HELPERS ---
+    // HELPERS
     function val(id) { return document.getElementById(id).value; }
     
     function edit(str) {
         const p = JSON.parse(decodeURIComponent(str));
         editId = p._id;
-        
         document.getElementById('title').value = p.title;
         document.getElementById('price').value = p.price;
         document.getElementById('propertyType').value = p.propertyType;
@@ -268,12 +309,10 @@
         document.getElementById('parking').value = p.features?.parking ? 'true' : 'false';
         document.getElementById('description').value = p.description;
         document.getElementById('propAmenities').value = p.amenities?.join(',') || '';
-        
         oldImgs = p.images || []; newFiles = []; renderGallery();
-        
         document.getElementById('formCard').classList.add('editing');
         document.getElementById('formTitle').innerText = "Edit Property";
-        document.getElementById('saveBtn').innerText = "Update Property";
+        document.getElementById('saveBtn').innerText = "Update";
         document.getElementById('cancelBtn').style.display = "inline-block";
         window.scrollTo(0,0);
     }
@@ -289,7 +328,7 @@
     }
 
     async function del(id) {
-        if(confirm("Delete this property?")) {
+        if(confirm("Delete?")) {
             await fetch(`${API}/api/properties/${id}`, { method:'DELETE', headers:{'Authorization':`Bearer ${localStorage.getItem('token')}`} });
             loadProps();
         }
