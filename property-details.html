@@ -218,28 +218,40 @@
         if(ts - te > 50) move(1);
         if(te - ts > 50) move(-1);
     });
-
   
     document.addEventListener("DOMContentLoaded", function() {
-        // 1. Check if user is logged in
-        const user = localStorage.getItem('user');
+        const u = localStorage.getItem('user');
         const authBtn = document.getElementById('authBtn');
 
-        // 2. If user exists and we found the button
-        if (user && authBtn) {
-            console.log("User is logged in. Switching button."); // Debug message
-            
-            // Change text to "Admin Panel"
-            authBtn.innerText = "Admin Panel";
-            
-            // Change link to Admin Dashboard
-            authBtn.href = "admin.html";
-            
-            // Make it Green so it stands out
-            authBtn.style.background = "#2ecc71";
-            authBtn.style.fontWeight = "bold";
+        if (u && authBtn) {
+            const user = JSON.parse(u);
+            const email = (user.email || "").toLowerCase();
+
+            // --- SECURITY CHECK ---
+            // Only show Admin button if role is 'admin' OR email contains 'tester', 'ym', etc.
+            const isTester = ['team', 'test', 'tester', 'ym'].some(keyword => email.includes(keyword));
+            const isAdmin = user.role === 'admin' || user.role === 'team' || isTester;
+
+            if (isAdmin) {
+                // User is an Admin/Tester -> Show Dashboard Link
+                console.log("Admin detected. Showing Dashboard link.");
+                authBtn.innerText = "Admin Panel";
+                authBtn.href = "admin.html";
+                authBtn.style.background = "#2ecc71"; // Green
+                authBtn.style.fontWeight = "bold";
+            } else {
+                // User is a Regular User -> Keep "Login" or change to "Logout"
+                // For now, we'll just show "Logout" so they can exit standard user mode
+                authBtn.innerText = "Logout";
+                authBtn.href = "#";
+                authBtn.onclick = function() {
+                    localStorage.clear();
+                    window.location.reload();
+                };
+            }
         }
     });
+
 
 </script>
 </body>
