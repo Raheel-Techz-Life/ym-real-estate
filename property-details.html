@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
-    /* --- VARIABLES --- */
+    /* VARIABLES */
     :root {
         --primary: #263f6e;
         --light: #f6faff;
@@ -21,7 +21,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--text); overflow-x: hidden; padding-top: 100px; }
 
-    /* --- HEADER --- */
+    /* BLUE HEADER */
     .header {
         background: var(--primary);
         padding: 15px 30px; 
@@ -36,14 +36,8 @@
 
     /* SEARCH BAR */
     .search-container {
-        flex: 1;
-        max-width: 600px;
-        display: flex;
-        align-items: center;
-        background: white;
-        border-radius: 50px;
-        padding: 4px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        flex: 1; max-width: 600px; display: flex; align-items: center; background: white;
+        border-radius: 50px; padding: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     .search-select {
         border: none; background: transparent; padding: 8px 15px; font-weight: 600;
@@ -56,7 +50,7 @@
     }
     .search-btn:hover { background: #ffc800; }
 
-    /* NAV */
+    /* NAV LINKS */
     .nav { display: flex; gap: 15px; align-items: center; }
     .nav a {
         text-decoration: none; color: rgba(255,255,255,0.9); font-weight: 500; font-size: 0.95rem;
@@ -65,6 +59,16 @@
     .nav a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
     .nav a.active { background: var(--accent); color: var(--primary); font-weight: 700; }
 
+    /* USER PROFILE */
+    .user-profile { display: none; align-items: center; gap: 12px; margin-left: 10px; }
+    .user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
+    .logout-btn { 
+        padding: 6px 12px; background: rgba(255,255,255,0.2); color: white; 
+        border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.3); }
+
+    /* RESPONSIVE */
     @media (max-width: 1024px) {
         .header { flex-direction: column; padding: 15px; gap: 15px; height: auto; }
         .search-container { width: 100%; order: 2; }
@@ -72,7 +76,7 @@
         body { padding-top: 180px; }
     }
 
-    /* --- LAYOUT & GALLERY --- */
+    /* CONTENT */
     .container { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; }
     .back-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--primary); font-weight: 600; margin-bottom: 20px; transition: 0.2s; }
     .back-btn:hover { color: var(--accent); transform: translateX(-5px); }
@@ -86,39 +90,20 @@
 
     .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
     .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
-    
     .title { font-size: 2.2rem; font-weight: 700; color: var(--primary); line-height: 1.2; }
     .price { font-size: 2rem; color: #ffc800; font-weight: 700; margin-top: 10px; }
     .badge { display: inline-block; padding: 5px 12px; background: #e2e8f0; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 10px; color: #64748b; }
 
-    /* --- NEW: PROPERTY DETAILS GRID --- */
-    .details-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* Two Columns */
-        gap: 20px 40px;
-        margin-top: 15px;
-    }
-    .detail-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px dashed #e2e8f0;
-        padding-bottom: 12px;
-    }
-    .detail-label {
-        font-weight: 600;
-        color: #718096;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+    /* PROPERTY DETAILS GRID */
+    .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 40px; margin-top: 15px; }
+    .detail-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; }
+    .detail-label { font-weight: 600; color: #718096; display: flex; align-items: center; gap: 10px; }
     .detail-label i { color: var(--primary); width: 20px; }
     .detail-value { font-weight: 600; color: var(--text); }
 
-    /* --- AGENT CARD --- */
+    /* AGENT */
     .agent-card { background: linear-gradient(135deg, #263f6e, #18284b); color: white; text-align: center; padding: 40px; border-radius: 20px; position: sticky; top: 180px; box-shadow: 0 10px 30px rgba(38,63,110,0.2); }
     .agent-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 15px; background: white; }
-    
     .contact-btn { display: block; width: 100%; padding: 12px; margin-top: 12px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: 0.2s; }
     .btn-gold { background: var(--accent); color: var(--primary); }
     .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); }
@@ -128,11 +113,7 @@
     .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% {background-position: 200% 0} 100% {background-position: -200% 0} }
 
-    @media(max-width:900px) { 
-        .grid-layout { grid-template-columns: 1fr; } 
-        .gallery { height: 300px; } 
-        .details-grid { grid-template-columns: 1fr; } /* 1 Column on Mobile */
-    }
+    @media(max-width:900px) { .grid-layout { grid-template-columns: 1fr; } .gallery { height: 300px; } .details-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -157,6 +138,13 @@
       <a href="properties.html" class="active">Properties</a>
       <a href="team.html">Team</a>
       <a href="contact.html">Contact</a>
+      <a href="login.html" id="navLoginLink">Login</a>
+    </div>
+    
+    <div class="user-profile" id="userProfile">
+        <img id="userAvatar" src="" class="user-avatar">
+        <span id="userName" style="color: white; font-weight: 500;"></span>
+        <button onclick="api.logout()" class="logout-btn">Logout</button>
     </div>
   </div>
 
@@ -185,33 +173,14 @@
 
             <div class="card">
                 <h3 style="color:var(--primary); margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">Property Information</h3>
-                
                 <div class="details-grid">
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-ruler-combined"></i> Built-Up Area</span>
-                        <span class="detail-value" id="infoArea">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-vector-square"></i> Plot Area</span>
-                        <span class="detail-value" id="infoPlot">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-bed"></i> Bedrooms</span>
-                        <span class="detail-value" id="infoBeds">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-bath"></i> Bathrooms</span>
-                        <span class="detail-value" id="infoBaths">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-car"></i> Parking</span>
-                        <span class="detail-value" id="infoParking">Available</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label"><i class="fas fa-couch"></i> Furnishing</span>
-                        <span class="detail-value" id="infoFurnish">Semi-Furnished</span>
-                    </div>
-                    </div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-ruler-combined"></i> Built-Up Area</span><span class="detail-value" id="infoArea">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-vector-square"></i> Plot Area</span><span class="detail-value" id="infoPlot">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-bed"></i> Bedrooms</span><span class="detail-value" id="infoBeds">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-bath"></i> Bathrooms</span><span class="detail-value" id="infoBaths">-</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-car"></i> Parking</span><span class="detail-value" id="infoParking">Available</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-couch"></i> Furnishing</span><span class="detail-value" id="infoFurnish">Semi-Furnished</span></div>
+                </div>
             </div>
 
             <div class="card">
@@ -241,6 +210,10 @@
   <script src="js/api.js"></script>
   <script>
     (() => {
+        // --- AUTH CHECK ---
+        if(typeof ui !== 'undefined' && ui.updateAuthStatus) ui.updateAuthStatus();
+
+        // --- PROPERTY LOGIC ---
         const API = window.location.hostname === 'localhost' ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
         
         window.performSearch = () => {
@@ -270,8 +243,6 @@
 
         function render(p) {
             document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
-
-            // HEADER INFO
             document.getElementById('propTitle').textContent = p.title;
             document.getElementById('propPrice').textContent = "₹ " + Number(p.price).toLocaleString('en-IN');
             document.getElementById('propLoc').innerHTML = `<i class="fas fa-map-marker-alt" style="color:red"></i> ${p.address?.city}, ${p.address?.state}`;
@@ -279,28 +250,20 @@
             document.getElementById('propTypeBadge').textContent = p.propertyType || 'Property';
             document.getElementById('propStatusBadge').textContent = p.status === 'rent' ? 'For Rent' : 'For Sale';
 
-            // IMAGES
             const imgs = p.images || [];
             document.getElementById('imgMain').src = getImg(imgs[0]);
             document.getElementById('imgSub1').src = getImg(imgs[1] || imgs[0]);
             document.getElementById('imgSub2').src = getImg(imgs[2] || imgs[0]);
 
-            // --- NEW: POPULATE GRID DETAILS ---
-            // Mapping known fields + placeholders for others
             document.getElementById('infoArea').textContent = (p.features?.area || '0') + " sq.ft";
             document.getElementById('infoBeds').textContent = p.features?.bedrooms || "N/A";
             document.getElementById('infoBaths').textContent = p.features?.bathrooms || "N/A";
-            
-            // For Plot Area & Furnishing (if you add these fields to DB later, map them here)
-            // Currently using placeholders or existing data if available
             document.getElementById('infoPlot').textContent = p.features?.plotArea ? p.features.plotArea + " sq.ft" : "Contact Agent";
             document.getElementById('infoParking').textContent = p.features?.parking ? "Yes" : "Street Parking";
 
-            // AMENITIES
             const amHTML = (p.amenities || []).map(a => `<span style="background:#f0f4ff; padding:8px 15px; border-radius:10px; font-size:0.9rem; color:#263f6e; border:1px solid #e2e8f0;"><i class="fas fa-check-circle" style="color:#ffd700"></i> ${a}</span>`).join('');
             document.getElementById('propAmenities').innerHTML = amHTML || '<span style="color:#999">No amenities listed.</span>';
 
-            // AGENT
             const phone = p.owner?.phone || '+917795811097';
             const email = p.owner?.email || 'info@ymrealestate.com';
             document.getElementById('agentName').textContent = p.owner?.name || 'Y M Real Estate';
