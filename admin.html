@@ -346,14 +346,17 @@
                 body: formData
             });
 
+            // --- BETTER ERROR HANDLING ---
             const json = await res.json();
             
-            if(json.success) {
+            if (res.ok && (json.success || json._id)) {
                 alert("Success!");
                 resetForm();
                 loadProperties();
             } else {
-                throw new Error(json.message || "Upload Failed");
+                // Look for common error fields
+                const errMsg = json.message || json.error || "Unknown Server Error";
+                throw new Error(errMsg);
             }
 
         } catch(e) {
