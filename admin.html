@@ -118,59 +118,227 @@
 </div>
 
 <script>
-    // --- CONFIG ---
-    const API = window.location.hostname === 'localhost' ? 'http://localhost:5011/api' : 'https://ym-real-estate.onrender.com/api';
-    const UPLOADS = window.location.hostname === 'localhost' ? 'http://localhost:5011/uploads/' : 'https://ym-real-estate.onrender.com/uploads/';
+    // --- CONFIGURATION ---
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011/api' : 'https://ym-real-estate.onrender.com/api';
+    const UPLOADS_URL = window.location.hostname === 'localhost' ? 'http://localhost:5011/uploads/' : 'https://ym-real-estate.onrender.com/uploads/';
 
-    // --- STATE ---
+    let currentUser = null;
     let editingId = null;
-    let existingImages = []; // URLs from DB
-    let newFiles = [];       // File objects to upload
+    let existingImages = []; 
+    let newFiles = [];       
+    let imagesToDelete = []; 
 
-    // --- INIT ---
-    window.onload = () => {
-        const user = localStorage.getItem('user');
-        if(!user) return window.location.href = 'index.html';
-        loadProperties();
+    // --- INITIALIZATION ---
+    window.onload = async () => {
+        checkAuth();
+        
+        // CHECK URL FOR DIRECT EDIT (e.g. admin.html?edit=12345)
+        const params = new URLSearchParams(window.location.search);
+        const editId = params.get('edit');
+        if(editId) {
+            await fetchAndLoadProperty(editId);
+        }
     };
 
+    function checkAuth() {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) return window.location.href = 'index.html'; 
+        currentUser = JSON.parse(userStr);
+        
+        // Allow Tester ID
+        if (currentUser.email === 'team@test.com') {
+            grantAccess();
+            return;
+        }
+
+        if (currentUser.role !== 'admin' && currentUser.role !== 'team') {
+            alert("Access Denied."); 
+            window.location.href = 'index.html'; 
+            return;
+        }
+        grantAccess();
+    }
+
+    function grantAccess() {
+        document.getElementById('auth-warning').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        
+        // Auto-fill Agent defaults if not editing
+        if (!editingId && currentUser) {
+            document.getElementById('ownerName').value = currentUser.name || '';
+            document.getElementById('ownerEmail').value = currentUser.email || '';
+            document.getElementById('ownerPhone').value = currentUser.phone || '';
+        }
+        loadProperties();
+    }
+
+    // --- NEW: FETCH SINGLE PROPERTY BY ID ---
+    async function fetchAndLoadProperty(id) {
+        try {
+            document.getElementById('loading').style.display = 'flex';
+            const res = await fetch(`${API_URL}/properties/${id}`);
+            const json = await res.json();
+            const p = json.data || json;
+            
+            if (p) {
+                // Reuse the existing startEdit function logic
+                // We fake the data string since startEdit expects it
+                const dataString = encodeURIComponent(JSON.stringify(p));
+                startEdit(dataString);
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Could not load property for editing.");
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
     // --- IMAGE LOGIC ---
-    function handleNewFiles(e) {
-        newFiles = [...newFiles, ...Array.from(e.target.files)];
+    function handleNewFiles(event) {
+        const files = Array.from(event.target.files);
+        newFiles = newFiles.concat(files);
         renderGallery();
-        e.target.value = ''; 
+        event.target.value = ''; 
     }
 
     function renderGallery() {
-        const grid = document.getElementById('previewGrid');
-        grid.innerHTML = '';
+        const container = document.getElementById('previewContainer');
+        container.innerHTML = '';
 
-        // 1. OLD IMAGES
-        existingImages.forEach((url, i) => {
-            let src = url.startsWith('http') ? url : UPLOADS + url.split(/[/\\]/).pop();
-            grid.innerHTML += `
-                <div class="preview-item">
-                    <img src="${src}" onerror="this.src='https://placehold.co/100'">
-                    <div class="img-badge badge-old">SAVED</div>
-                    <button class="btn-remove" onclick="removeOld(${i})"><i class="fas fa-times"></i></button>
-                </div>`;
+        // Old Images
+        existingImages.forEach((url, index) => {
+            const div = document.createElement('div');
+            div.className = 'preview-item';
+            
+            let src = url;
+            if(!url.startsWith('http')) {
+                const filename = url.split(/[/\\]/).pop();
+                src = `${UPLOADS_URL}${filename}`;
+            }
+
+            div.innerHTML = `
+                <img src="${src}" onerror="this.src='https://placehold.co/100?text=Err'">
+                <div class="img-badge badge-old">SAVED</div>
+                <button type="button" class="btn-remove-img" onclick="removeExisting(${index})"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(div);
         });
 
-        // 2. NEW IMAGES
-        newFiles.forEach((file, i) => {
-            grid.innerHTML += `
-                <div class="preview-item">
-                    <img src="${URL.createObjectURL(file)}">
-                    <div class="img-badge badge-new">NEW</div>
-                    <button class="btn-remove" onclick="removeNew(${i})"><i class="fas fa-times"></i></button>
-                </div>`;
+        // New Images
+        newFiles.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'preview-item';
+            div.innerHTML = `
+                <img src="${URL.createObjectURL(file)}">
+                <div class="img-badge badge-new">NEW</div>
+                <button type="button" class="btn-remove-img" onclick="removeNew(${index})"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(div);
         });
     }
 
-    function removeOld(i) { existingImages.splice(i, 1); renderGallery(); }
-    function removeNew(i) { newFiles.splice(i, 1); renderGallery(); }
+    function removeExisting(index) {
+        imagesToDelete.push(existingImages[index]);
+        existingImages.splice(index, 1);
+        renderGallery();
+    }
 
-    // --- SAVE LOGIC (TWO-STEP) ---
+    function removeNew(index) {
+        newFiles.splice(index, 1);
+        renderGallery();
+    }
+
+    // --- MAIN LOGIC ---
+    async function loadProperties() {
+        const itemsEl = document.getElementById('items');
+        itemsEl.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Fetching data...</p>';
+
+        try {
+            const res = await fetch(`${API_URL}/properties`);
+            const json = await res.json();
+            const properties = json.data || json;
+
+            if (!properties || properties.length === 0) {
+                itemsEl.innerHTML = '<div style="text-align:center; padding:40px; background:white; border-radius:16px;"><p style="color:#888;">No properties found.</p></div>';
+                return;
+            }
+
+            itemsEl.innerHTML = ''; 
+            properties.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                
+                let thumb = 'https://placehold.co/100?text=No+Img';
+                if(p.images && p.images.length > 0) {
+                    const filename = p.images[0].split(/[/\\]/).pop();
+                    thumb = `${UPLOADS_URL}${filename}`;
+                }
+                
+                const dataString = encodeURIComponent(JSON.stringify(p));
+
+                div.innerHTML = `
+                    <img src="${thumb}" alt="Property" style="object-fit:cover;">
+                    <div class="meta">
+                        <h3>${p.title} <span class="status ${p.status}">${p.status}</span></h3>
+                        <div class="note">
+                          <span><i class="fas fa-tag"></i> ₹${Number(p.price).toLocaleString()}</span>
+                          <span><i class="fas fa-map-marker-alt"></i> ${p.address?.city || 'Unknown'}</span>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn-edit" onclick="startEdit('${dataString}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn-delete" onclick="deleteProperty('${p._id}')"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                itemsEl.appendChild(div);
+            });
+        } catch (err) {
+            console.error(err);
+            itemsEl.innerHTML = `<p style="color:red; text-align:center;">Error loading properties</p>`;
+        }
+    }
+
+    function startEdit(dataStr) {
+        const p = JSON.parse(decodeURIComponent(dataStr));
+        editingId = p._id;
+
+        document.getElementById('title').value = p.title;
+        document.getElementById('price').value = p.price;
+        document.getElementById('propertyType').value = p.propertyType;
+        document.getElementById('status').value = p.status;
+        document.getElementById('city').value = p.address?.city || '';
+        document.getElementById('area').value = p.features?.area || '';
+        document.getElementById('description').value = p.description;
+        document.getElementById('ownerName').value = p.owner?.name || '';
+        document.getElementById('ownerPhone').value = p.owner?.phone || '';
+        document.getElementById('ownerEmail').value = p.owner?.email || '';
+
+        existingImages = p.images || []; 
+        newFiles = []; 
+        imagesToDelete = [];
+        renderGallery();
+
+        document.getElementById('formTitle').innerText = "Edit Property";
+        document.getElementById('saveBtn').innerHTML = "Update Property";
+        document.getElementById('cancelBtn').style.display = "inline-flex";
+        document.getElementById('propertyFormCard').classList.add('editing');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        editingId = null;
+        existingImages = [];
+        newFiles = [];
+        imagesToDelete = [];
+        renderGallery();
+        document.querySelectorAll('input:not(#ownerName,#ownerPhone,#ownerEmail), textarea').forEach(i => i.value = '');
+        document.getElementById('formTitle').innerText = "Add New Property";
+        document.getElementById('saveBtn').innerHTML = "Save Property";
+        document.getElementById('cancelBtn').style.display = "none";
+        document.getElementById('propertyFormCard').classList.remove('editing');
+    }
+
     async function saveProperty() {
         const btn = document.getElementById('saveBtn');
         btn.disabled = true; btn.innerText = "Processing...";
@@ -180,44 +348,38 @@
             const token = localStorage.getItem('token');
             if(!token) throw new Error("Please login again.");
 
-            // STEP 1: Upload New Images (If any)
-            let uploadedUrls = [];
+            // 1. Upload New Images
+            let newUrls = [];
             if(newFiles.length > 0) {
                 const fd = new FormData();
                 newFiles.forEach(f => fd.append('images', f));
-                
-                console.log("Step 1: Uploading images...");
-                const upRes = await fetch(`${API}/upload`, {
+                const upRes = await fetch(`${API_URL}/upload`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` },
                     body: fd
                 });
-                
-                if(!upRes.ok) {
-                    const txt = await upRes.text();
-                    throw new Error(`Image Upload Failed: ${txt}`);
-                }
-
                 const upJson = await upRes.json();
-                if(upJson.success) uploadedUrls = upJson.urls || upJson.data; // Handle both formats
-                else throw new Error("Image upload returned false success");
+                if(upJson.success) newUrls = upJson.urls || upJson.data;
             }
 
-            // STEP 2: Send JSON Data
-            console.log("Step 2: Sending Data...");
+            // 2. Prepare Data
             const payload = {
-                title: val('title'),
-                price: val('price'),
-                propertyType: val('propertyType'),
-                status: val('status'),
-                description: val('description'),
-                address: { city: val('city'), state: 'India' },
-                features: { area: val('area') },
-                owner: { name: val('ownerName'), phone: val('ownerPhone'), email: val('ownerEmail') },
-                images: [...existingImages, ...uploadedUrls] // Merge Lists
+                title: document.getElementById('title').value,
+                price: document.getElementById('price').value,
+                propertyType: document.getElementById('propertyType').value,
+                status: document.getElementById('status').value,
+                description: document.getElementById('description').value,
+                address: { city: document.getElementById('city').value, state: 'India' },
+                features: { area: document.getElementById('area').value },
+                owner: {
+                    name: document.getElementById('ownerName').value,
+                    phone: document.getElementById('ownerPhone').value,
+                    email: document.getElementById('ownerEmail').value
+                },
+                images: [...existingImages, ...newUrls] // Merge old + new
             };
 
-            const url = editingId ? `${API}/properties/${editingId}` : `${API}/properties`;
+            const url = editingId ? `${API_URL}/properties/${editingId}` : `${API_URL}/properties`;
             const method = editingId ? 'PUT' : 'POST';
 
             const res = await fetch(url, {
@@ -230,104 +392,38 @@
             });
 
             const json = await res.json();
-            if(!json.success && !json._id) {
-                // Try to find the error message in various formats
-                throw new Error(json.message || json.error || JSON.stringify(json));
+            
+            if(json.success || json._id) {
+                alert("Success!");
+                resetForm();
+                loadProperties();
+                // If we were editing from URL, clear the URL param
+                if(window.location.search.includes('edit=')) {
+                    window.history.replaceState({}, document.title, "admin.html");
+                }
+            } else {
+                throw new Error(json.message || "Failed to save");
             }
-
-            alert("Success!");
-            resetForm();
-            loadProperties();
 
         } catch(e) {
             console.error(e);
             alert("Error: " + e.message);
         } finally {
-            btn.disabled = false; btn.innerText = "Save Property";
+            btn.disabled = false; btn.innerHTML = "Save Property";
             document.getElementById('loading').style.display = 'none';
         }
     }
 
-    // --- HELPER FUNCTIONS ---
-    function val(id) { return document.getElementById(id).value; }
-
-    function startEdit(pStr) {
-        const p = JSON.parse(decodeURIComponent(pStr));
-        editingId = p._id;
-        existingImages = p.images || [];
-        newFiles = [];
-        
-        // Fill Fields
-        ['title','price','description','propertyType','status'].forEach(k => document.getElementById(k).value = p[k] || '');
-        document.getElementById('city').value = p.address?.city || '';
-        document.getElementById('area').value = p.features?.area || '';
-        document.getElementById('ownerName').value = p.owner?.name || '';
-        document.getElementById('ownerPhone').value = p.owner?.phone || '';
-        document.getElementById('ownerEmail').value = p.owner?.email || '';
-
-        // UI Updates
-        document.getElementById('formCard').classList.add('editing');
-        document.getElementById('formTitle').innerText = "Edit Property";
-        document.getElementById('saveBtn').innerText = "Update";
-        document.getElementById('cancelBtn').style.display = "inline-block";
-        
-        renderGallery();
-        window.scrollTo(0,0);
-    }
-
-    function resetForm() {
-        editingId = null;
-        existingImages = []; newFiles = []; renderGallery();
-        document.querySelectorAll('input:not([type=file]), textarea').forEach(i => i.value = '');
-        document.getElementById('formCard').classList.remove('editing');
-        document.getElementById('formTitle').innerText = "Add New Property";
-        document.getElementById('saveBtn').innerText = "Save Property";
-        document.getElementById('cancelBtn').style.display = "none";
-        
-        // Refill user defaults
-        const user = JSON.parse(localStorage.getItem('user'));
-        if(user) {
-            document.getElementById('ownerName').value = user.name || '';
-            document.getElementById('ownerPhone').value = user.phone || '';
-            document.getElementById('ownerEmail').value = user.email || '';
-        }
-    }
-
-    async function loadProperties() {
+    async function deleteProperty(id) {
+        if(!confirm("Are you sure?")) return;
+        const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`${API}/properties`);
-            const json = await res.json();
-            const list = document.getElementById('listContainer');
-            list.innerHTML = '';
-            
-            (json.data || json).forEach(p => {
-                let thumb = (p.images && p.images[0]) 
-                    ? (p.images[0].startsWith('http') ? p.images[0] : UPLOADS + p.images[0].split(/[/\\]/).pop()) 
-                    : 'https://placehold.co/100';
-                
-                list.innerHTML += `
-                    <div class="card">
-                        <img src="${thumb}">
-                        <div style="flex:1">
-                            <b>${p.title}</b><br>
-                            <small>${p.address?.city} | ₹${p.price}</small>
-                        </div>
-                        <div class="controls">
-                            <button class="btn-edit" onclick="startEdit('${encodeURIComponent(JSON.stringify(p))}')">Edit</button>
-                            <button class="btn-delete" onclick="deleteProp('${p._id}')">Delete</button>
-                        </div>
-                    </div>`;
+            await fetch(`${API_URL}/properties/${id}`, { 
+                method: 'DELETE',
+                headers: {'Authorization': `Bearer ${token}`}
             });
-        } catch(e) { console.error(e); }
-    }
-
-    async function deleteProp(id) {
-        if(!confirm("Delete?")) return;
-        await fetch(`${API}/properties/${id}`, { 
-            method: 'DELETE', 
-            headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`} 
-        });
-        loadProperties();
+            loadProperties();
+        } catch(e) { alert("Delete failed"); }
     }
 </script>
 </body>
