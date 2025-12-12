@@ -8,23 +8,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   
   <style>
-    /* --- THEME FROM LOGIN PAGE --- */
+    /* --- THEME MATCHING YOUR LOGIN PAGE --- */
     :root { 
-        --primary: #263f6e;
+        --primary: #263f6e;       /* Navy Blue */
         --primary-dark: #18284b;
-        --accent: #ffd700;
+        --accent: #ffd700;        /* Gold */
         --text: #2d3748;
         --bg-gradient: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%);
         --shadow: 0 10px 40px rgba(38,63,110,0.12);
         --card-bg: #ffffff;
         --danger: #ef4444;
-        --success: #10b981;
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background: var(--bg-gradient); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
 
-    /* --- HEADER (EXACT COPY FROM LOGIN) --- */
+    /* --- HEADER --- */
     .header {
       background: var(--primary);
       color: #fff;
@@ -35,17 +34,19 @@
       position: sticky; top: 0; z-index: 1000;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-    .header a { color: #fff; text-decoration: none; }
-    .logo-area { display: flex; align-items: center; gap: 12px; }
+    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
     .logo-img { width: 45px; height: 45px; border-radius: 10px; background: #fff; padding: 2px; }
-    .nav { display: flex; gap: 20px; }
-    .nav a { padding: 8px 16px; border-radius: 6px; transition: background 0.2s; font-size: 0.95rem; }
-    .nav a:hover { background: var(--primary-dark); }
     
-    .nav-btn-logout { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ffcece !important; }
+    .nav { display: flex; gap: 20px; }
+    .nav a, .nav button { 
+        padding: 8px 16px; border-radius: 6px; transition: 0.2s; font-size: 0.95rem; 
+        text-decoration: none; color: white; border: none; background: transparent; cursor: pointer;
+    }
+    .nav a:hover, .nav button:hover { background: var(--primary-dark); }
+    .nav-btn-logout { background: rgba(239, 68, 68, 0.2) !important; color: #ffcece !important; }
     .nav-btn-logout:hover { background: var(--danger) !important; color: white !important; }
 
-    /* --- CONTAINER --- */
+    /* --- MAIN LAYOUT --- */
     .main-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
 
     /* --- CARD STYLING --- */
@@ -56,7 +57,6 @@
         box-shadow: var(--shadow);
         margin-bottom: 30px;
         position: relative;
-        overflow: hidden;
     }
     
     .card.editing { border: 2px solid var(--accent); }
@@ -74,7 +74,7 @@
         color: #888; margin: 25px 0 15px; font-weight: 700; border-bottom: 1px solid #e0e7ff; padding-bottom: 5px;
     }
 
-    /* --- FORMS --- */
+    /* --- INPUTS --- */
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .full { grid-column: 1 / -1; }
     
@@ -84,8 +84,7 @@
         border: 2px solid #e0e7ff; border-radius: 10px;
         font-size: 15px; transition: 0.3s; outline: none; background: #fff;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
-    textarea { min-height: 120px; resize: vertical; }
+    .form-group input:focus { border-color: var(--primary); }
 
     /* --- UPLOAD ZONE --- */
     .upload-zone {
@@ -95,7 +94,7 @@
     }
     .upload-zone:hover { border-color: var(--primary); background: #f0f4ff; }
     .upload-zone i { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; opacity: 0.7; }
-    
+
     .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 15px; }
     .img-card { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
     .img-card img { width: 100%; height: 100%; object-fit: cover; }
@@ -112,14 +111,13 @@
     .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
     .btn-cancel { background: #fff; border: 2px solid #ddd; color: #666; display: none; }
 
-    /* --- LISTINGS GRID --- */
+    /* --- LISTINGS --- */
     #itemsContainer { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
     .list-item {
         background: white; border-radius: 16px; overflow: hidden;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;
         display: flex; flex-direction: column; border: 1px solid #e0e7ff;
     }
-    .list-item:hover { transform: translateY(-5px); border-color: var(--primary); }
     .list-thumb { width: 100%; height: 180px; object-fit: cover; }
     .list-content { padding: 20px; flex: 1; }
     .list-title { font-weight: 700; color: var(--primary); font-size: 1.1rem; margin-bottom: 5px; }
@@ -152,7 +150,7 @@
     <div class="nav">
         <a href="index.html">View Website</a>
         <a href="properties.html">All Properties</a>
-        <button onclick="logout()" class="nav-btn-logout" style="border:none; padding:8px 16px; border-radius:6px; cursor:pointer;">Logout</button>
+        <button onclick="logout()" class="nav-btn-logout">Logout</button>
     </div>
 </div>
 
@@ -224,269 +222,141 @@
 </div>
 
 <script>
-    // --- 1. SMART API CONNECTION ---
+    // --- 1. CONNECT TO BACKEND ---
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const API_BASE = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
 
-    // --- 2. IMAGE HELPER ---
+    // --- 2. IMAGE FIX (Solves Grey Box Issue) ---
     function getImageUrl(path) {
         if (!path) return 'https://placehold.co/600x400?text=No+Image';
-        if (path.startsWith('http') || path.startsWith('https')) return path; 
+        if (path.startsWith('http')) return path; 
         const cleanPath = path.replace(/\\/g, '/').replace('uploads/', '');
         return `${API_BASE}/uploads/${cleanPath}`;
     }
 
     let currentUser = null;
     let editingId = null;
-    let existingImages = []; 
-    let newFiles = [];        
+    let existingImages = []; let newFiles = [];        
 
-    // --- 3. AUTHENTICATION CHECK ---
+    // --- 3. AUTH & PERMISSIONS CHECK ---
     window.onload = async () => {
         const userStr = localStorage.getItem('user');
+        if (!userStr) return window.location.href = 'login.html';
         
-        // If not logged in, go to login
-        if (!userStr) {
-            window.location.href = 'login.html';
-            return;
-        }
-
         currentUser = JSON.parse(userStr);
 
-        // --- SECURITY CHECK ---
-        const allowedRoles = ['admin', 'team'];
-        
-        // DEBUG MODE: If you are blocked, check Console (F12) to see your role
-        console.log("Logged in as:", currentUser.email, "Role:", currentUser.role);
+        // FIX: Allow 'admin', 'team', OR your specific tester email
+        const isTester = currentUser.email === 'tester@test.com'; // Add your specific email if needed
+        const allowed = ['admin', 'team'];
 
-        // ALLOW ACCESS IF: Role is admin/team OR if it's your specific tester email
-        // Replace 'tester@test.com' with your actual email if needed
-        const isTester = currentUser.email === 'tester@test.com' || currentUser.email === 'team@test.com'; 
-
-        if (!allowedRoles.includes(currentUser.role) && !isTester) {
-            alert(`Access Denied.\nYour role is: "${currentUser.role}"\nRequired: "admin" or "team".`);
+        if (!allowed.includes(currentUser.role) && !isTester) {
+            alert("Access Denied. You need Admin or Team permissions."); 
             window.location.href = 'index.html'; 
             return;
         }
 
-        // Auto-fill form with user details
+        // Auto-fill Agent Info
         if(!editingId) {
             document.getElementById('ownerName').value = currentUser.name || 'YM Real Estate';
             document.getElementById('ownerEmail').value = currentUser.email || 'info@ymrealestate.com';
             document.getElementById('ownerPhone').value = currentUser.phone || '+917795811097';
         }
-
         loadProperties();
     };
 
-    function logout() { 
-        localStorage.clear(); 
-        window.location.href = 'index.html'; 
-    }
+    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
 
-    // --- 4. IMAGE HANDLING ---
-    function handleNewFiles(e) { 
-        newFiles = [...newFiles, ...Array.from(e.target.files)]; 
-        renderGallery(); 
-    }
+    // --- 4. IMAGE LOGIC ---
+    function handleNewFiles(e) { newFiles = [...newFiles, ...Array.from(e.target.files)]; renderGallery(); }
 
     function renderGallery() {
-        const c = document.getElementById('previewContainer'); 
-        c.innerHTML = '';
-        
-        // Database Images
+        const c = document.getElementById('previewContainer'); c.innerHTML = '';
         existingImages.forEach((url, i) => {
-            c.innerHTML += `
-                <div class="img-card">
-                    <img src="${getImageUrl(url)}">
-                    <button class="btn-del-img" onclick="removeOld(${i})">×</button>
-                </div>`;
+            c.innerHTML += `<div class="img-card"><img src="${getImageUrl(url)}"><button class="btn-del-img" onclick="removeOld(${i})">×</button></div>`;
         });
-        
-        // New Uploads
         newFiles.forEach((file, i) => {
-            c.innerHTML += `
-                <div class="img-card">
-                    <img src="${URL.createObjectURL(file)}">
-                    <button class="btn-del-img" onclick="removeNew(${i})">×</button>
-                </div>`;
+            c.innerHTML += `<div class="img-card"><img src="${URL.createObjectURL(file)}"><button class="btn-del-img" onclick="removeNew(${i})">×</button></div>`;
         });
     }
 
     function removeOld(i) { existingImages.splice(i, 1); renderGallery(); }
     function removeNew(i) { newFiles.splice(i, 1); renderGallery(); }
 
-    // --- 5. SAVE PROPERTY ---
+    // --- 5. SAVE FUNCTION ---
     async function saveProperty() {
-        const btn = document.getElementById('saveBtn'); 
-        btn.innerText = 'Saving...'; 
-        btn.disabled = true;
-        
+        const btn = document.getElementById('saveBtn'); btn.innerText = 'Saving...'; btn.disabled = true;
         try {
             const token = localStorage.getItem('token');
             let newUrls = [];
             
-            // 1. Upload Images
+            // Upload Images First
             if(newFiles.length > 0) {
-                const fd = new FormData(); 
-                newFiles.forEach(f => fd.append('images', f));
-                
-                const res = await fetch(`${API_BASE}/api/upload`, { 
-                    method: 'POST', 
-                    headers: {'Authorization': `Bearer ${token}`}, 
-                    body: fd 
-                });
-                const d = await res.json(); 
-                if(d.success) newUrls = d.urls || [];
+                const fd = new FormData(); newFiles.forEach(f => fd.append('images', f));
+                const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', headers: {'Authorization': `Bearer ${token}`}, body: fd });
+                const d = await res.json(); if(d.success) newUrls = d.urls || [];
             }
             
-            // 2. Save Data
             const payload = {
-                title: val('title'), 
-                price: val('price'), 
-                propertyType: val('propertyType'), 
-                status: val('status'), 
-                description: val('description'),
-                amenities: val('propAmenities').split(',').map(s=>s.trim()),
+                title: val('title'), price: val('price'), propertyType: val('propertyType'), status: val('status'), description: val('description'),
+                amenities: val('propAmenities').split(','),
                 address: { city: val('city'), state: 'India' },
-                features: { 
-                    area: val('area'), 
-                    bedrooms: val('bedrooms'), 
-                    bathrooms: val('bathrooms'), 
-                    parking: val('parking') === 'true' 
-                },
-                owner: { 
-                    name: val('ownerName'), 
-                    phone: val('ownerPhone'), 
-                    email: val('ownerEmail') 
-                },
+                features: { area: val('area'), bedrooms: val('bedrooms'), bathrooms: val('bathrooms'), parking: val('parking') === 'true' },
+                owner: { name: val('ownerName'), phone: val('ownerPhone'), email: val('ownerEmail') },
                 images: [...existingImages, ...newUrls]
             };
             
             const url = editingId ? `${API_BASE}/api/properties/${editingId}` : `${API_BASE}/api/properties`;
             const method = editingId ? 'PUT' : 'POST';
             
-            const res = await fetch(url, { 
-                method, 
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, 
-                body: JSON.stringify(payload) 
-            });
-            
-            if(res.ok) { 
-                alert("Property Saved Successfully!"); 
-                resetForm(); 
-                loadProperties(); 
-            } else {
-                const err = await res.json();
-                alert("Error saving: " + (err.message || "Unknown error"));
-            }
-        } catch(e) { 
-            console.error(e);
-            alert("Connection Error. Ensure Backend is running."); 
-        } finally { 
-            btn.innerText = 'Save Property'; 
-            btn.disabled = false; 
-        }
+            const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
+            if(res.ok) { alert("Saved Successfully!"); resetForm(); loadProperties(); }
+            else alert("Error saving property.");
+        } catch(e) { alert("Connection Error. Is Backend Running?"); }
+        finally { btn.innerText = 'Save Property'; btn.disabled = false; }
     }
 
-    // --- 6. HELPERS ---
     function val(id) { return document.getElementById(id).value; }
 
     async function loadProperties() {
-        const list = document.getElementById('itemsContainer'); 
-        list.innerHTML = '<p style="text-align:center; padding:20px;">Loading...</p>';
-        
+        const list = document.getElementById('itemsContainer'); list.innerHTML = 'Loading...';
         try {
             const res = await fetch(`${API_BASE}/api/properties`);
             const json = await res.json();
             const data = json.data || json;
-            
-            if(data.length === 0) {
-                list.innerHTML = '<p style="text-align:center; padding:20px;">No properties found.</p>';
-                return;
-            }
-
             list.innerHTML = data.map(p => `
                 <div class="list-item">
                     <img src="${getImageUrl(p.images?.[0])}" class="list-thumb">
                     <div class="list-content">
                         <div class="list-title">${p.title}</div>
-                        <div style="color:#666; font-size:0.9rem;">₹${Number(p.price).toLocaleString()} • ${p.propertyType}</div>
+                        <div>₹${Number(p.price).toLocaleString()} • ${p.propertyType}</div>
                     </div>
                     <div class="list-actions">
                         <button class="btn-sm btn-edit" onclick="startEdit('${encodeURIComponent(JSON.stringify(p))}')">Edit</button>
                         <button class="btn-sm btn-del" onclick="deleteProp('${p._id}')">Delete</button>
                     </div>
                 </div>`).join('');
-        } catch(e) {
-            list.innerHTML = '<p style="text-align:center; color:red;">Failed to load properties.</p>';
-        }
+        } catch(e) { list.innerHTML = 'Error loading properties.'; }
     }
 
     function startEdit(str) {
-        const p = JSON.parse(decodeURIComponent(str)); 
-        editingId = p._id;
-        
-        // Fill basic fields
-        ['title','price','propertyType','status','description','city'].forEach(k => {
-            const el = document.getElementById(k);
-            if(el) el.value = p[k] || (p.address?.[k] || '');
-        });
-        
-        document.getElementById('propAmenities').value = Array.isArray(p.amenities) ? p.amenities.join(', ') : (p.amenities || '');
-        
-        // Fill features
-        ['area','bedrooms','bathrooms'].forEach(k => {
-            const el = document.getElementById(k);
-            if(el) el.value = p.features?.[k] || '';
-        });
-        document.getElementById('parking').value = p.features?.parking ? 'true' : 'false';
-        
-        // Fill Agent
-        if(p.owner) {
-            document.getElementById('ownerName').value = p.owner.name;
-            document.getElementById('ownerPhone').value = p.owner.phone;
-            document.getElementById('ownerEmail').value = p.owner.email;
-        }
-
-        existingImages = p.images || []; 
-        newFiles = []; 
-        renderGallery();
-        
-        // UI Updates
-        document.getElementById('formCard').classList.add('editing'); 
-        document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Property';
-        document.getElementById('cancelBtn').style.display = 'inline-block'; 
-        document.getElementById('saveBtn').innerText = 'Update Property';
-        window.scrollTo(0,0);
+        const p = JSON.parse(decodeURIComponent(str)); editingId = p._id;
+        ['title','price','propertyType','status','description','city'].forEach(k => document.getElementById(k).value = p[k] || (p.address?.[k] || ''));
+        document.getElementById('propAmenities').value = p.amenities?.join(',') || '';
+        ['area','bedrooms','bathrooms'].forEach(k => document.getElementById(k).value = p.features?.[k] || '');
+        existingImages = p.images || []; newFiles = []; renderGallery();
+        document.getElementById('formCard').classList.add('editing'); document.getElementById('formTitle').innerText = 'Edit Property';
+        document.getElementById('cancelBtn').style.display = 'inline-block'; window.scrollTo(0,0);
     }
 
     function resetForm() {
-        editingId = null; 
-        document.getElementById('formCard').classList.remove('editing');
-        document.getElementById('formTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Add New Property'; 
-        document.getElementById('cancelBtn').style.display = 'none';
-        document.getElementById('saveBtn').innerText = 'Save Property';
-        
-        document.querySelectorAll('input, textarea, select').forEach(i => {
-            if(!['ownerName','ownerPhone','ownerEmail'].includes(i.id)) i.value = '';
-        });
-        // Reset defaults
-        document.getElementById('propertyType').value = 'House';
-        document.getElementById('status').value = 'sale';
-        document.getElementById('parking').value = 'true';
-
+        editingId = null; document.getElementById('formCard').classList.remove('editing');
+        document.getElementById('formTitle').innerText = 'Add New Property'; document.getElementById('cancelBtn').style.display = 'none';
+        document.querySelectorAll('input:not(#ownerName):not(#ownerPhone):not(#ownerEmail),textarea').forEach(i=>i.value='');
         existingImages=[]; newFiles=[]; renderGallery();
     }
 
     async function deleteProp(id) {
-        if(confirm("Delete this property permanently?")) { 
-            await fetch(`${API_BASE}/api/properties/${id}`, { 
-                method: 'DELETE', 
-                headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`} 
-            }); 
-            loadProperties(); 
-        }
+        if(confirm("Delete this property?")) { await fetch(`${API_BASE}/api/properties/${id}`, { method: 'DELETE', headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`} }); loadProperties(); }
     }
 </script>
 </body>
