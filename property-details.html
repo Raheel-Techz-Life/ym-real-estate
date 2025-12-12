@@ -126,26 +126,38 @@
     </div>
   </div>
 
-  <script src="js/api.js"></script>
+ <script src="js/api.js"></script>
 <script>
-  // We wrap everything in an anonymous function to prevent conflicts
   (() => {
-    // --- 1. CONFIGURATION (Renamed to prevent conflicts) ---
+    // --- 1. CONFIGURATION ---
     const APP_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:5011'
       : 'https://ym-real-estate.onrender.com';
     
-    // Use unique names for this page's variables
+    // The folder where images live on the server
     const PROPERTY_IMAGES_URL = `${APP_BASE_URL}/uploads/`;
     const PROPERTY_API_ENDPOINT = `${APP_BASE_URL}/api`;
 
-    // --- 2. IMAGE HELPER ---
+    // --- 2. SMART IMAGE FIXER ---
     function resolveImageUrl(imagePath) {
       if (!imagePath) return 'https://placehold.co/1200x600?text=No+Image';
+
+      // CHECK: Is it a "localhost" link saved in the database?
+      // If yes, we strip the localhost part so we can fix it with the Render URL.
+      if (imagePath.includes('localhost')) {
+        // Remove "http://localhost:10000/uploads/" or similar
+        // We just want the filename at the end
+        const filename = imagePath.split('/uploads/').pop();
+        return `${PROPERTY_IMAGES_URL}${filename}`;
+      }
+
+      // If it's a valid web link (like an external hosting), keep it
       if (imagePath.startsWith('http')) return imagePath;
 
-      // Clean the path and prepend the server URL
+      // Clean the path (remove existing /uploads/ prefixes)
       const cleanPath = imagePath.replace(/^\\uploads\\/, '').replace(/^\/uploads\//, '');
+      
+      // Combine: Server URL + Filename
       return `${PROPERTY_IMAGES_URL}${cleanPath}`;
     }
 
@@ -166,8 +178,6 @@
         
         const response = await fetch(`${PROPERTY_API_ENDPOINT}/properties/${propertyId}`);
         const json = await response.json();
-        
-        // Handle data wrapper
         const property = json.data || json;
 
         if (!property || json.success === false) throw new Error("Property not found");
@@ -191,12 +201,12 @@
 
     // --- 4. RENDER FUNCTION ---
     function renderPage(p) {
-      // Safe Data Extraction
       const title = p.title || "Untitled Property";
       const price = p.price ? Number(p.price).toLocaleString('en-IN') : "0";
       const loc = p.address ? `${p.address.city || ''}, ${p.address.state || ''}` : "Location N/A";
       const desc = p.description || "No description provided.";
       
+      // Fix Main Image
       const mainImg = (p.images && p.images.length > 0) ? resolveImageUrl(p.images[0]) : 'https://placehold.co/1200x600?text=No+Image';
 
       // Render Hero
