@@ -196,17 +196,21 @@
     }
 
     // 2. Helper: Create the Info Box
-    function createBox(label, value, isHighlight = false, unit = '') {
-        // SAFETY CHECK: If value is null, undefined, empty, or 0, do not show the box.
+    function createBox(label, value, isHighlight = false, unit = '', isWide = false) {
+        // SAFETY: If value is missing/empty/0, don't show the box
         if (value === null || value === undefined || value === '' || value === 0 || value === '0') return '';
 
-        // SPECIAL LOGIC: Handle Boolean "Yes/No" (Specifically for Parking)
-        if (typeof value === 'boolean') {
-            value = value ? 'Yes' : 'No';
+        // LOGIC: Handle Boolean (True/False -> Yes/No)
+        if (value === true || value === 'true') value = 'Yes';
+        if (value === false || value === 'false') value = 'No';
+
+        // LOGIC: Capitalize first letter (e.g. "house" -> "House")
+        if (typeof value === 'string' && label !== 'Description') {
+            value = value.charAt(0).toUpperCase() + value.slice(1);
         }
 
         return `
-            <div class="info-box">
+            <div class="info-box ${isWide ? 'wide-box' : ''}">
                 <div class="info-label">${label}</div>
                 <div class="info-value ${isHighlight ? 'highlight' : ''}">
                     ${value} ${unit ? `<span class="unit">${unit}</span>` : ''}
@@ -224,44 +228,48 @@
         try {
             const res = await fetch(`${API}/api/properties/${id}`);
             const d = await res.json();
-            const p = d.data || d;
+            const p = d.data || d; // Handle both response formats
+            
+            // Allow checking features object safely
+            const f = p.features || {}; 
+            const a = p.address || {};
 
-            // --- 1. TITLE ---
-            document.getElementById('page-title').innerText = p.title;
+            // CLEAR the "Loading..." title since we are putting Title in a box
+            document.getElementById('page-title').style.display = 'none'; 
 
-            // --- 2. BUILD THE GRID ---
+            // --- BUILD THE GRID ---
             const grid = document.getElementById('details-grid');
             let html = '';
 
-            // --- KEY METRICS (Top Row) ---
-            // Price
+            // 1. TITLE (Wide Box)
+            html += createBox('Title', p.title, false, '', true);
+
+            // 2. PRICE (Highlight)
             html += createBox('Price', '₹ ' + Number(p.price).toLocaleString(), true);
-            
-            // City
-            html += createBox('City', p.address?.city || 'Unknown');
-            
-            // Type (House, Villa, Plot, Apartment, Shop)
-            html += createBox('Property Type', p.propertyType);
 
-            // --- FEATURES (The Specific List You Gave) ---
-            if(p.features) {
-                // Area (sqft)
-                // Checks 'area', 'builtUpArea', or 'plotArea' depending on what you saved
-                const areaVal = p.features.area || p.features.builtUpArea || p.features.plotArea;
-                html += createBox('Area', areaVal, true, 'sq ft');
+            // 3. TYPE (House, Villa, Plot, Apartment, Shop)
+            // Checks p.propertyType AND p.type just in case
+            html += createBox('Property Type', p.propertyType || p.type);
 
-                // Bedrooms
-                html += createBox('Bedrooms', p.features.bedrooms);
+            // 4. CITY
+            html += createBox('City', a.city || p.city || 'Unknown');
 
-                // Bathrooms
-                html += createBox('Bathrooms', p.features.bathrooms);
+            // 5. AREA (sqft)
+            // Checks area, builtUpArea, or plotArea
+            const areaVal = f.area || f.builtUpArea || f.plotArea || p.area;
+            html += createBox('Area', areaVal, true, 'sq ft');
 
-                // Parking (Yes / No)
-                // This handles if you saved it as "Yes", "No", true, or false
-                html += createBox('Parking', p.features.parking); 
-            }
+            // 6. BEDROOMS
+            html += createBox('Bedrooms', f.bedrooms || p.bedrooms);
 
-            // --- 3. DESCRIPTION (Full Width) ---
+            // 7. BATHROOMS
+            html += createBox('Bathrooms', f.bathrooms || p.bathrooms);
+
+            // 8. PARKING (Yes/No)
+            // Checks p.features.parking OR p.parking
+            html += createBox('Parking', f.parking !== undefined ? f.parking : p.parking);
+
+            // 9. DESCRIPTION (Wide Box)
             if(p.description) {
                 html += `
                     <div class="info-box wide-box">
@@ -271,10 +279,10 @@
                 `;
             }
 
-            // --- 4. AMENITIES (Full Width) ---
-            const am = p.amenities ? (Array.isArray(p.amenities) ? p.amenities : p.amenities.split(',')) : [];
-            if(am.length > 0) {
-                const chips = am.map(a => `<span class="amenity-chip">${a.trim()}</span>`).join('');
+            // 10. AMENITIES (Wide Box)
+            const amList = p.amenities ? (Array.isArray(p.amenities) ? p.amenities : p.amenities.split(',')) : [];
+            if(amList.length > 0) {
+                const chips = amList.map(item => `<span class="amenity-chip">${item.trim()}</span>`).join('');
                 html += `
                     <div class="info-box wide-box">
                         <div class="info-label">Amenities</div>
@@ -283,11 +291,10 @@
                 `;
             }
 
-            // Inject HTML into the grid
+            // Inject HTML
             grid.innerHTML = html;
 
-
-            // --- 5. AGENT INFO ---
+            // --- AGENT & SLIDER ---
             if(p.owner) {
                 document.getElementById('aName').innerText = p.owner.name;
                 document.getElementById('aImg').src = `https://placehold.co/100/263f6e/FFF?text=${p.owner.name[0]}`;
@@ -295,11 +302,11 @@
                 document.getElementById('btnWa').href = `https://wa.me/${p.owner.phone.replace(/\D/g,'')}?text=Hi, interested in ${p.title}`;
             }
 
-            // --- 6. SLIDER ---
             setupSlider(p.images);
 
         } catch (err) {
-            console.error(err);
+            console.error("Error showing details:", err);
+            document.body.innerHTML += `<p style="text-align:center; color:red">Error: ${err.message}</p>`;
         }
     };
 
