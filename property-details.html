@@ -187,6 +187,7 @@
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const API = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
 
+    // 1. Helper to fix image URLs
     function getImgUrl(path) {
         if (!path) return 'https://placehold.co/1200x600?text=No+Image';
         if (path.startsWith('http')) return path;
@@ -194,9 +195,10 @@
         return `${API}/uploads/${filename}`;
     }
 
-    // Dynamic Box Creator
+    // 2. The Box Creator (Standardized)
     function createBox(label, value, isHighlight = false, unit = '') {
-        if (value === null || value === undefined || value === '' || value === 0) return '';
+        // Validation: If data is missing, 0, or null, DO NOT create a box.
+        if (value === null || value === undefined || value === '' || value === 0 || value === '0') return '';
         
         return `
             <div class="info-box">
@@ -219,23 +221,46 @@
             const d = await res.json();
             const p = d.data || d;
 
+            // --- A. Basic Header Info ---
             document.getElementById('page-title').innerText = p.title;
 
-            // BUILD GRID
+            // --- B. BUILD THE GRID BOXES ---
             const grid = document.getElementById('details-grid');
             let html = '';
 
+            // 1. The Basics
             html += createBox('Price', '₹ ' + Number(p.price).toLocaleString(), true);
             html += createBox('Location', p.address?.city || 'Unknown');
-            html += createBox('Type', p.propertyType);
-            
+            html += createBox('Property Type', p.propertyType);
+            html += createBox('Status', 'Active'); // You can map p.status here if available
+
+            // 2. The Specific "Dashboard" Elements
+            // We check if p.features exists, then check every specific key you asked for
             if(p.features) {
-                html += createBox('Area', p.features.area, true, 'sq ft');
+                // BHK (If you have it explicitly, or we can use Bedrooms)
+                html += createBox('Configuration', p.features.bhk || (p.features.bedrooms ? `${p.features.bedrooms} BHK` : ''));
+                
+                // Bedrooms & Bathrooms
                 html += createBox('Bedrooms', p.features.bedrooms);
                 html += createBox('Bathrooms', p.features.bathrooms);
+                html += createBox('Balconies', p.features.balconies); // Added Balconies just in case
+
+                // Areas (Distinguishing Plot vs Built-Up)
+                // Note: Check your database keys. I am checking both 'area' and 'builtUpArea'
+                html += createBox('Super Built-up Area', p.features.builtUpArea || p.features.area, true, 'sq ft');
+                html += createBox('Carpet Area', p.features.carpetArea, false, 'sq ft');
+                html += createBox('Plot Area', p.features.plotArea, false, 'sq ft');
+
+                // Parking & Others
+                html += createBox('Parking', p.features.parking); // e.g., "2 Covered"
+                html += createBox('Furnishing', p.features.furnishing); // e.g., "Semi-Furnished"
+                html += createBox('Floor', p.features.floor); // e.g., "4th Floor"
+                html += createBox('Total Floors', p.features.totalFloors);
+                html += createBox('Facing', p.features.facing); // e.g., "North-East"
+                html += createBox('Age of Property', p.features.age); // e.g., "New Construction"
             }
 
-            // Description
+            // 3. Description (Spans Full Width)
             if(p.description) {
                 html += `
                     <div class="info-box wide-box">
@@ -245,21 +270,23 @@
                 `;
             }
 
-            // Amenities
+            // 4. Amenities (Spans Full Width, but inside a Box)
             const am = p.amenities ? (Array.isArray(p.amenities) ? p.amenities : p.amenities.split(',')) : [];
             if(am.length > 0) {
                 const chips = am.map(a => `<span class="amenity-chip">${a.trim()}</span>`).join('');
                 html += `
                     <div class="info-box wide-box">
                         <div class="info-label">Amenities</div>
-                        <div style="margin-top:5px;">${chips}</div>
+                        <div style="margin-top:10px; display:flex; flex-wrap:wrap;">${chips}</div>
                     </div>
                 `;
             }
 
+            // Inject the HTML
             grid.innerHTML = html;
 
-            // Agent
+
+            // --- C. Agent Info & Slider ---
             if(p.owner) {
                 document.getElementById('aName').innerText = p.owner.name;
                 document.getElementById('aImg').src = `https://placehold.co/100/263f6e/FFF?text=${p.owner.name[0]}`;
@@ -274,15 +301,14 @@
         }
     };
 
+    // Standard Slider Logic (No changes needed here)
     function setupSlider(imgs) {
         const t = document.getElementById('track');
         if(!imgs || !imgs.length) { t.innerHTML = `<div class="slide"><img src="https://placehold.co/800x400?text=No+Image"></div>`; return; }
-        
         total = imgs.length;
         t.innerHTML = imgs.map(url => `<div class="slide"><img src="${getImgUrl(url)}"></div>`).join('');
         updateUI();
     }
-
     function move(d) {
         if(total < 2) return;
         curr += d;
@@ -291,11 +317,9 @@
         document.getElementById('track').style.transform = `translateX(-${curr * 100}%)`;
         updateUI();
     }
-    
-    function updateUI() {
-        document.getElementById('counter').innerText = `${curr+1}/${total}`;
-    }
-    
+    function updateUI() { document.getElementById('counter').innerText = `${curr+1}/${total}`; }
+
+    // Auth Logic
     document.addEventListener("DOMContentLoaded", function() {
         const u = localStorage.getItem('user');
         const authBtn = document.getElementById('authBtn');
@@ -304,15 +328,10 @@
             const email = (user.email || "").toLowerCase();
             const isTester = ['team', 'test', 'tester', 'ym'].some(keyword => email.includes(keyword));
             const isAdmin = user.role === 'admin' || user.role === 'team' || isTester;
-
             if (isAdmin) {
-                authBtn.innerText = "Admin Panel";
-                authBtn.href = "admin.html";
-                authBtn.style.background = "#2ecc71"; 
+                authBtn.innerText = "Admin Panel"; authBtn.href = "admin.html"; authBtn.style.background = "#2ecc71"; 
             } else {
-                authBtn.innerText = "Logout";
-                authBtn.href = "#";
-                authBtn.onclick = function() { localStorage.clear(); window.location.reload(); };
+                authBtn.innerText = "Logout"; authBtn.href = "#"; authBtn.onclick = function() { localStorage.clear(); window.location.reload(); };
             }
         }
     });
