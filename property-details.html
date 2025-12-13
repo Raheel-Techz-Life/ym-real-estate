@@ -31,6 +31,11 @@
 
     .logo-img { height: 45px; width: auto; border-radius: 5px; }
 
+    .nav-links {
+        display: flex;
+        align-items: center;
+    }
+
     .nav-links a {
         color: rgba(255,255,255,0.9); text-decoration: none; margin-left: 25px;
         font-weight: 500; font-size: 1rem; transition: color 0.3s;
@@ -97,8 +102,41 @@
     .btn:hover { opacity: 0.9; }
     .btn-wa { background:#25D366; color:white; }
 
-    /* RESPONSIVE */
-    @media(max-width:800px) { .layout-grid { grid-template-columns:1fr; } .slider { height:300px; } }
+    /* --- RESPONSIVE CSS --- */
+    /* This section handles the mobile resizing */
+    @media(max-width:800px) { 
+        /* Stack the main grid (Details top, Agent bottom) */
+        .layout-grid { grid-template-columns:1fr; } 
+        
+        /* Reduce slider height */
+        .slider { height:300px; } 
+
+        /* Header Mobile Fix */
+        .header {
+            flex-direction: column; /* Stack logo on top of links */
+            padding: 15px 20px;
+            gap: 15px; /* Add space between logo and links */
+        }
+        
+        .nav-links {
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow links to wrap if screen is very small */
+            gap: 15px;
+        }
+
+        .nav-links a {
+            margin-left: 0; /* Remove left margin */
+            font-size: 0.9rem;
+            padding: 5px;
+        }
+
+        /* Fix Agent Box sticky issue on mobile */
+        .agent-box {
+            position: relative;
+            top: 0;
+        }
+    }
   </style>
 </head>
 <body>
@@ -149,7 +187,6 @@
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const API = isLocal ? 'http://localhost:5011' : 'https://ym-real-estate.onrender.com';
 
-    // Helper: Fix Image URLs
     function getImgUrl(path) {
         if (!path) return 'https://placehold.co/1200x600?text=No+Image';
         if (path.startsWith('http')) return path;
@@ -157,9 +194,9 @@
         return `${API}/uploads/${filename}`;
     }
 
-    // Helper: Create Box HTML
+    // Dynamic Box Creator
     function createBox(label, value, isHighlight = false, unit = '') {
-        if (value === null || value === undefined || value === '' || value === 0) return ''; // Hide empty/zero boxes
+        if (value === null || value === undefined || value === '' || value === 0) return '';
         
         return `
             <div class="info-box">
@@ -182,27 +219,23 @@
             const d = await res.json();
             const p = d.data || d;
 
-            // 1. Set Page Title
             document.getElementById('page-title').innerText = p.title;
 
-            // 2. BUILD THE GRID BOXES
+            // BUILD GRID
             const grid = document.getElementById('details-grid');
             let html = '';
 
-            // -- Core Metrics --
             html += createBox('Price', '₹ ' + Number(p.price).toLocaleString(), true);
             html += createBox('Location', p.address?.city || 'Unknown');
             html += createBox('Type', p.propertyType);
-            html += createBox('Status', 'Active'); // Default or p.status
-
-            // -- Features (Dynamic: only shows if data exists) --
+            
             if(p.features) {
                 html += createBox('Area', p.features.area, true, 'sq ft');
                 html += createBox('Bedrooms', p.features.bedrooms);
                 html += createBox('Bathrooms', p.features.bathrooms);
             }
 
-            // -- Description (Full Width Box) --
+            // Description
             if(p.description) {
                 html += `
                     <div class="info-box wide-box">
@@ -212,7 +245,7 @@
                 `;
             }
 
-            // -- Amenities (Full Width Box with Chips) --
+            // Amenities
             const am = p.amenities ? (Array.isArray(p.amenities) ? p.amenities : p.amenities.split(',')) : [];
             if(am.length > 0) {
                 const chips = am.map(a => `<span class="amenity-chip">${a.trim()}</span>`).join('');
@@ -224,11 +257,9 @@
                 `;
             }
 
-            // Inject HTML
             grid.innerHTML = html;
 
-
-            // 3. Setup Agent Box
+            // Agent
             if(p.owner) {
                 document.getElementById('aName').innerText = p.owner.name;
                 document.getElementById('aImg').src = `https://placehold.co/100/263f6e/FFF?text=${p.owner.name[0]}`;
@@ -236,12 +267,10 @@
                 document.getElementById('btnWa').href = `https://wa.me/${p.owner.phone.replace(/\D/g,'')}?text=Hi, interested in ${p.title}`;
             }
 
-            // 4. Setup Slider
             setupSlider(p.images);
 
         } catch (err) {
             console.error(err);
-            document.getElementById('page-title').innerText = "Error loading property details.";
         }
     };
 
@@ -267,7 +296,6 @@
         document.getElementById('counter').innerText = `${curr+1}/${total}`;
     }
     
-    // Auth Check
     document.addEventListener("DOMContentLoaded", function() {
         const u = localStorage.getItem('user');
         const authBtn = document.getElementById('authBtn');
