@@ -1036,36 +1036,17 @@
 
 
 
-        .property-card {
-
-            flex: 1 1 300;
-
-            background: #fff;
-
-            border: 2px solid #263f6e;
-
-            border-radius: 14px;
-
-            transition: box-shadow 0.3s, transform 0.3s;
-
-            box-shadow: 0 2px 12px rgba(38, 63, 110, 0.06);
-
-            padding: 16px;
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            min-width: 0;
-
-            cursor: pointer;
-
-            position: relative;
-
-        }
-
+        .property-card { 
+    flex: 1 1 450px;        /* ✅ Increased from 300px (Starts wider) */
+    max-width: 600px;       /* ✅ Increased from 400px (Allows it to grow) */
+    background: #fff; 
+    border: 2px solid #263f6e; 
+    border-radius: 14px; 
+    padding: 16px; 
+    cursor: pointer; 
+    position: relative;     /* Ensure this is here for the tags */
+    transition: all 0.3s ease;
+}
 
 
         .property-card img {
