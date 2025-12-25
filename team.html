@@ -6,7 +6,9 @@
   <title>Our Team - Y M REAL ESTATE</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
   <script src="js/api.js" defer></script>
+  
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Poppins', sans-serif; background: #f8f9fa; color: #333; }
@@ -197,7 +199,8 @@
   </div>
 
   <script>
-    const API_URL = window.location.hostname.includes('localhost') 
+    // ✅ RENAMED TO AVOID CONFLICT WITH API.JS
+    const BACKEND_URL = window.location.hostname.includes('localhost') 
         ? 'http://localhost:5011/api' 
         : 'https://ym-real-estate.onrender.com/api';
     
@@ -211,7 +214,7 @@
 
     async function fetchTeamMembers() {
         try {
-            const res = await fetch(`${API_URL}/team`);
+            const res = await fetch(`${BACKEND_URL}/team`);
             const json = await res.json();
             currentTeamData = json.data || json || [];
             
@@ -259,7 +262,7 @@
           const formData = new FormData();
           formData.append('images', fileInput.files[0]);
           try {
-              const upRes = await fetch(`${API_URL}/upload`, {
+              const upRes = await fetch(`${BACKEND_URL}/upload`, {
                   method: 'POST',
                   headers: { 'Authorization': `Bearer ${token}` },
                   body: formData
@@ -284,7 +287,7 @@
 
       try {
           const method = id ? 'PUT' : 'POST';
-          const url = id ? `${API_URL}/team/${id}` : `${API_URL}/team`;
+          const url = id ? `${BACKEND_URL}/team/${id}` : `${BACKEND_URL}/team`;
           
           await fetch(url, {
               method: method,
@@ -300,7 +303,7 @@
     async function deleteMember(id) {
         if(!confirm("Delete?")) return;
         const token = localStorage.getItem('token');
-        await fetch(`${API_URL}/team/${id}`, { 
+        await fetch(`${BACKEND_URL}/team/${id}`, { 
             method: 'DELETE', 
             headers: { 'Authorization': `Bearer ${token}` } 
         });
