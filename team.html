@@ -10,9 +10,11 @@
   <script src="js/api.js" defer></script>
   
   <style>
+    /* --- GLOBAL RESET --- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Poppins', sans-serif; background: #f8f9fa; color: #333; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; font-family: 'Poppins', sans-serif; background: #f8f9fa; color: #333; }
     
+    /* HEADER */
     .header {
       background: #263f6e; color: #fff; padding: 20px 40px;
       display: flex; align-items: center; justify-content: space-between; gap: 40px;
@@ -27,6 +29,7 @@
     .nav a:hover { background: #18284b; }
     .user-profile { display: none; align-items: center; gap: 10px; margin-left: auto; }
     
+    /* HERO */
     .hero {
       background: linear-gradient(135deg, #263f6e 0%, #18284b 100%);
       color: white; padding: 80px 20px 60px; text-align: center;
@@ -34,14 +37,56 @@
     .hero h1 { font-size: 3em; margin-bottom: 15px; }
     .hero p { font-size: 1.2em; opacity: 0.9; }
     
-    .container { max-width: 1200px; margin: -40px auto 60px; padding: 0 20px; }
+    /* MAIN CONTAINER */
+    .container { max-width: 1200px; margin: -40px auto 60px; padding: 0 20px; position: relative; z-index: 2; }
     
+    /* STATIC CARDS (Founder) */
+    .founder-card {
+      background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); color: white;
+      border-radius: 20px; padding: 50px 40px; margin-bottom: 40px;
+      text-align: center; box-shadow: 0 10px 40px rgba(38,63,110,0.2);
+    }
+
+    /* --- ✅ DEVELOPER CARD (FIXED TO MATCH TEAM CARD) --- */
+    .dev-wrapper {
+      background: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%);
+      border-radius: 20px; padding: 50px 40px; margin-bottom: 40px;
+      box-shadow: 0 10px 40px rgba(38,63,110,0.1);
+    }
+    
+    .dev-grid {
+      display: grid; 
+      grid-template-columns: 150px 1fr; /* Fixed image width + flexible text */
+      gap: 30px; 
+      align-items: center; 
+      max-width: 900px; 
+      margin: 0 auto; 
+      background: white; 
+      padding: 35px; 
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(38,63,110,0.1);
+      overflow: hidden; /* 🛑 STOPS LEAKING */
+    }
+
+    .dev-photo {
+      width: 150px; height: 150px; 
+      border-radius: 50%; 
+      border: 5px solid #ffd700;
+      object-fit: cover;
+    }
+
+    .dev-info {
+      min-width: 0; /* 🛑 KEY FIX: Allows text to wrap instead of overflowing */
+    }
+
+    /* TEAM GRID */
     .team-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
     
     .team-member-card {
       background: white; border-radius: 15px; padding: 35px;
       box-shadow: 0 5px 20px rgba(38,63,110,0.1); transition: all 0.3s;
-      position: relative; overflow: hidden; display: grid; grid-template-columns: 180px 1fr;
+      position: relative; overflow: hidden; /* 🛑 STOPS LEAKING */
+      display: grid; grid-template-columns: 180px 1fr;
       gap: 35px; align-items: start;
     }
     .team-member-card::before {
@@ -56,7 +101,10 @@
     }
     .team-member-card:hover .member-photo { transform: scale(1.05); }
     
-    .member-info { flex: 1; }
+    .member-info { 
+      flex: 1; 
+      min-width: 0; /* 🛑 KEY FIX */
+    }
     .member-name { font-size: 1.8em; color: #263f6e; font-weight: 600; margin-bottom: 8px; }
     .member-role { color: #666; font-size: 1.2em; margin-bottom: 20px; font-weight: 500; }
     .member-bio { color: #555; line-height: 1.8; margin-bottom: 25px; font-size: 1.05em; }
@@ -92,14 +140,22 @@
     .add-member-fab:hover { transform: scale(1.1) rotate(90deg); background: #10b981; }
     .add-member-fab.show { display: flex !important; }
     
+    /* MOBILE MEDIA QUERY */
     @media (max-width: 768px) {
       .header { flex-direction: column; padding: 15px; gap: 15px; }
       .nav { flex-wrap: wrap; justify-content: center; width: 100%; gap: 10px; }
       .nav a { font-size: 13px; padding: 8px 12px; }
       .hero h1 { font-size: 2em; }
-      .team-member-card { grid-template-columns: 1fr; padding: 25px; text-align: center; gap: 20px; }
-      .member-photo { margin: 0 auto; width: 150px; height: 150px; }
-      .member-contact { justify-content: center; }
+      
+      /* Card Stack for Mobile */
+      .team-member-card, .dev-grid { 
+        grid-template-columns: 1fr !important; 
+        padding: 25px; 
+        text-align: center; 
+        gap: 20px; 
+      }
+      .member-photo, .dev-photo { margin: 0 auto; }
+      .member-contact, .dev-links { justify-content: center !important; }
     }
   </style>
 </head>
@@ -130,7 +186,7 @@
   </div>
 
   <div class="container">
-    <div style="background: linear-gradient(135deg, #263f6e 0%, #18284b 100%); color: white; border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 40px rgba(38,63,110,0.2);">
+    <div class="founder-card">
       <h2 style="color: #ffd700; margin-bottom: 30px; font-size: 2em;">
         <i class="fas fa-star"></i> Founder & CEO
       </h2>
@@ -142,16 +198,16 @@
       </p>
     </div>
 
-    <div style="background: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%); border-radius: 20px; padding: 50px 40px; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(38,63,110,0.1);">
+    <div class="dev-wrapper">
       <h2 style="color: #263f6e; margin-bottom: 30px; font-size: 2em; text-align: center;">
         <i class="fas fa-code"></i> Website Developer
       </h2>
-      <div style="display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px;">
-        <img src="meeee.png" alt="Developer" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #ffd700;">
-        <div>
+      <div class="dev-grid">
+        <img src="meeee.png" class="dev-photo" alt="Developer">
+        <div class="dev-info">
           <h3 style="color: #263f6e; font-size: 1.8em; margin-bottom: 8px;">Raheel Hosmani</h3>
           <p style="color: #666; font-size: 1.1em; margin-bottom: 15px;">Full Stack Web Developer</p>
-          <div style="display: flex; gap: 12px; margin-top: 15px;">
+          <div class="dev-links" style="display: flex; gap: 12px; margin-top: 15px;">
             <a href="#" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="fab fa-github"></i></a>
             <a href="#" style="width: 40px; height: 40px; background: #263f6e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="fab fa-linkedin"></i></a>
           </div>
@@ -199,7 +255,7 @@
   </div>
 
   <script>
-    // ✅ RENAMED TO AVOID CONFLICT WITH API.JS
+    // ✅ RENAMED TO AVOID CONFLICT
     const BACKEND_URL = window.location.hostname.includes('localhost') 
         ? 'http://localhost:5011/api' 
         : 'https://ym-real-estate.onrender.com/api';
@@ -281,7 +337,6 @@
         email: document.getElementById('memberEmail').value,
         phone: document.getElementById('memberPhone').value,
         linkedin: document.getElementById('memberLinkedIn').value,
-        // Only update photo if new one uploaded
         ...(photoUrl && { photo: photoUrl }) 
       };
 
@@ -333,7 +388,6 @@
         document.getElementById('memberLinkedIn').value = m ? m.linkedin : '';
         document.getElementById('memberPhotoFile').value = '';
         document.getElementById('memberEditorModal').style.display = 'flex';
-        // Center modal using flex
         document.getElementById('memberEditorModal').style.justifyContent = 'center';
         document.getElementById('memberEditorModal').style.alignItems = 'center';
     }
