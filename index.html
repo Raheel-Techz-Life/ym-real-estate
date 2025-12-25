@@ -1826,7 +1826,13 @@
 
 
 
-       .properties-section, 
+       /* =========================================
+           MOBILE ONLY FIXES (Optimized)
+           ========================================= */
+        @media (max-width: 768px) {
+            
+            /* 1. Force Full Width for Background Sections */
+            .properties-section, 
             .footer { 
                 width: 100% !important; 
                 left: auto !important; 
@@ -1834,7 +1840,87 @@
                 margin-left: 0 !important; 
                 margin-right: 0 !important; 
                 padding-left: 15px !important; 
-                padding-right: 15px !important;
+                padding-right: 15px !important; 
+            }
+
+            /* 2. Header & Nav Stack */
+            .header { 
+                flex-direction: column; 
+                padding: 15px; 
+                gap: 15px; 
+                position: relative; 
+            }
+            
+            .nav { 
+                flex-wrap: wrap; 
+                justify-content: center; 
+                gap: 8px; 
+                width: 100%; 
+            }
+            
+            .nav a { 
+                font-size: 13px; 
+                padding: 8px 12px; 
+                flex-grow: 1; 
+                justify-content: center; 
+            }
+
+            /* 3. Hero Section Adjustment */
+            .hero-section { 
+                height: auto; 
+                min-height: 50vh; 
+                padding: 130px 20px 60px; /* Extra top padding for stacked header */
+            }
+            
+            .hero-title { font-size: 2rem; }
+
+            /* 4. Force Single Column Layouts */
+            .properties-row, 
+            .team-members, 
+            .instagram-grid, 
+            .footer-content,
+            .stats-circles { 
+                display: flex; 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 30px; 
+                grid-template-columns: 1fr !important;
+            }
+
+            /* 5. Card Sizing */
+            .property-card, 
+            .team-card, 
+            .insta-card { 
+                width: 100%; 
+                max-width: 100%; 
+                margin-bottom: 20px; 
+            }
+
+            /* 6. Developer Section (Fixed Selector) */
+            .developer-card {
+                grid-template-columns: 1fr !important;
+                text-align: center;
+                gap: 30px;
+                padding: 30px 20px;
+            }
+            
+            .developer-social, 
+            .developer-skills {
+                justify-content: center;
+            }
+
+            /* 7. Floating Edit Button Position */
+            .edit-reels-fab { 
+                bottom: 20px; 
+                right: 20px; 
+                width: 50px; 
+                height: 50px; 
+                font-size: 20px; 
+            }
+            
+            /* Hide hover tooltip on mobile */
+            .edit-reels-fab::before { display: none; }
+        }
 
 
         /* --- STYLISH BUTTON & MODAL CSS --- */
