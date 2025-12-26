@@ -2,35 +2,35 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
     <url>
-        <loc>https://ym-real-estate.vercel.app/</loc>
+        <loc>https://ymrealestate.in/</loc>
         <lastmod>2025-01-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
 
     <url>
-        <loc>https://ym-real-estate.vercel.app/properties</loc>
+        <loc>https://ymrealestate.in/properties</loc>
         <lastmod>2025-01-01</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
 
     <url>
-        <loc>https://ym-real-estate.vercel.app/team</loc>
+        <loc>https://ymrealestate.in/team</loc>
         <lastmod>2025-01-01</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
 
     <url>
-        <loc>https://ym-real-estate.vercel.app/contact</loc>
+        <loc>https://ymrealestate.in/contact</loc>
         <lastmod>2025-01-01</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
 
     <url>
-        <loc>https://ym-real-estate.vercel.app/login</loc>
+        <loc>https://ymrealestate.in/login</loc>
         <lastmod>2025-01-01</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
