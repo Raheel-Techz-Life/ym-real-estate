@@ -2005,6 +2005,36 @@ body, p, a, button, .nav a {
 
         .save-btn:hover { background: #1e3a8a; transform: scale(1.02); }
 
+        /* Custom Hero Look */
+.hero-content {
+    background: rgba(255, 255, 255, 0.1); /* See-through */
+    backdrop-filter: blur(12px);          /* Frosted Glass Effect */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 60px;
+    border-radius: 20px;
+    text-align: left !important; /* Align left looks more professional */
+    max-width: 800px;
+    margin-right: auto; /* Push slightly to the left */
+    margin-left: 5%;
+}
+
+.hero-title {
+    font-size: 4rem !important; /* Bigger is bolder */
+    text-shadow: none !important; /* Remove cheap shadow */
+    color: #fff;
+}
+
+/* Mobile adjust */
+@media (max-width: 768px) {
+    .hero-content {
+        text-align: center !important;
+        margin: 0 20px;
+        padding: 30px;
+    }
+    .hero-title { font-size: 2.5rem !important; }
+}
+
     </style>
 
 </head>
