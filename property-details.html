@@ -7,6 +7,23 @@
   <link rel="icon" type="image/jpeg" href="ymr.jpg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600&display=swap');
+
+:root {
+    --font-heading: 'Playfair Display', serif; /* Luxury Feel */
+    --font-body: 'Manrope', sans-serif;       /* Modern & Clean */
+}
+
+/* Apply it */
+h1, h2, h3, .logo-text, .hero-title, .section-title {
+    font-family: var(--font-heading) !important;
+    letter-spacing: -0.5px; /* Tighter letters look more expensive */
+}
+
+body, p, a, button, .nav a {
+    font-family: var(--font-body) !important;
+}
     /* NAVY THEME */
     :root { --primary: #263f6e; --accent: #ffd700; --bg: linear-gradient(135deg, #f6faff 0%, #e8f0fe 100%); }
     body { margin:0; font-family:'Segoe UI', sans-serif; background:var(--bg); padding-bottom:40px; }
@@ -138,6 +155,36 @@
             top: 0;
         }
     }
+
+    /* Custom Hero Look */
+.hero-content {
+    background: rgba(255, 255, 255, 0.1); /* See-through */
+    backdrop-filter: blur(12px);          /* Frosted Glass Effect */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 60px;
+    border-radius: 20px;
+    text-align: left !important; /* Align left looks more professional */
+    max-width: 800px;
+    margin-right: auto; /* Push slightly to the left */
+    margin-left: 5%;
+}
+
+.hero-title {
+    font-size: 4rem !important; /* Bigger is bolder */
+    text-shadow: none !important; /* Remove cheap shadow */
+    color: #fff;
+}
+
+/* Mobile adjust */
+@media (max-width: 768px) {
+    .hero-content {
+        text-align: center !important;
+        margin: 0 20px;
+        padding: 30px;
+    }
+    .hero-title { font-size: 2.5rem !important; }
+}
   </style>
 </head>
 <body>
