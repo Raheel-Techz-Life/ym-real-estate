@@ -7,6 +7,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600&display=swap');
+
+:root {
+    --font-heading: 'Playfair Display', serif; /* Luxury Feel */
+    --font-body: 'Manrope', sans-serif;       /* Modern & Clean */
+}
+
+/* Apply it */
+h1, h2, h3, .logo-text, .hero-title, .section-title {
+    font-family: var(--font-heading) !important;
+    letter-spacing: -0.5px; /* Tighter letters look more expensive */
+}
+
+body, p, a, button, .nav a {
+    font-family: var(--font-body) !important;
+}
     /* VARIABLES */
     :root { --primary: #263f6e; --light: #f6faff; --accent: #ffd700; --text: #2d3748; --border: #e2e8f0; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -51,6 +68,36 @@
     .admin-fab.show { display: flex !important; }
 
     @media (max-width: 900px) { .filter-bar { grid-template-columns: 1fr; } .header { flex-direction: column; padding: 15px; gap: 15px; height:auto;} body{padding-top:160px;} }
+
+    /* Custom Hero Look */
+.hero-content {
+    background: rgba(255, 255, 255, 0.1); /* See-through */
+    backdrop-filter: blur(12px);          /* Frosted Glass Effect */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 60px;
+    border-radius: 20px;
+    text-align: left !important; /* Align left looks more professional */
+    max-width: 800px;
+    margin-right: auto; /* Push slightly to the left */
+    margin-left: 5%;
+}
+
+.hero-title {
+    font-size: 4rem !important; /* Bigger is bolder */
+    text-shadow: none !important; /* Remove cheap shadow */
+    color: #fff;
+}
+
+/* Mobile adjust */
+@media (max-width: 768px) {
+    .hero-content {
+        text-align: center !important;
+        margin: 0 20px;
+        padding: 30px;
+    }
+    .hero-title { font-size: 2.5rem !important; }
+}
   </style>
 </head>
 <body>
