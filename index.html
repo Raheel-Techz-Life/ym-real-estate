@@ -634,31 +634,27 @@ body, p, a, button, .nav a {
 
 
 
-        .property-card {
+       .property-card {
+    border: none !important; /* remove the "boxy" border */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08) !important; /* Soft, deep shadow */
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important; /* Smooth "Apple-like" motion */
+}
 
-            background: var(--white);
+.property-card:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 20px 50px rgba(38, 63, 110, 0.15) !important;
+}
 
-            border-radius: 20px;
-
-            overflow: hidden;
-
-            transition: all 0.3s ease;
-
-            position: relative;
-
-            box-shadow: var(--shadow-sm);
-
-        }
-
-
-
-        .property-card:hover {
-
-            transform: translateY(-10px);
-
-            box-shadow: var(--shadow-lg);
-
-        }
+/* Make the price tag look like a premium badge */
+.property-price {
+    background: #263f6e;
+    color: #fff !important;
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-size: 1.1rem !important;
+    margin-top: 10px;
+}
 
 
 
@@ -792,15 +788,7 @@ body, p, a, button, .nav a {
 
 
 
-        .property-price {
-
-            font-size: 1.6rem;
-
-            font-weight: 700;
-
-            color: var(--primary-color);
-
-        }
+       
 
 
 
