@@ -1604,7 +1604,54 @@ body, p, a, button, .nav a {
 
 
         
+/* ✅ TEAM SECTION FIX (Prevents Leaking) */
+        .team-members {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap; /* This prevents them from pushing off-screen */
+            padding: 20px;
+            max-width: 100%;
+        }
 
+        .team-card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            width: 280px; /* ✅ Fixed width keeps them contained */
+            flex-shrink: 0; /* Prevents squashing */
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .team-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #f0f0f0;
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #263f6e;
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: 500;
+        }
 
 
         /* --- PREMIUM FOOTER DESIGN --- */
